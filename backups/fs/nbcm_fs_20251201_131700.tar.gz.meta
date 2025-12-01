@@ -1,0 +1,5 @@
+timestamp=20251201_131700
+description=Sauvegarde FS automatique daily
+backup_type=fs
+directories=/app_src
+size=126157

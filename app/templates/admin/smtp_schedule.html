@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% block title %}Planification SMTP{% endblock %}
+{% block page_title %}Planification envoi vers destinataires{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <div class="card shadow-sm border-primary">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-calendar-week"></i> Planification envoi automatique
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i>
+                    <strong>Configuration actuelle :</strong>
+                    {% if email_config.get('actif') %}
+                        <span class="badge bg-success ms-2">Envoi automatique activé</span>
+                    {% else %}
+                        <span class="badge bg-secondary ms-2">Envoi automatique désactivé</span>
+                    {% endif %}
+                </div>
+
+                <h6 class="text-primary mb-3">
+                    <i class="bi bi-clock"></i> Jobs planifiés
+                </h6>
+
+                {% if scheduler_status.get('running') %}
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th><i class="bi bi-tag"></i> Job ID</th>
+                                    <th><i class="bi bi-info-circle"></i> Nom</th>
+                                    <th><i class="bi bi-calendar"></i> Prochaine exécution</th>
+                                    <th><i class="bi bi-check-circle"></i> Statut</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for job in scheduler_status.get('jobs', []) %}
+                                    {% if 'email' in job.id or 'rapport' in job.id %}
+                                    <tr>
+                                        <td><code>{{ job.id }}</code></td>
+                                        <td>{{ job.name }}</td>
+                                        <td>
+                                            <strong class="text-primary">{{ job.next_run }}</strong>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-success">
+                                                <i class="bi bi-check-circle"></i> Actif
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        Le scheduler n'est pas actif. Les envois automatiques ne fonctionneront pas.
+                    </div>
+                {% endif %}
+
+                <hr class="my-4">
+
+                <h6 class="text-secondary mb-3">
+                    <i class="bi bi-gear"></i> Configuration de base
+                </h6>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6 class="card-title">
+                                    <i class="bi bi-envelope"></i> Configuration SMTP
+                                </h6>
+                                <p class="card-text small text-muted">
+                                    Serveur : <strong>{{ email_config.get('smtp_server', 'Non configuré') }}</strong><br>
+                                    Port : <strong>{{ email_config.get('smtp_port', 'Non configuré') }}</strong><br>
+                                    Utilisateur : <strong>{{ email_config.get('smtp_user', 'Non configuré') }}</strong>
+                                </p>
+                                <a href="{{ url_for('admin.smtp') }}" class="btn btn-sm btn-outline-secondary">
+                                    <i class="bi bi-pencil"></i> Modifier
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6 class="card-title">
+                                    <i class="bi bi-people"></i> Destinataires
+                                </h6>
+                                <p class="card-text small text-muted">
+                                    {{ email_config.get('email_to', 'Aucun destinataire configuré') }}
+                                </p>
+                                <a href="{{ url_for('recipients.index') }}" class="btn btn-sm btn-outline-secondary">
+                                    <i class="bi bi-pencil"></i> Gérer les destinataires
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mt-4 border-success">
+            <div class="card-header bg-success text-white">
+                <h6 class="mb-0">
+                    <i class="bi bi-lightbulb"></i> Informations utiles
+                </h6>
+            </div>
+            <div class="card-body">
+                <ul class="mb-0">
+                    <li>Les rapports sont envoyés automatiquement selon la planification définie dans le scheduler</li>
+                    <li>Pour modifier la fréquence d'envoi, contactez l'administrateur système</li>
+                    <li>Les jobs planifiés sont gérés par APScheduler</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

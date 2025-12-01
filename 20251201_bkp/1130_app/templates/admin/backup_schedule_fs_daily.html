@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Planif FS Quotidienne{% endblock %}
+{% block page_title %}Planification Sauvegarde FS - Quotidienne{% endblock %}
+{% block content %}
+<div class="card">
+    <div class="card-header bg-success text-white">
+        <h5 class="mb-0"><i class="bi bi-sun"></i> Sauvegarde FS Quotidienne</h5>
+    </div>
+    <div class="card-body">
+        <p>Configuration de la sauvegarde automatique quotidienne des fichiers.</p>
+        <p><em>Page en cours de développement</em></p>
+        <a href="{{ url_for('backup.index') }}" class="btn btn-secondary">Retour</a>
+    </div>
+</div>
+{% endblock %}

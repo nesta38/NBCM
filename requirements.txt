@@ -1,0 +1,25 @@
+# NBCM V3.0 - Dependencies
+Flask==3.0.0
+Flask-SQLAlchemy==3.1.1
+Flask-Login==0.6.3
+Flask-Migrate==4.0.5
+Flask-Caching==2.1.0
+Flask-Session==0.6.0
+Werkzeug==3.0.1
+SQLAlchemy==2.0.23
+gunicorn==21.2.0
+APScheduler==3.10.4
+requests==2.31.0
+
+# PostgreSQL
+psycopg2-binary==2.9.9
+
+# Redis (cache + sessions)
+redis==5.0.1
+
+# Reports
+openpyxl==3.1.2
+reportlab==4.0.7
+
+# Utils
+python-dotenv==1.0.0

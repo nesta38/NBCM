@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Sauvegardes FS{% endblock %}
+{% block page_title %}Sauvegardes Fichiers (FileSystem){% endblock %}
+{% block content %}
+<div class="alert alert-info mb-4">
+    <p>Créez des archives des fichiers applicatifs. Fichiers stockés dans <code>/app/backups/fs/</code></p>
+</div>
+<div class="card">
+    <div class="card-body">
+        <form action="{{ url_for('backup.create') }}" method="POST">
+            <input type="hidden" name="type" value="fs">
+            <div class="mb-3">
+                <label class="form-label">Description</label>
+                <input type="text" class="form-control" name="description" placeholder="Ex: Avant migration">
+            </div>
+            <button type="submit" class="btn btn-success"><i class="bi bi-save"></i> Créer sauvegarde FS</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

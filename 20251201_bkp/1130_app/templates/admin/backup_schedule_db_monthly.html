@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Planif DB Mensuelle{% endblock %}
+{% block page_title %}Planification Sauvegarde DB - Mensuelle{% endblock %}
+{% block content %}
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0"><i class="bi bi-calendar-month"></i> Sauvegarde DB Mensuelle</h5>
+    </div>
+    <div class="card-body">
+        <p>Configuration de la sauvegarde automatique mensuelle de la base de données.</p>
+        <p><em>Page en cours de développement</em></p>
+        <a href="{{ url_for('backup.index') }}" class="btn btn-secondary">Retour</a>
+    </div>
+</div>
+{% endblock %}

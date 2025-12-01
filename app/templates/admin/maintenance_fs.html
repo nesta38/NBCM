@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+{% block title %}Maintenance FS{% endblock %}
+{% block page_title %}Nettoyage Fichiers Auto-Import{% endblock %}
+
+{% block content %}
+<!-- Statistiques -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card shadow-sm bg-primary text-white">
+            <div class="card-body">
+                <h6 class="card-title"><i class="bi bi-files"></i> Fichiers totaux</h6>
+                <h3 class="mb-0" id="totalFiles">-</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm bg-warning text-dark">
+            <div class="card-body">
+                <h6 class="card-title"><i class="bi bi-clock"></i> > 48h</h6>
+                <h3 class="mb-0" id="oldFiles">-</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm bg-info text-white">
+            <div class="card-body">
+                <h6 class="card-title"><i class="bi bi-hdd"></i> Espace total</h6>
+                <h3 class="mb-0" id="totalSize">-</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm bg-success text-white">
+            <div class="card-body">
+                <h6 class="card-title"><i class="bi bi-trash"></i> Libérable</h6>
+                <h3 class="mb-0" id="cleanableSize">-</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Configuration -->
+<div class="card shadow-sm border-warning mb-4">
+    <div class="card-header bg-warning">
+        <h5 class="mb-0">
+            <i class="bi bi-gear"></i> Configuration du nettoyage automatique
+        </h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <h6 class="text-primary">
+                    <i class="bi bi-folder"></i> Répertoire surveillé
+                </h6>
+                <div class="alert alert-light">
+                    <code>/app/data/altaview_auto_import/processed/</code>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h6 class="text-primary">
+                    <i class="bi bi-clock-history"></i> Paramètres
+                </h6>
+                <ul class="mb-0">
+                    <li><strong>Rétention :</strong> 48 heures</li>
+                    <li><strong>Planification :</strong> Tous les jours à 3h00</li>
+                    <li><strong>Statut :</strong> <span class="badge bg-success">Actif</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Action manuelle -->
+<div class="card shadow-sm border-success mb-4">
+    <div class="card-header bg-success text-white">
+        <h5 class="mb-0">
+            <i class="bi bi-play-circle"></i> Nettoyage manuel
+        </h5>
+    </div>
+    <div class="card-body">
+        <p class="text-muted">
+            Déclenchez un nettoyage immédiat des fichiers de plus de 48 heures.
+            Cette action n'affecte pas la planification automatique.
+        </p>
+
+        <div class="alert alert-info" id="cleanupPreview">
+            <strong id="previewCount">-</strong> fichiers seront supprimés, 
+            libérant <strong id="previewSize">-</strong> d'espace disque
+        </div>
+
+        <form action="{{ url_for('admin.cleanup_now') }}" method="POST"
+              onsubmit="return confirm('Confirmer le nettoyage des fichiers de plus de 48h ?');">
+            <button type="submit" class="btn btn-success btn-lg w-100">
+                <i class="bi bi-trash"></i> Nettoyer maintenant
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Historique récent -->
+<div class="card shadow-sm border-primary">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">
+            <i class="bi bi-clock-history"></i> Derniers nettoyages
+        </h5>
+    </div>
+    <div class="card-body">
+        <p class="text-muted">
+            Les nettoyages automatiques sont tracés dans les logs système.
+            Consultez <code>/app/logs/app.log</code> pour le détail complet.
+        </p>
+
+        <div class="table-responsive">
+            <table class="table table-sm">
+                <thead class="table-light">
+                    <tr>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Fichiers supprimés</th>
+                        <th>Espace libéré</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">
+                            <i class="bi bi-info-circle"></i> Consultez les logs pour l'historique complet
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Informations -->
+<div class="card shadow-sm border-info mt-4">
+    <div class="card-header bg-info text-white">
+        <h6 class="mb-0">
+            <i class="bi bi-info-circle"></i> Informations
+        </h6>
+    </div>
+    <div class="card-body">
+        <ul class="mb-0">
+            <li><strong>Fonctionnement</strong> : Les fichiers CSV importés automatiquement sont conservés 48h dans le répertoire processed/</li>
+            <li><strong>Sécurité</strong> : Seuls les fichiers de plus de 48h sont supprimés, les imports récents sont préservés</li>
+            <li><strong>Performance</strong> : Le nettoyage régulier évite l'accumulation de fichiers inutiles</li>
+            <li><strong>Logs</strong> : Chaque nettoyage est tracé avec le nombre de fichiers supprimés et l'espace libéré</li>
+            <li><strong>Planification</strong> : Le nettoyage automatique est géré par le scheduler APScheduler</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Charger les statistiques au chargement de la page
+$(document).ready(function() {
+    loadCleanupStats();
+    
+    // Recharger toutes les 30 secondes
+    setInterval(loadCleanupStats, 30000);
+});
+
+function loadCleanupStats() {
+    fetch('{{ url_for("admin.cleanup_stats") }}')
+        .then(response => response.json())
+        .then(data => {
+            // Mettre à jour les KPIs
+            $('#totalFiles').text(data.total_files || 0);
+            $('#oldFiles').text(data.old_files || 0);
+            $('#totalSize').text((data.total_size_mb || 0).toFixed(2) + ' MB');
+            $('#cleanableSize').text((data.cleanable_size_mb || 0).toFixed(2) + ' MB');
+            
+            // Mettre à jour la preview
+            $('#previewCount').text(data.old_files || 0);
+            $('#previewSize').text((data.cleanable_size_mb || 0).toFixed(2) + ' MB');
+            
+            // Pourcentage dans la preview
+            if (data.total_files > 0) {
+                let percentage = ((data.old_files / data.total_files) * 100).toFixed(1);
+                $('#cleanupPreview').html(
+                    `<strong>${data.old_files}</strong> fichiers seront supprimés (${percentage}%), ` +
+                    `libérant <strong>${data.cleanable_size_mb.toFixed(2)} MB</strong> d'espace disque`
+                );
+            }
+        })
+        .catch(err => {
+            console.error('Erreur chargement stats cleanup:', err);
+        });
+}
+</script>
+{% endblock %}

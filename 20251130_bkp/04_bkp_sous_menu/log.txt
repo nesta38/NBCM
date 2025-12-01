@@ -1,0 +1,28 @@
+Attaching to nbcm-app
+[36mnbcm-app    |[0m [2025-11-29 10:37:19 +0100] [1] [INFO] Starting gunicorn 21.2.0
+[36mnbcm-app    |[0m [2025-11-29 10:37:19 +0100] [1] [INFO] Listening at: http://0.0.0.0:5000 (1)
+[36mnbcm-app    |[0m [2025-11-29 10:37:19 +0100] [1] [INFO] Using worker: sync
+[36mnbcm-app    |[0m [2025-11-29 10:37:19 +0100] [7] [INFO] Booting worker with pid: 7
+[36mnbcm-app    |[0m [2025-11-29 10:37:19 +0100] [8] [INFO] Booting worker with pid: 8
+[36mnbcm-app    |[0m [2025-11-29 10:37:19 +0100] [9] [INFO] Booting worker with pid: 9
+[36mnbcm-app    |[0m [2025-11-29 10:37:19 +0100] [10] [INFO] Booting worker with pid: 10
+[36mnbcm-app    |[0m [2025-11-29 10:37:20] INFO [scheduler_service.init_scheduler:110] Scheduler déjà actif dans un autre processus
+[36mnbcm-app    |[0m [2025-11-29 10:37:20] INFO [__init__.create_app:80] NBCM V3.0 démarré en mode production
+[36mnbcm-app    |[0m [2025-11-29 10:37:20] INFO [scheduler_service.init_scheduler:110] Scheduler déjà actif dans un autre processus
+[36mnbcm-app    |[0m [2025-11-29 10:37:20] INFO [__init__.create_app:80] NBCM V3.0 démarré en mode production
+[36mnbcm-app    |[0m [2025-11-29 10:37:20] INFO [scheduler_service.init_scheduler:110] Scheduler déjà actif dans un autre processus
+[36mnbcm-app    |[0m [2025-11-29 10:37:20] INFO [__init__.create_app:80] NBCM V3.0 démarré en mode production
+[36mnbcm-app    |[0m [2025-11-29 10:37:20] INFO [scheduler_service.init_scheduler:102] Scheduler démarré (processus maître)
+[36mnbcm-app    |[0m [2025-11-29 10:37:20] INFO [__init__.create_app:80] NBCM V3.0 démarré en mode production
+[36mnbcm-app    |[0m [INIT] Base de données initialisée
+[36mnbcm-app    |[0m [INIT] Admin par défaut: admin / admin123
+[36mnbcm-app    |[0m [2025-11-29 10:37:20] INFO [scheduler_service.init_scheduler:110] Scheduler déjà actif dans un autre processus
+[36mnbcm-app    |[0m [INIT] Base de données initialisée[INIT] Base de données initialisée
+[36mnbcm-app    |[0m 
+[36mnbcm-app    |[0m [INIT] Admin par défaut: admin / admin123[INIT] Admin par défaut: admin / admin123
+[36mnbcm-app    |[0m 
+[36mnbcm-app    |[0m [INIT] Base de données initialisée
+[36mnbcm-app    |[0m [INIT] Admin par défaut: admin / admin123
+[36mnbcm-app    |[0m [2025-11-29 10:37:20] INFO [scheduler_service.init_scheduler:110] Scheduler déjà actif dans un autre processus
+[36mnbcm-app    |[0m [2025-11-29 10:37:20] INFO [scheduler_service.init_scheduler:110] Scheduler déjà actif dans un autre processus
+[36mnbcm-app    |[0m [2025-11-29 10:37:20] INFO [scheduler_service.init_scheduler:102] Scheduler démarré (processus maître)

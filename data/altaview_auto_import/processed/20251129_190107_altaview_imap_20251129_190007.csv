@@ -1,0 +1,2 @@
+###################### TABLE (COMPLIANCE)####################
+"hostname","policy_name","backup_time","last_job_id","schedule_name","status","size_gb","max_duration"

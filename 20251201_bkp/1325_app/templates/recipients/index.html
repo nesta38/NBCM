@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}{{ t('nav_recipients') }}{% endblock %}
+{% block page_title %}{{ t('recipients_title') }}{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-4"><div class="card border-primary shadow-sm"><div class="card-body d-flex align-items-center"><div class="flex-grow-1"><h3 class="mb-0">{{ recipients|length }}</h3><small class="text-muted">{{ t('recipients_total') }}</small></div><i class="bi bi-envelope-paper fs-1 text-primary opacity-25"></i></div></div></div>
+    <div class="col-md-4"><div class="card border-success shadow-sm"><div class="card-body d-flex align-items-center"><div class="flex-grow-1"><h3 class="mb-0">{{ recipients|selectattr('active', 'equalto', true)|list|length }}</h3><small class="text-muted">{{ t('recipients_active') }}</small></div><i class="bi bi-check-circle fs-1 text-success opacity-25"></i></div></div></div>
+    <div class="col-md-4"><div class="card bg-light shadow-sm"><div class="card-body"><small class="text-muted d-block mb-2">{{ t('recipients_next_send') }}</small><strong>{{ t('tomorrow_at') }} 08:00 ({{ t('default') }})</strong><br><small class="text-info"><i class="bi bi-info-circle"></i> {{ t('managed_by') }}</small></div></div></div>
+</div>
+
+<div class="row">
+    <div class="col-lg-4 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white"><i class="bi bi-person-plus-fill me-2"></i> {{ t('recipients_new') }}</div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3"><label class="form-label fw-bold">{{ t('lbl_name') }}</label><div class="input-group"><span class="input-group-text"><i class="bi bi-person"></i></span><input type="text" class="form-control" name="name" placeholder="Ex: Équipe Ops" required></div></div>
+                    <div class="mb-3"><label class="form-label fw-bold">{{ t('lbl_email') }}</label><div class="input-group"><span class="input-group-text"><i class="bi bi-at"></i></span><input type="email" class="form-control" name="email" placeholder="admin@company.com" required></div></div>
+                    <div class="mb-4"><label class="form-label fw-bold">{{ t('lbl_schedule_time') }}</label><div class="input-group"><span class="input-group-text"><i class="bi bi-alarm"></i></span><input type="time" class="form-control" name="schedule_time" value="08:00" required></div><div class="form-text">{{ t('recipients_send_time_help') }}</div></div>
+                    <div class="d-grid"><button type="submit" class="btn btn-primary"><i class="bi bi-plus-lg"></i> {{ t('btn_add') }}</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-header d-flex justify-content-between" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                <h5 class="mb-0 text-white fw-bold">{{ t('recipients_list') }}</h5>
+                <span class="badge bg-white text-danger">{{ recipients|length }} {{ t('lbl_person') }}</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light"><tr><th>{{ t('th_user') }}</th><th>{{ t('th_email') }}</th><th>{{ t('lbl_schedule_time') }}</th><th>{{ t('th_status') }}</th><th class="text-end">{{ t('th_actions') }}</th></tr></thead>
+                    <tbody>
+                        {% for r in recipients %}
+                        <tr>
+                            <td><div class="fw-bold">{{ r.name }}</div></td>
+                            <td><a href="mailto:{{ r.email }}" class="text-decoration-none">{{ r.email }}</a></td>
+                            <td><span class="badge bg-light text-dark border"><i class="bi bi-clock"></i> {{ r.schedule_time }}</span></td>
+                            <td>{% if r.active %}<span class="badge bg-success">{{ t('status_active') }}</span>{% else %}<span class="badge bg-secondary">{{ t('status_inactive') }}</span>{% endif %}</td>
+                            <td class="text-end">
+                                <form method="POST" action="{{ url_for('recipients.toggle', id=r.id) }}" class="d-inline"><button type="submit" class="btn btn-sm btn-outline-{{ 'warning' if r.active else 'success' }}"><i class="bi bi-{{ 'pause' if r.active else 'play' }}"></i></button></form>
+                                <a href="{{ url_for('recipients.delete', id=r.id) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('{{ t('msg_confirm_delete') }}')" title="{{ t('btn_delete') }}"><i class="bi bi-trash"></i></a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="5" class="text-center py-5 text-muted"><i class="bi bi-inbox fs-1 d-block mb-3 opacity-25"></i>{{ t('recipients_empty') }}</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

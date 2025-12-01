@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block title %}Historique IMAP{% endblock %}
+{% block page_title %}Historique des imports IMAP{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">
+            <i class="bi bi-clock-history"></i> Historique des imports
+        </h5>
+        <span class="badge bg-white text-info">{{ imports|length }} imports récents</span>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover datatable">
+                <thead class="table-light">
+                    <tr>
+                        <th><i class="bi bi-calendar"></i> Date</th>
+                        <th><i class="bi bi-tag"></i> Type</th>
+                        <th><i class="bi bi-file-earmark"></i> Fichier</th>
+                        <th><i class="bi bi-hash"></i> Lignes</th>
+                        <th><i class="bi bi-check-circle"></i> Statut</th>
+                        <th><i class="bi bi-chat-text"></i> Message</th>
+                        <th><i class="bi bi-person"></i> Utilisateur</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for imp in imports %}
+                    <tr>
+                        <td>
+                            <small class="text-muted">{{ imp.date_import.strftime('%Y-%m-%d') }}</small><br>
+                            <strong>{{ imp.date_import.strftime('%H:%M:%S') }}</strong>
+                        </td>
+                        <td>
+                            {% if imp.type_import == 'altaview' %}
+                                <span class="badge bg-primary">
+                                    <i class="bi bi-inbox"></i> IMAP
+                                </span>
+                            {% elif imp.type_import == 'altaview_api' %}
+                                <span class="badge bg-success">
+                                    <i class="bi bi-cloud-arrow-down"></i> API
+                                </span>
+                            {% elif imp.type_import == 'cmdb' %}
+                                <span class="badge bg-secondary">
+                                    <i class="bi bi-database"></i> CMDB
+                                </span>
+                            {% else %}
+                                <span class="badge bg-info">{{ imp.type_import }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <code class="small">{{ imp.filename }}</code>
+                        </td>
+                        <td>
+                            <strong class="text-primary">{{ imp.nb_lignes }}</strong>
+                        </td>
+                        <td>
+                            {% if imp.statut == 'success' %}
+                                <span class="badge bg-success">
+                                    <i class="bi bi-check-circle"></i> Succès
+                                </span>
+                            {% elif imp.statut == 'warning' %}
+                                <span class="badge bg-warning">
+                                    <i class="bi bi-exclamation-triangle"></i> Avertissement
+                                </span>
+                            {% elif imp.statut == 'error' %}
+                                <span class="badge bg-danger">
+                                    <i class="bi bi-x-circle"></i> Erreur
+                                </span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ imp.statut }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <small class="text-muted">{{ imp.message[:80] }}{% if imp.message|length > 80 %}...{% endif %}</small>
+                        </td>
+                        <td>
+                            <span class="badge bg-light text-dark">{{ imp.utilisateur or 'Système' }}</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm mt-4 border-info">
+    <div class="card-header bg-info text-white">
+        <h6 class="mb-0">
+            <i class="bi bi-info-circle"></i> Légende
+        </h6>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <h6 class="text-primary">Types d'import :</h6>
+                <ul class="list-unstyled">
+                    <li><span class="badge bg-primary"><i class="bi bi-inbox"></i> IMAP</span> : Import automatique depuis email</li>
+                    <li><span class="badge bg-success"><i class="bi bi-cloud-arrow-down"></i> API</span> : Import via API Altaview</li>
+                    <li><span class="badge bg-secondary"><i class="bi bi-database"></i> CMDB</span> : Import CMDB manuel</li>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <h6 class="text-success">Statuts :</h6>
+                <ul class="list-unstyled">
+                    <li><span class="badge bg-success"><i class="bi bi-check-circle"></i> Succès</span> : Import réussi</li>
+                    <li><span class="badge bg-warning"><i class="bi bi-exclamation-triangle"></i> Avertissement</span> : Import partiel</li>
+                    <li><span class="badge bg-danger"><i class="bi bi-x-circle"></i> Erreur</span> : Import échoué</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

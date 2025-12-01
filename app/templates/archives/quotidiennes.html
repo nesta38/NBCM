@@ -1,0 +1,252 @@
+{% extends "base.html" %}
+{% block title %}{{ t('archives_quotidiennes_title') }}{% endblock %}
+{% block page_title %}{{ t('archives_quotidiennes_title') }}{% endblock %}
+
+{% block content %}
+<p class="text-muted mb-4">
+    <i class="bi bi-calendar-check"></i>
+    {{ t('archives_quotidiennes_subtitle') }}
+</p>
+
+<!-- KPI Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body py-2 text-center">
+                <h3 class="mb-0">{{ archives|length }}</h3>
+                <small>{{ t('archives_total') }}</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body py-2 text-center">
+                <h3 class="mb-0">{{ archives[0].taux_conformite if archives else '-' }}%</h3>
+                <small>{{ t('archives_last_rate') }}</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-info text-white">
+            <div class="card-body py-2 text-center">
+                <h3 class="mb-0">{{ archives[0].date_archivage.strftime('%d/%m') if archives else '-' }}</h3>
+                <small>{{ t('archives_last_date') }}</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-secondary text-white">
+            <div class="card-body py-2 text-center">
+                <h3 class="mb-0">24h</h3>
+                <small>{{ t('archives_period_covered') }}</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Archives List -->
+<div class="card shadow-sm">
+    <div class="card-header d-flex justify-content-between" style="background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);">
+        <h5 class="mb-0 text-dark fw-bold">
+            <i class="bi bi-archive"></i> {{ t('archives_list_title') }}
+        </h5>
+        <span class="badge bg-dark">{{ archives|length }}</span>
+    </div>
+    <div class="card-body p-0">
+        {% if archives %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light sticky-top">
+                    <tr>
+                        <th>{{ t('th_date') }}</th>
+                        <th>{{ t('th_period') }}</th>
+                        <th class="text-center">{{ t('th_rate') }}</th>
+                        <th class="text-center">{{ t('th_compliant') }}</th>
+                        <th class="text-center">{{ t('th_non_compliant') }}</th>
+                        <th class="text-center">{{ t('th_jobs') }}</th>
+                        <th class="text-end">{{ t('th_actions') }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for a in archives %}
+                    <tr>
+                        <td>
+                            <strong>{{ a.date_archivage.strftime('%d/%m/%Y') }}</strong><br>
+                            <small class="text-muted">{{ a.date_archivage.strftime('%H:%M') }}</small>
+                        </td>
+                        <td>
+                            <i class="bi bi-calendar-range text-primary"></i> 
+                            {{ a.date_debut_periode.strftime('%d/%m %Hh') }} → {{ a.date_fin_periode.strftime('%d/%m %Hh') }}
+                        </td>
+                        <td class="text-center">
+                            <span class="badge bg-{{ 'success' if a.taux_conformite >= 98 else 'warning' if a.taux_conformite >= 90 else 'danger' }} fs-6">
+                                {{ a.taux_conformite }}%
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <span class="badge bg-success-subtle text-success border border-success">
+                                {{ a.nb_conformes }}
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <span class="badge bg-danger-subtle text-danger border border-danger">
+                                {{ a.nb_non_conformes }}
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <span class="badge bg-info-subtle text-info border border-info">
+                                {{ a.total_jobs }}
+                            </span>
+                        </td>
+                        <td class="text-end">
+                            <div class="btn-group btn-group-sm">
+                                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modal{{ a.id }}">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                                <a href="{{ url_for('archives.pdf', id=a.id) }}" class="btn btn-outline-danger">
+                                    <i class="bi bi-file-pdf"></i>
+                                </a>
+                                <a href="{{ url_for('archives.excel', id=a.id) }}" class="btn btn-outline-success">
+                                    <i class="bi bi-file-excel"></i>
+                                </a>
+                                <form method="POST" action="{{ url_for('archives.delete', id=a.id) }}" class="d-inline" 
+                                      onsubmit="return confirm('{{ t('msg_confirm_delete') }}');">
+                                    <button type="submit" class="btn btn-outline-dark">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-archive fs-1 text-muted mb-3 d-block"></i>
+            <h5 class="text-muted">{{ t('archives_empty') }}</h5>
+            <p class="text-muted">
+                {{ t('archives_quotidiennes_subtitle') }}<br>
+                <a href="{{ url_for('admin.archive_schedule') }}">{{ t('archives_config_desc') }}</a>
+            </p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Modals pour détails archives -->
+{% for a in archives %}
+<div class="modal fade" id="modal{{ a.id }}" tabindex="-1">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-archive"></i> {{ t('archives_title') }}: {{ a.date_archivage.strftime('%d/%m/%Y %H:%M') }}
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <div class="card bg-{{ 'success' if a.taux_conformite >= 98 else 'warning' if a.taux_conformite >= 90 else 'danger' }} text-white text-center">
+                            <div class="card-body py-2">
+                                <h3 class="mb-0">{{ a.taux_conformite }}%</h3>
+                                <small>{{ t('th_rate') }}</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="card bg-light text-center">
+                            <div class="card-body py-2">
+                                <h4 class="mb-0">{{ a.total_cmdb }}</h4>
+                                <small>CMDB</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="card bg-light text-center">
+                            <div class="card-body py-2">
+                                <h4 class="mb-0">{{ a.nb_conformes }}</h4>
+                                <small>OK</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="card bg-light text-center">
+                            <div class="card-body py-2">
+                                <h4 class="mb-0">{{ a.nb_non_conformes }}</h4>
+                                <small>KO</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="card bg-light text-center">
+                            <div class="card-body py-2">
+                                <h4 class="mb-0">{{ a.total_jobs }}</h4>
+                                <small>{{ t('th_jobs') }}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#ok{{ a.id }}">
+                            <i class="bi bi-check-circle"></i> {{ t('th_compliant') }}
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#ko{{ a.id }}">
+                            <i class="bi bi-x-circle"></i> {{ t('th_non_compliant') }}
+                        </button>
+                    </li>
+                </ul>
+                
+                <div class="tab-content border border-top-0 p-3" style="max-height: 400px; overflow-y: auto;">
+                    <div class="tab-pane fade show active" id="ok{{ a.id }}">
+                        {% set liste = a.get_liste_conformes() %}
+                        {% if liste %}
+                        <div class="row g-2">
+                            {% for h in liste %}
+                            <div class="col-md-3">
+                                <span class="badge bg-success-subtle text-success border border-success w-100 text-start">
+                                    <i class="bi bi-server"></i> {{ h }}
+                                </span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <p class="text-center text-muted">{{ t('lbl_no_data') }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="tab-pane fade" id="ko{{ a.id }}">
+                        {% set liste = a.get_liste_non_conformes() %}
+                        {% if liste %}
+                        <div class="row g-2">
+                            {% for h in liste %}
+                            <div class="col-md-3">
+                                <span class="badge bg-danger-subtle text-danger border border-danger w-100 text-start">
+                                    <i class="bi bi-exclamation-triangle"></i> {{ h }}
+                                </span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <p class="text-center text-muted">{{ t('lbl_no_data') }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    {{ t('btn_close') }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}

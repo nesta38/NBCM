@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block title %}API Altaview{% endblock %}
+{% block page_title %}Configuration API Altaview{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card shadow-sm border-success">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-cloud-arrow-down"></i> Configuration API Altaview
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">
+                    <i class="bi bi-info-circle"></i>
+                    Configurez l'import automatique des données Altaview via API REST.
+                </p>
+
+                <form action="{{ url_for('admin.config_api') }}" method="POST">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">
+                            <i class="bi bi-link-45deg"></i> URL de l'API
+                        </label>
+                        <input type="url" class="form-control form-control-lg" name="url" 
+                               value="{{ api_config.get('url', '') }}" 
+                               placeholder="https://api.altaview.example.com/v1/exports" required>
+                        <small class="text-muted">URL complète de l'endpoint API Altaview</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">
+                            <i class="bi bi-key"></i> Token d'authentification
+                        </label>
+                        <input type="password" class="form-control form-control-lg" name="token" 
+                               value="{{ api_config.get('token', '') }}" 
+                               placeholder="••••••••••••••••••••••••••••••••" required>
+                        <small class="text-muted">Token Bearer fourni par Altaview</small>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input form-check-input-lg" type="checkbox" 
+                                   name="actif" id="apiSwitch" {% if api_config.get('actif') %}checked{% endif %}>
+                            <label class="form-check-label fw-bold fs-5" for="apiSwitch">
+                                {% if api_config.get('actif') %}
+                                    <span class="badge bg-success fs-6">
+                                        <i class="bi bi-check-circle-fill"></i> API activée
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-secondary fs-6">
+                                        <i class="bi bi-pause-circle-fill"></i> API désactivée
+                                    </span>
+                                {% endif %}
+                            </label>
+                        </div>
+
+                        <div>
+                            <button type="submit" formaction="{{ url_for('admin.test_api') }}" 
+                                    class="btn btn-outline-success btn-lg">
+                                <i class="bi bi-cloud-download"></i> Tester l'API
+                            </button>
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-save"></i> Enregistrer
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card shadow-sm border-primary">
+                    <div class="card-header bg-primary text-white">
+                        <h6 class="mb-0">
+                            <i class="bi bi-info-circle"></i> Comment ça marche ?
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <ol class="mb-0">
+                            <li>Le système interroge l'API Altaview à intervalles réguliers</li>
+                            <li>Les données sont téléchargées au format CSV</li>
+                            <li>Les jobs sont importés automatiquement dans la base</li>
+                            <li>Les doublons sont détectés et éliminés</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card shadow-sm border-warning">
+                    <div class="card-header bg-warning">
+                        <h6 class="mb-0">
+                            <i class="bi bi-exclamation-triangle"></i> Important
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <ul class="mb-0">
+                            <li><strong>Sécurité</strong> : Le token est stocké de manière sécurisée</li>
+                            <li><strong>Fréquence</strong> : L'API est interrogée selon la planification du scheduler</li>
+                            <li><strong>Logs</strong> : Tous les imports sont tracés dans l'historique</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mt-4 border-info">
+            <div class="card-header bg-info text-white">
+                <h6 class="mb-0">
+                    <i class="bi bi-graph-up"></i> Avantages de l'API vs IMAP
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-success">
+                            <i class="bi bi-check-circle"></i> Avantages API
+                        </h6>
+                        <ul>
+                            <li>Import direct sans email intermédiaire</li>
+                            <li>Meilleure performance</li>
+                            <li>Données structurées</li>
+                            <li>Pas de limite de taille</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-warning">
+                            <i class="bi bi-envelope"></i> IMAP reste utile pour
+                        </h6>
+                        <ul>
+                            <li>Imports ponctuels manuels</li>
+                            <li>Backup des données par email</li>
+                            <li>Compatibilité avec anciennes versions</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

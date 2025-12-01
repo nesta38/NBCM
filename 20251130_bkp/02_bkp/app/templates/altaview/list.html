@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}{{ t('nav_jobs') }}{% endblock %}
+{% block page_title %}{{ t('jobs_title') }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="row g-3">
+        <div class="col-auto"><div class="card bg-light"><div class="card-body py-2"><i class="bi bi-database"></i> {{ t('jobs_total') }}: <strong>{{ stats.total }}</strong></div></div></div>
+        <div class="col-auto"><div class="card bg-info text-white"><div class="card-body py-2"><i class="bi bi-clock-history"></i> {{ t('jobs_last_24h') }}: <strong>{{ stats.recent }}</strong></div></div></div>
+        <div class="col-auto"><div class="card bg-primary text-white"><div class="card-body py-2"><i class="bi bi-funnel"></i> Filtered: <strong>{{ stats.filtered }}</strong></div></div></div>
+    </div>
+    {% if current_user.is_operator() %}
+    <a href="{{ url_for('altaview.import_page') }}" class="btn btn-success"><i class="bi bi-upload"></i> {{ t('jobs_manual_import') }}</a>
+    {% endif %}
+</div>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <h6 class="mb-0 text-white fw-bold"><i class="bi bi-funnel-fill"></i> {{ t('btn_filter') }}</h6>
+    </div>
+    <div class="card-body">
+        <form method="GET" class="row g-3">
+            <div class="col-md-2"><label class="form-label fw-bold"><i class="bi bi-calendar-range"></i> {{ t('th_date') }} {{ t('lbl_from') }}</label><input type="date" name="date_from" class="form-control" value="{{ filters.get('date_from', '') }}"></div>
+            <div class="col-md-1"><label class="form-label fw-bold"><i class="bi bi-clock"></i> {{ t('lbl_time') }}</label><input type="time" name="time_from" class="form-control" value="{{ filters.get('time_from', '') }}"></div>
+            <div class="col-md-2"><label class="form-label fw-bold"><i class="bi bi-calendar-range"></i> {{ t('th_date') }} {{ t('lbl_to') }}</label><input type="date" name="date_to" class="form-control" value="{{ filters.get('date_to', '') }}"></div>
+            <div class="col-md-1"><label class="form-label fw-bold"><i class="bi bi-clock"></i> {{ t('lbl_time') }}</label><input type="time" name="time_to" class="form-control" value="{{ filters.get('time_to', '') }}"></div>
+            <div class="col-md-2"><label class="form-label fw-bold"><i class="bi bi-check-circle"></i> {{ t('th_status') }}</label><select name="status" class="form-select"><option value="all" {% if filters.get('status', 'all') == 'all' %}selected{% endif %}>{{ t('lbl_all') }}</option><option value="success" {% if filters.get('status') == 'success' %}selected{% endif %}>✅ {{ t('status_success') }}</option><option value="error" {% if filters.get('status') == 'error' %}selected{% endif %}>❌ {{ t('status_error') }}</option><option value="warning" {% if filters.get('status') == 'warning' %}selected{% endif %}>⚠️ {{ t('status_warning') }}</option></select></div>
+            <div class="col-md-2"><label class="form-label fw-bold"><i class="bi bi-shield"></i> {{ t('th_policy') }}</label><select name="policy" class="form-select"><option value="all" {% if filters.get('policy', 'all') == 'all' %}selected{% endif %}>{{ t('lbl_all') }}</option>{% for policy in policies %}<option value="{{ policy }}" {% if filters.get('policy') == policy %}selected{% endif %}>{{ policy }}</option>{% endfor %}</select></div>
+            <div class="col-md-2"><label class="form-label fw-bold"><i class="bi bi-search"></i> {{ t('btn_search') }}</label><input type="text" name="search" class="form-control" placeholder="Hostname..." value="{{ filters.get('search', '') }}"></div>
+            <input type="hidden" name="sort_by" value="{{ filters.get('sort_by', 'backup_time') }}">
+            <input type="hidden" name="sort_order" value="{{ filters.get('sort_order', 'desc') }}">
+            <div class="col-12"><button type="submit" class="btn btn-primary"><i class="bi bi-funnel"></i> {{ t('btn_filter') }}</button> <a href="{{ url_for('altaview.list', reset_filters=1) }}" class="btn btn-outline-secondary"><i class="bi bi-x-circle"></i> {{ t('btn_reset') }}</a><span class="text-muted ms-3"><i class="bi bi-info-circle"></i> {{ stats.filtered }} {{ t('lbl_jobs_displayed') }}</span></div>
+        </form>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover table-sm">
+                <thead class="table-light">
+                    <tr>
+                        {% macro sort_link(column, label, icon) %}
+                            {% set current_sort = filters.get('sort_by', 'backup_time') %}
+                            {% set current_order = filters.get('sort_order', 'desc') %}
+                            {% set new_order = 'asc' if (current_sort == column and current_order == 'desc') else 'desc' %}
+                            <th>
+                                <a href="{{ url_for('altaview.list', 
+                                    date_from=filters.get('date_from', ''),
+                                    date_to=filters.get('date_to', ''),
+                                    time_from=filters.get('time_from', ''),
+                                    time_to=filters.get('time_to', ''),
+                                    status=filters.get('status', 'all'),
+                                    policy=filters.get('policy', 'all'),
+                                    search=filters.get('search', ''),
+                                    sort_by=column,
+                                    sort_order=new_order) }}" 
+                                    class="text-decoration-none text-dark" 
+                                    style="cursor: pointer;">
+                                    <i class="bi bi-{{ icon }}"></i> {{ label }}
+                                    {% if current_sort == column %}
+                                        <i class="bi bi-arrow-{{ 'down' if current_order == 'desc' else 'up' }}"></i>
+                                    {% endif %}
+                                </a>
+                            </th>
+                        {% endmacro %}
+                        {{ sort_link('backup_time', t('th_date'), 'calendar3') }}
+                        {{ sort_link('hostname', t('th_hostname'), 'server') }}
+                        {{ sort_link('policy_name', t('th_policy'), 'shield') }}
+                        {{ sort_link('status', t('th_status'), 'activity') }}
+                        {{ sort_link('taille_gb', t('th_size'), 'hdd') }}
+                        {{ sort_link('duree_minutes', t('th_duration'), 'clock') }}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for job in jobs %}
+                    <tr>
+                        <td>{{ job.backup_time.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td><strong>{{ job.hostname }}</strong></td>
+                        <td><span class="badge bg-secondary">{{ job.policy_name }}</span></td>
+                        <td>{% if job.is_success() %}<span class="badge bg-success"><i class="bi bi-check-circle-fill"></i> {{ t('status_success') }}</span>{% elif job.is_warning() %}<span class="badge bg-warning text-dark"><i class="bi bi-exclamation-triangle-fill"></i> {{ t('status_warning') }}</span>{% elif job.is_error() %}<span class="badge bg-danger"><i class="bi bi-x-circle-fill"></i> {{ t('status_error') }}</span>{% else %}<span class="badge bg-secondary">{{ job.status }}</span>{% endif %}</td>
+                        <td>{{ '%.2f'|format(job.taille_gb) }}</td>
+                        <td>{{ job.duree_minutes if job.duree_minutes else 'N/A' }}</td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="6" class="text-center py-5 text-muted"><i class="bi bi-inbox fs-1"></i><br>{{ t('lbl_no_data') }}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

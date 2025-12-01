@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% block title %}Planification Archivage{% endblock %}
+{% block page_title %}Planification Archivage Automatique{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <div class="card shadow-sm border-info">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-calendar-check"></i> Configuration archivage automatique
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">
+                    <i class="bi bi-info-circle"></i>
+                    Configurez l'archivage automatique quotidien des rapports de conformité.
+                </p>
+
+                <form action="{{ url_for('admin.config_archive') }}" method="POST">
+                    <div class="row align-items-end mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">
+                                <i class="bi bi-clock"></i> Heure d'archivage
+                            </label>
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-text">
+                                    <i class="bi bi-clock-history"></i>
+                                </span>
+                                <input type="number" name="heure" class="form-control" 
+                                       value="{{ arch_config.get('heure', 18) }}" 
+                                       min="0" max="23" required>
+                                <span class="input-group-text">:</span>
+                                <input type="number" name="minute" class="form-control" 
+                                       value="{{ arch_config.get('minute', 0) }}" 
+                                       min="0" max="59" required>
+                            </div>
+                            <small class="text-muted">Format 24h (ex: 18:00 pour 6h du soir)</small>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input form-check-input-lg" type="checkbox" 
+                                       name="actif" id="archActive" 
+                                       {% if arch_config.get('actif', True) %}checked{% endif %}>
+                                <label class="form-check-label fw-bold" for="archActive">
+                                    Archivage automatique
+                                </label>
+                            </div>
+                            <button type="submit" class="btn btn-info text-white btn-lg w-100">
+                                <i class="bi bi-save"></i> Enregistrer la planification
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <hr class="my-4">
+
+                <h6 class="text-primary mb-3">
+                    <i class="bi bi-list-check"></i> Statut du scheduler
+                </h6>
+
+                {% if scheduler_status.get('running') %}
+                    <div class="alert alert-success">
+                        <i class="bi bi-check-circle"></i>
+                        <strong>Scheduler actif</strong> - L'archivage automatique est opérationnel
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Job ID</th>
+                                    <th>Description</th>
+                                    <th>Prochaine exécution</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for job in scheduler_status.get('jobs', []) %}
+                                    {% if 'archive' in job.id.lower() %}
+                                    <tr>
+                                        <td><code>{{ job.id }}</code></td>
+                                        <td>{{ job.name }}</td>
+                                        <td>
+                                            <strong class="text-primary">{{ job.next_run }}</strong>
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <strong>Scheduler inactif</strong> - L'archivage automatique ne fonctionnera pas
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Test manuel -->
+        <div class="card shadow-sm mt-4 border-success">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-play-circle"></i> Test manuel
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">
+                    Créez une archive manuellement pour tester le fonctionnement.
+                    Cela n'affecte pas la planification automatique.
+                </p>
+
+                <form action="{{ url_for('admin.test_archive') }}" method="POST"
+                      onsubmit="return confirm('Créer une archive de test maintenant ?');">
+                    <button type="submit" class="btn btn-success btn-lg w-100">
+                        <i class="bi bi-file-earmark-arrow-down"></i> Créer une archive maintenant
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Informations -->
+        <div class="card shadow-sm mt-4 border-primary">
+            <div class="card-header bg-primary text-white">
+                <h6 class="mb-0">
+                    <i class="bi bi-info-circle"></i> Comment ça marche ?
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-primary">Archivage automatique :</h6>
+                        <ul>
+                            <li>S'exécute tous les jours à l'heure configurée</li>
+                            <li>Crée un snapshot des données de conformité</li>
+                            <li>Stocke l'archive dans la base de données</li>
+                            <li>Conserve l'historique complet</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-success">Contenu des archives :</h6>
+                        <ul>
+                            <li>Période de l'archive (date/heure)</li>
+                            <li>Taux de conformité global</li>
+                            <li>Nombre de jobs analysés</li>
+                            <li>État détaillé par serveur</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <hr>
+
+                <p class="mb-0">
+                    <i class="bi bi-folder"></i>
+                    <strong>Consultation des archives :</strong> 
+                    Accédez à toutes les archives dans 
+                    <a href="{{ url_for('archives.index') }}">Archives > Archivage Manuel</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

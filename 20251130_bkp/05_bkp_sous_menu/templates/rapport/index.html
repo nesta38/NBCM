@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}{{ t('nav_report') }}{% endblock %}
+{% block page_title %}{{ t('report_title') }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="alert alert-info mb-0 py-2"><i class="bi bi-calendar3"></i> {{ t('report_period') }} | <i class="bi bi-clock"></i> {{ t('report_generated') }} {{ now().strftime('%d/%m/%Y %H:%M') }}</div>
+    <div class="btn-group">
+        <a href="{{ url_for('rapport.pdf') }}" class="btn btn-danger"><i class="bi bi-file-pdf"></i> PDF</a>
+        <a href="{{ url_for('rapport.excel') }}" class="btn btn-success"><i class="bi bi-file-excel"></i> Excel</a>
+        <form method="POST" action="{{ url_for('rapport.email') }}" class="d-inline"><button type="submit" class="btn btn-primary rounded-0 rounded-end"><i class="bi bi-envelope"></i> Email</button></form>
+    </div>
+</div>
+
+<div class="card text-center mb-4 shadow-sm border-3 border-{{ 'success' if conformite.taux_conformite > 95 else 'warning' }}">
+    <div class="card-body py-4">
+        <h1 class="display-1 fw-bold text-{{ 'success' if conformite.taux_conformite > 95 else 'warning' }}">{{ conformite.taux_conformite }}%</h1>
+        <p class="text-muted mb-0">{{ t('dash_compliance_rate') }}</p>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-3"><div class="card kpi-card bg-primary opacity-75 text-white text-center p-3"><h3 class="mb-0">{{ conformite.total_attendus }}</h3><small>{{ t('report_expected_servers') }}</small><i class="bi bi-database kpi-icon"></i></div></div>
+    <div class="col-md-3"><div class="card kpi-card bg-success opacity-75 text-white text-center p-3"><h3 class="mb-0">{{ conformite.conformes }}</h3><small>{{ t('dash_compliant') }}</small><i class="bi bi-emoji-smile kpi-icon"></i></div></div>
+    <div class="col-md-3"><div class="card kpi-card bg-warning opacity-75 text-dark text-center p-3"><h3 class="mb-0">{{ conformite.non_conformes }}</h3><small>{{ t('dash_non_compliant') }}</small><i class="bi bi-exclamation-triangle-fill kpi-icon"></i></div></div>
+    <div class="col-md-3"><div class="card kpi-card bg-secondary opacity-75 text-dark text-center p-3"><h3 class="mb-0">{{ conformite.non_references }}</h3><small>{{ t('dash_out_of_cmdb') }}</small><i class="bi bi-bell-fill kpi-icon"></i></div></div>
+</div>
+
+{% if conformite.liste_non_conformes %}
+<div class="card border-danger mb-4 shadow-sm">
+    <div class="card-header bg-danger text-white d-flex justify-content-between"><div><i class="bi bi-exclamation-triangle-fill"></i> {{ t('report_failed_servers') }} ({{ conformite.non_conformes }})</div><span class="badge bg-white text-danger">{{ t('dash_high_priority') }}</span></div>
+    <div class="card-body">
+        <div class="alert alert-danger mb-3"><strong>⚠️ {{ t('report_immediate_action') }}</strong></div>
+        <div class="row">{% for host in conformite.liste_non_conformes %}<div class="col-md-3 mb-2"><div class="border border-danger rounded p-2 text-center bg-danger bg-opacity-10"><i class="bi bi-server text-danger"></i> <strong>{{ host }}</strong></div></div>{% endfor %}</div>
+    </div>
+</div>
+{% endif %}
+
+{% if conformite.liste_non_references %}
+<div class="card border-warning mb-4 shadow-sm">
+    <div class="card-header bg-warning text-dark d-flex justify-content-between"><div><i class="bi bi-question-circle-fill"></i> {{ t('dash_out_of_cmdb') }} ({{ conformite.non_references }})</div><span class="badge bg-dark">{{ t('dash_needs_check') }}</span></div>
+    <div class="card-body">
+        <div class="row">{% for host in conformite.liste_non_references %}<div class="col-md-3 mb-2"><div class="border border-warning rounded p-2 text-center" style="background: rgba(255, 165, 0, 0.1);"><i class="bi bi-server" style="color: #ff6b35;"></i> <strong>{{ host }}</strong></div></div>{% endfor %}</div>
+        <div class="d-flex justify-content-center gap-2 mt-4">
+            <a href="{{ url_for('rapport.export_hors_cmdb') }}" class="btn btn-outline-dark"><i class="bi bi-filetype-csv"></i> {{ t('report_download_csv') }}</a>
+            <form action="{{ url_for('rapport.import_hors_cmdb_auto') }}" method="POST" class="d-inline" onsubmit="return confirm('{{ t('report_add_to_cmdb') }} ?');"><button type="submit" class="btn btn-warning fw-bold"><i class="bi bi-database-add"></i> {{ t('report_direct_import') }}</button></form>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="card shadow-sm">
+    <div class="card-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <h5 class="mb-0 text-white fw-bold"><i class="bi bi-graph-up"></i> {{ t('report_evolution_7d') }}</h5>
+    </div>
+    <div class="card-body"><canvas id="histChart" height="80"></canvas></div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+const ctx = document.getElementById('histChart').getContext('2d');
+let gradient = ctx.createLinearGradient(0, 0, 0, 400);
+gradient.addColorStop(0, 'rgba(25, 135, 84, 0.4)');
+gradient.addColorStop(1, 'rgba(25, 135, 84, 0.0)');
+new Chart(ctx, { type: 'line', data: { labels: {{ chart_labels | tojson }}, datasets: [{ label: '{{ t("dash_compliance_rate") }} (%)', data: {{ chart_values | tojson }}, borderColor: '#198754', backgroundColor: gradient, tension: 0.4, fill: true }] }, options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 100 } } } });
+</script>
+{% endblock %}

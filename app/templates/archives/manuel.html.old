@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+{% block title %}Archivage Manuel{% endblock %}
+{% block page_title %}Archivage Manuel{% endblock %}
+
+{% block content %}
+<p class="text-muted mb-4">
+    <i class="bi bi-hand-index"></i>
+    Créez une archive de conformité manuellement à tout moment
+</p>
+
+<!-- Carte principale d'archivage manuel -->
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card shadow-lg border-danger">
+            <div class="card-header text-white" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);">
+                <h5 class="mb-0 fw-bold">
+                    <i class="bi bi-folder-plus"></i> Créer une Archive Manuelle
+                </h5>
+            </div>
+            <div class="card-body p-4">
+                <div class="alert alert-info mb-4">
+                    <i class="bi bi-info-circle"></i>
+                    <strong>Information :</strong> 
+                    La création d'une archive capture l'état actuel de la conformité des sauvegardes.
+                    Cette archive contiendra un snapshot de toutes les données CMDB et des jobs de sauvegarde.
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h6 class="text-danger mb-3">
+                            <i class="bi bi-calendar-event"></i> Contenu de l'archive
+                        </h6>
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle text-success"></i> 
+                                Période couverte (24 dernières heures)
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle text-success"></i> 
+                                Taux de conformité global
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle text-success"></i> 
+                                Liste des serveurs conformes
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle text-success"></i> 
+                                Liste des serveurs non conformes
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle text-success"></i> 
+                                Nombre total de jobs analysés
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-danger mb-3">
+                            <i class="bi bi-clock-history"></i> Utilisation
+                        </h6>
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="bi bi-arrow-right-circle text-primary"></i> 
+                                Audit ponctuel
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-arrow-right-circle text-primary"></i> 
+                                Documentation pour rapport
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-arrow-right-circle text-primary"></i> 
+                                Sauvegarde état avant modification
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-arrow-right-circle text-primary"></i> 
+                                Analyse comparative
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <div class="text-center">
+                    <form method="POST" action="{{ url_for('archives.create_manuel') }}" 
+                          onsubmit="return confirm('Créer une archive manuelle maintenant ? Cette opération peut prendre quelques secondes.');">
+                        <button type="submit" class="btn btn-danger btn-lg px-5 py-3 shadow-lg">
+                            <i class="bi bi-file-earmark-arrow-down fs-4"></i>
+                            <br>
+                            <strong>Créer une Archive Maintenant</strong>
+                        </button>
+                    </form>
+                    <p class="text-muted mt-3 small">
+                        <i class="bi bi-shield-check"></i>
+                        L'archive sera consultable immédiatement dans la section 
+                        <a href="{{ url_for('archives.quotidiennes') }}">Archives Quotidiennes</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Archives récentes -->
+        {% if recent_archives %}
+        <div class="card shadow-sm mt-4">
+            <div class="card-header bg-light">
+                <h6 class="mb-0">
+                    <i class="bi bi-clock-history"></i> 5 Dernières Archives Créées
+                </h6>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Date de création</th>
+                                <th>Période</th>
+                                <th class="text-center">Taux</th>
+                                <th class="text-center">Conformes</th>
+                                <th class="text-center">Non Conformes</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for a in recent_archives %}
+                            <tr>
+                                <td>
+                                    <strong>{{ a.date_archivage.strftime('%d/%m/%Y') }}</strong><br>
+                                    <small class="text-muted">{{ a.date_archivage.strftime('%H:%M') }}</small>
+                                </td>
+                                <td>
+                                    <small>
+                                        {{ a.date_debut_periode.strftime('%d/%m %Hh') }} → 
+                                        {{ a.date_fin_periode.strftime('%d/%m %Hh') }}
+                                    </small>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-{{ 'success' if a.taux_conformite >= 98 else 'warning' if a.taux_conformite >= 90 else 'danger' }}">
+                                        {{ a.taux_conformite }}%
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-success-subtle text-success">
+                                        {{ a.nb_conformes }}
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-danger-subtle text-danger">
+                                        {{ a.nb_non_conformes }}
+                                    </span>
+                                </td>
+                                <td class="text-end">
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="{{ url_for('archives.pdf', id=a.id) }}" 
+                                           class="btn btn-outline-danger" title="PDF">
+                                            <i class="bi bi-file-pdf"></i>
+                                        </a>
+                                        <a href="{{ url_for('archives.excel', id=a.id) }}" 
+                                           class="btn btn-outline-success" title="Excel">
+                                            <i class="bi bi-file-excel"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer bg-light text-center">
+                    <a href="{{ url_for('archives.quotidiennes') }}" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-arrow-right"></i> Voir toutes les archives
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="card shadow-sm mt-4">
+            <div class="card-body text-center py-4">
+                <i class="bi bi-inbox fs-1 text-muted mb-3 d-block"></i>
+                <h6 class="text-muted">Aucune archive créée pour le moment</h6>
+                <p class="text-muted small">
+                    Créez votre première archive en utilisant le bouton ci-dessus
+                </p>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Informations complémentaires -->
+        <div class="card shadow-sm mt-4 border-info">
+            <div class="card-header bg-info text-white">
+                <h6 class="mb-0">
+                    <i class="bi bi-question-circle"></i> À savoir
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-info">
+                            <i class="bi bi-calendar-check"></i> Archivage Manuel vs Automatique
+                        </h6>
+                        <p class="small text-muted mb-3">
+                            L'archivage manuel permet de créer un snapshot à tout moment, 
+                            indépendamment de la planification automatique quotidienne.
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-info">
+                            <i class="bi bi-gear"></i> Configuration
+                        </h6>
+                        <p class="small text-muted mb-3">
+                            Pour configurer l'archivage automatique quotidien, 
+                            consultez la section 
+                            <a href="{{ url_for('admin.archive_schedule') }}">Planification Archivage</a>.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="alert alert-warning mb-0 mt-3">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    <strong>Note :</strong> 
+                    La création d'une archive peut prendre quelques secondes selon le volume de données à traiter.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

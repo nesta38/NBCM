@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block title %}Sauvegardes{% endblock %}
+{% block page_title %}Sauvegarde & Restauration - Vue d'ensemble{% endblock %}
+
+{% block content %}
+<!-- Stats -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card shadow-sm bg-primary text-white">
+            <div class="card-body">
+                <h6 class="card-title"><i class="bi bi-database"></i> Sauvegardes DB</h6>
+                <h3 class="mb-0">{{ backups.db|length }}</h3>
+                <small>Fichiers disponibles</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm bg-success text-white">
+            <div class="card-body">
+                <h6 class="card-title"><i class="bi bi-hdd"></i> Sauvegardes FS</h6>
+                <h3 class="mb-0">{{ backups.fs|length }}</h3>
+                <small>Fichiers disponibles</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm {% if redis_enabled %}bg-info{% else %}bg-secondary{% endif %} text-white">
+            <div class="card-body">
+                <h6 class="card-title"><i class="bi bi-lightning"></i> Cache Redis</h6>
+                <h3 class="mb-0">{% if redis_enabled %}Actif{% else %}Inactif{% endif %}</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Navigation rapide -->
+<div class="row">
+    <div class="col-lg-4 mb-4">
+        <div class="card shadow-sm border-primary">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-save"></i> Sauvegardes</h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">Créer et gérer les sauvegardes manuelles</p>
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('backup.backups_db') }}" class="btn btn-primary">
+                        <i class="bi bi-database"></i> Sauvegardes DB
+                    </a>
+                    <a href="{{ url_for('backup.backups_fs') }}" class="btn btn-outline-primary">
+                        <i class="bi bi-hdd"></i> Sauvegardes FS
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4 mb-4">
+        <div class="card shadow-sm border-success">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="bi bi-arrow-clockwise"></i> Restaurations</h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">Restaurer depuis une sauvegarde existante</p>
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('backup.restore_db') }}" class="btn btn-success">
+                        <i class="bi bi-database"></i> Restaurations DB
+                    </a>
+                    <a href="{{ url_for('backup.restore_fs') }}" class="btn btn-outline-success">
+                        <i class="bi bi-hdd"></i> Restaurations FS
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4 mb-4">
+        <div class="card shadow-sm border-warning">
+            <div class="card-header bg-warning">
+                <h5 class="mb-0"><i class="bi bi-calendar-check"></i> Planification</h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">Configurer les sauvegardes automatiques</p>
+                <div class="d-grid gap-2 mb-2">
+                    <a href="{{ url_for('backup.schedule_db_daily') }}" class="btn btn-sm btn-outline-warning">
+                        <i class="bi bi-database"></i> DB Quotidienne
+                    </a>
+                    <a href="{{ url_for('backup.schedule_fs_daily') }}" class="btn btn-sm btn-outline-warning">
+                        <i class="bi bi-hdd"></i> FS Quotidienne
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Informations -->
+<div class="card shadow-sm border-info">
+    <div class="card-header bg-info text-white">
+        <h6 class="mb-0"><i class="bi bi-info-circle"></i> Informations</h6>
+    </div>
+    <div class="card-body">
+        <ul class="mb-0">
+            <li><strong>Sauvegardes DB</strong> : Fichiers SQL compressés de la base de données</li>
+            <li><strong>Sauvegardes FS</strong> : Archives tar.gz des fichiers applicatifs</li>
+            <li><strong>Planification</strong> : Sauvegardes automatiques quotidiennes/hebdo/mensuelles via APScheduler</li>
+            <li><strong>Restauration</strong> : Processus sécurisé avec confirmation obligatoire</li>
+            <li><strong>Cache Redis</strong> : Invalidé automatiquement après restauration DB</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

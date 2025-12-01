@@ -1,0 +1,5 @@
+timestamp=20251201_125100
+description=Sauvegarde automatique daily
+db_type=postgresql
+backup_type=db
+size=208319
