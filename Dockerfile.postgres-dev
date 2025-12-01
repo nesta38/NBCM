@@ -1,0 +1,8 @@
+# Dockerfile.postgres-dev
+FROM postgres:16-alpine
+
+RUN apk add --no-cache tzdata \
+ && cp /usr/share/zoneinfo/Europe/Paris /etc/localtime \
+ && echo "Europe/Paris" > /etc/timezone
+
+ENV TZ=Europe/Paris

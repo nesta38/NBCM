@@ -3,12 +3,16 @@ version: '3.8'
 services:
   postgres-dev:
     image: postgres:16-alpine
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres-dev
     container_name: nbcm-postgres-dev
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-nbcm}
-      POSTGRES_USER: ${POSTGRES_USER:-nbcm}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-nbcm2025}
-      PGDATA: /var/lib/postgresql/data/pgdata
+      - POSTGRES_DB=${POSTGRES_DB:-nbcm}
+      - POSTGRES_USER=${POSTGRES_USER:-nbcm}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-nbcm2025}
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      - TZ=Europe/Paris
     ports:
       - "5433:5432"
     volumes:
@@ -26,6 +30,8 @@ services:
   redis-dev:
     image: redis:7-alpine
     container_name: nbcm-redis-dev
+    environment:
+      - TZ=Europe/Paris
     sysctls:
       - net.core.somaxconn=1024
     ports:
