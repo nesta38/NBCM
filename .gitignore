@@ -1,5 +1,5 @@
 __pycache__/
 nbcm_v30_redis-data/
-nbcm_v30_postgres-data/
+nbcm_v30_postgres-data/pgdata/
 *.log
 *.csv
