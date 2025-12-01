@@ -31,7 +31,7 @@ services:
     ports:
       - "6379:6379"
     volumes:
-      - ./data/nbcm_redis-data:/data
+      - ./data/nbcm_v30_redis-data:/data
     restart: unless-stopped
     command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-redis2025}
     healthcheck:
