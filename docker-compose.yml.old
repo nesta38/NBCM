@@ -1,0 +1,83 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: nbcm-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-nbcm}
+      POSTGRES_USER: ${POSTGRES_USER:-nbcm}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-nbcm2025}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data/nbcm_v30_postgres-data:/var/lib/postgresql/data
+      - ./backups:/backups  # Dossier backups partagé
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nbcm"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - nbcm-net
+
+  redis:
+    image: redis:7-alpine
+    container_name: nbcm-redis
+    sysctls:
+      - net.core.somaxconn=1024
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./data/nbcm_v30_redis-data:/data
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-redis2025}
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - nbcm-net
+
+  nbcm:
+    build: .
+    container_name: nbcm-app
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - FLASK_ENV=${FLASK_ENV:-production}
+      - SECRET_KEY=${SECRET_KEY:-change-me-in-production-super-secret-key}
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-nbcm}:${POSTGRES_PASSWORD:-nbcm2025}@postgres:5432/${POSTGRES_DB:-nbcm}
+      - REDIS_URL=redis://:${REDIS_PASSWORD:-redis2025}@redis:6379/0
+      - ALTAVIEW_AUTO_IMPORT_DIR=/app/data/altaview_auto_import
+      - BACKUP_DIR=/app/backups
+      - TZ=Europe/Paris
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./app:/app_src  # ⬅️ Ajouter cette ligne
+      - ./data/altaview_auto_import:/app/data/altaview_auto_import
+      - ./data/logs:/app/logs
+      - ./backups:/app/backups  # Dossier backups partagé
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - nbcm-net
+
+#volumes:
+#  postgres-data:
+#  redis-data:
+
+networks:
+  nbcm-net:
+    driver: bridge
