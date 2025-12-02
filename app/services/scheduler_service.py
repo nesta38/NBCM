@@ -64,14 +64,21 @@ def init_scheduler(app):
                 name='Vérification IMAP'
             )
             
-            # Tâche: Import API (toutes les heures)
-            scheduler.add_job(
-                func=lambda: run_in_context(app, fetch_api_job),
-                trigger="interval",
-                minutes=60,
-                id='api_import',
-                name='Import API Altaview'
-            )
+            # Tâche: Import API (selon config - intervalle dynamique)
+            api_schedule_config = get_config('altaview_api_schedule', {
+                'interval_minutes': 60,
+                'actif': True
+            })
+            
+            if api_schedule_config.get('actif', True):
+                interval_minutes = int(api_schedule_config.get('interval_minutes', 60))
+                scheduler.add_job(
+                    func=lambda: run_in_context(app, fetch_api_job),
+                    trigger="interval",
+                    minutes=interval_minutes,
+                    id='api_import',
+                    name=f'Import API Altaview ({interval_minutes} min)'
+                )
             
             # Tâche: Nettoyage des doublons (toutes les heures)
             scheduler.add_job(
@@ -470,4 +477,58 @@ def reschedule_backup(backup_type, frequency, config):
             with _flask_app.app_context():
                 from flask import current_app
                 current_app.logger.error(f"Erreur reprogrammation backup {backup_type}/{frequency}: {e}")
+        return False
+
+
+def reschedule_api_import(interval_minutes, actif):
+    """
+    Reprogramme la tâche d'import API.
+    
+    Args:
+        interval_minutes: Intervalle en minutes (min 5, max 1440)
+        actif: bool - activer ou désactiver
+    """
+    global scheduler, _flask_app
+    
+    if not scheduler or not scheduler.running:
+        return False
+    
+    job_id = 'api_import'
+    
+    try:
+        if actif:
+            # Valider l'intervalle
+            interval_minutes = max(5, min(1440, int(interval_minutes)))
+            
+            # Ajouter ou reprogrammer le job
+            if scheduler.get_job(job_id):
+                scheduler.reschedule_job(
+                    job_id,
+                    trigger='interval',
+                    minutes=interval_minutes
+                )
+                scheduler.modify_job(
+                    job_id,
+                    name=f'Import API Altaview ({interval_minutes} min)'
+                )
+            else:
+                scheduler.add_job(
+                    func=lambda: run_in_context(_flask_app, fetch_api_job),
+                    trigger='interval',
+                    minutes=interval_minutes,
+                    id=job_id,
+                    name=f'Import API Altaview ({interval_minutes} min)'
+                )
+        else:
+            # Désactiver le job
+            if scheduler.get_job(job_id):
+                scheduler.remove_job(job_id)
+        
+        return True
+        
+    except Exception as e:
+        if _flask_app:
+            with _flask_app.app_context():
+                from flask import current_app
+                current_app.logger.error(f"Erreur reprogrammation API import: {e}")
         return False

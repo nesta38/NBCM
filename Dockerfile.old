@@ -3,22 +3,11 @@ FROM python:3.11-slim
 WORKDIR /app
 
 # Dépendances système
-# Dépendances système : curl + client PostgreSQL 16 via dépôt PGDG
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
-    wget \
-    gnupg \
- && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/*
 
-# Ajouter le dépôt PostgreSQL officiel (PGDG)
-RUN . /etc/os-release \
- && echo "deb http://apt.postgresql.org/pub/repos/apt ${VERSION_CODENAME}-pgdg main" \
-    > /etc/apt/sources.list.d/pgdg.list \
- && wget -qO- https://www.postgresql.org/media/keys/ACCC4CF8.asc \
-    | gpg --dearmor -o /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg \
- && apt-get update \
- && apt-get install -y --no-install-recommends postgresql-client-16 \
- && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y postgresql-client && rm -rf /var/lib/apt/lists/*
 
 # Dépendances Python
 COPY requirements.txt .

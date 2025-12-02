@@ -561,7 +561,7 @@ def supprimer_doublons_altaview(force=False):
         from sqlalchemy import text
         query = text("""
             SELECT backup_time, hostname, policy_name, status, taille_gb, 
-                   COUNT(*) as cnt, GROUP_CONCAT(id ORDER BY id) as ids
+                   COUNT(*) as cnt, STRING_AGG(id::text, ',' ORDER BY id) as ids
             FROM job_altaview 
             GROUP BY backup_time, hostname, policy_name, status, taille_gb 
             HAVING COUNT(*) > 1

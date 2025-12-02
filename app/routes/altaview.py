@@ -213,3 +213,17 @@ def import_page():
             return redirect(url_for('altaview.list'))
     
     return render_template('altaview/import.html')
+
+
+@altaview_bp.route('/history')
+@login_required
+def import_history():
+    """Historique des imports (IMAP, API, Manuels)"""
+    from app.models.jobs import ImportHistory
+    
+    # Récupérer tous les imports (IMAP, API, manuels)
+    imports = ImportHistory.query.filter(
+        ImportHistory.type_import.in_(['altaview', 'altaview_api', 'imap'])
+    ).order_by(ImportHistory.date_import.desc()).limit(100).all()
+    
+    return render_template('altaview/import_history.html', imports=imports)

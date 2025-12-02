@@ -20,31 +20,6 @@ from app.routes.auth import admin_required
 
 admin_bp = Blueprint('admin', __name__)
 
-# Variable pour suivre le temps de démarrage
-start_time = None
-
-
-# ============================================================================
-# DIAGNOSTIC & MONITORING
-# ============================================================================
-
-@admin_bp.route('/scheduler/status')
-@admin_required
-def scheduler_status():
-    """Statut détaillé du scheduler"""
-    scheduler_status = get_scheduler_status()
-    
-    return render_template('admin/scheduler_status.html', 
-                         scheduler_status=scheduler_status)
-
-
-@admin_bp.route('/scheduler/reload', methods=['POST'])
-@admin_required
-def scheduler_reload():
-    """Force le rechargement du scheduler (redémarrage requis)"""
-    flash('⚠️ Pour recharger le scheduler, redémarrez l\'application : docker-compose restart nbcm', 'warning')
-    return redirect(request.referrer or url_for('admin.index'))
-
 
 # ============================================================================
 # SMTP - Configuration et Planification
@@ -191,100 +166,32 @@ def test_api():
     return redirect(url_for('admin.api'))
 
 
-@admin_bp.route('/api/schedule')
-@admin_required
-def api_schedule():
-    """Planification import API"""
-    api_config = get_config('altaview_api', {})
-    schedule_config = get_config('altaview_api_schedule', {
-        'interval_minutes': 60,
-        'actif': True
-    })
-    scheduler_status = get_scheduler_status()
-    
-    return render_template(
-        'admin/api_schedule.html',
-        api_config=api_config,
-        schedule_config=schedule_config,
-        scheduler_status=scheduler_status
-    )
-
-
-@admin_bp.route('/api/schedule/config', methods=['POST'])
-@admin_required
-def config_api_schedule():
-    """Configurer la planification API"""
-    interval_minutes = int(request.form.get('interval_minutes', 60))
-    actif = request.form.get('actif') == 'on'
-    
-    # Validation de l'intervalle
-    if interval_minutes < 5:
-        flash('⚠️ Intervalle minimum: 5 minutes', 'warning')
-        interval_minutes = 5
-    elif interval_minutes > 1440:  # 24 heures
-        flash('⚠️ Intervalle maximum: 1440 minutes (24h)', 'warning')
-        interval_minutes = 1440
-    
-    config = {
-        'interval_minutes': interval_minutes,
-        'actif': actif
-    }
-    
-    set_config('altaview_api_schedule', config, 'Planification API', current_user.username)
-    
-    flash(
-        f'⚠️ Configuration enregistrée (intervalle: {interval_minutes} min). '
-        f'Redémarrez l\'application pour appliquer : docker-compose restart nbcm',
-        'warning'
-    )
-    
-    return redirect(url_for('admin.api_schedule'))
-
-
 # ============================================================================
 # MAINTENANCE DB - Purges et nettoyage base de données
 # ============================================================================
 
-def _get_db_stats():
-    """Helper pour récupérer les statistiques DB"""
-    return {
-        'cmdb_count': ReferentielCMDB.query.count(),
-        'jobs_count': JobAltaview.query.count(),
-        'jobs_old_count': JobAltaview.query.filter(
-            JobAltaview.backup_time < datetime.now() - timedelta(days=180)
-        ).count(),
-        'dedup_active': get_config('dedup_auto', {}).get('actif', False)
-    }
-
 @admin_bp.route('/maintenance/db')
 @admin_required
 def maintenance_db():
-    """Vue d'ensemble maintenance DB"""
-    return render_template('admin/maintenance_db_index.html', stats=_get_db_stats())
-
-@admin_bp.route('/maintenance/db/purge-cmdb')
-@admin_required
-def maintenance_db_purge_cmdb():
-    """Page purge CMDB"""
-    return render_template('admin/maintenance_db_purge_cmdb.html', stats=_get_db_stats())
-
-@admin_bp.route('/maintenance/db/purge-jobs')
-@admin_required
-def maintenance_db_purge_jobs():
-    """Page purge Jobs"""
-    return render_template('admin/maintenance_db_purge_jobs.html', stats=_get_db_stats())
-
-@admin_bp.route('/maintenance/db/cleanup-old')
-@admin_required
-def maintenance_db_cleanup_old():
-    """Page nettoyage jobs anciens"""
-    return render_template('admin/maintenance_db_cleanup_old.html', stats=_get_db_stats())
-
-@admin_bp.route('/maintenance/db/deduplication')
-@admin_required
-def maintenance_db_deduplication():
-    """Page déduplication"""
-    return render_template('admin/maintenance_db_deduplication.html', stats=_get_db_stats())
+    """Maintenance base de données"""
+    # Statistiques
+    cmdb_count = ReferentielCMDB.query.count()
+    jobs_count = JobAltaview.query.count()
+    jobs_old_count = JobAltaview.query.filter(
+        JobAltaview.backup_time < datetime.now() - timedelta(days=180)
+    ).count()
+    
+    # Config déduplication
+    dedup_config = get_config('dedup_auto', {})
+    
+    stats = {
+        'cmdb_count': cmdb_count,
+        'jobs_count': jobs_count,
+        'jobs_old_count': jobs_old_count,
+        'dedup_active': dedup_config.get('actif', False)
+    }
+    
+    return render_template('admin/maintenance_db.html', stats=stats)
 
 
 @admin_bp.route('/maintenance/db/purge_cmdb', methods=['POST'])
@@ -309,7 +216,7 @@ def purge_cmdb():
     else:
         flash('Code de confirmation incorrect.', 'warning')
     
-    return redirect(url_for('admin.maintenance_db_purge_cmdb'))
+    return redirect(url_for('admin.maintenance_db'))
 
 
 @admin_bp.route('/maintenance/db/purge_jobs', methods=['POST'])
@@ -334,19 +241,19 @@ def purge_altaview():
     else:
         flash('Code de confirmation incorrect.', 'warning')
     
-    return redirect(url_for('admin.maintenance_db_purge_jobs'))
+    return redirect(url_for('admin.maintenance_db'))
 
 
-@admin_bp.route('/maintenance/db/cleanup-old/execute', methods=['POST'])
+@admin_bp.route('/maintenance/db/cleanup', methods=['POST'])
 @admin_required
-def cleanup_old_jobs():
+def nettoyer():
     """Nettoyer les anciens jobs"""
     count = JobAltaview.query.filter(
         JobAltaview.backup_time < datetime.now() - timedelta(days=180)
     ).delete()
     db.session.commit()
     flash(f'{count} anciens jobs supprimés.', 'success')
-    return redirect(url_for('admin.maintenance_db_cleanup_old'))
+    return redirect(url_for('admin.maintenance_db'))
 
 
 @admin_bp.route('/maintenance/db/dedup/config', methods=['POST'])
@@ -370,7 +277,7 @@ def supprimer_doublons():
     else:
         flash(f"Doublons supprimés: {result.get('supprimes', 0)}", 'success')
     
-    return redirect(url_for('admin.maintenance_db_deduplication'))
+    return redirect(url_for('admin.maintenance_db'))
 
 
 # ============================================================================
@@ -450,7 +357,7 @@ def config_archive():
     
     reschedule_archive(heure, minute, actif)
     
-    flash(f'⚠️ Configuration archivage enregistrée ({heure}:{minute:02d}). Redémarrez l\'application pour appliquer : docker-compose restart nbcm', 'warning')
+    flash(f'Configuration archivage enregistrée ({heure}:{minute:02d}).', 'success')
     return redirect(url_for('admin.archive_schedule'))
 
 
@@ -468,23 +375,3 @@ def test_archive():
         flash(f"Erreur: {result.get('error', 'Inconnue')}", 'danger')
     
     return redirect(url_for('admin.archive_schedule'))
-
-
-# ============================================================================
-# PAGE D'ACCUEIL ADMIN
-# ============================================================================
-
-@admin_bp.route('/')
-@admin_required
-def index():
-    """Page d'accueil admin avec statut système"""
-    global start_time
-    
-    # Informations système
-    system_info = {
-        'uptime': str(datetime.now() - start_time) if start_time else 'N/A',
-        'scheduler': get_scheduler_status(),
-        'db_stats': _get_db_stats()
-    }
-    
-    return render_template('admin/index.html', system_info=system_info)

@@ -11,11 +11,11 @@
     <style>
         :root { --sidebar-width: 260px; --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%); --success-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); --danger-gradient: linear-gradient(135deg, #cb2d3e 0%, #ef473a 100%); --warning-gradient: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%); }
         body { min-height: 100vh; display: flex; }
-        .sidebar { width: var(--sidebar-width); height: 100vh; position: fixed; left: 0; top: 0; background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); z-index: 1000; transition: transform 0.3s ease; display: flex; flex-direction: column; overflow: hidden; }
+        .sidebar { width: var(--sidebar-width); min-height: 100vh; position: fixed; left: 0; top: 0; background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); z-index: 1000; transition: transform 0.3s ease; display: flex; flex-direction: column; }
         .sidebar-header { padding: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); flex-shrink: 0; }
         .sidebar-brand { color: #fff; font-size: 1.3rem; font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 10px; }
         .sidebar-brand i { font-size: 1.8rem; background: var(--success-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .sidebar-nav { padding: 1rem 0; flex: 1; overflow-y: auto; overflow-x: hidden; }
+        .sidebar-nav { padding: 1rem 0; flex: 1; overflow-y: auto; overflow-x: hidden; padding-bottom: 100px; }
         .nav-section { padding: 0.5rem 1.5rem; font-size: 0.7rem; text-transform: uppercase; color: rgba(255,255,255,0.4); letter-spacing: 1px; margin-top: 1rem; }
         .sidebar .nav-link { color: rgba(255,255,255,0.7); padding: 0.75rem 1.5rem; display: flex; align-items: center; gap: 12px; transition: all 0.2s ease; border-left: 3px solid transparent; text-decoration: none; }
         .sidebar .nav-link:hover { color: #fff; background: rgba(255,255,255,0.05); border-left-color: rgba(255,255,255,0.3); }
@@ -27,7 +27,7 @@
         .submenu .nav-link { padding-left: 3rem; font-size: 0.9rem; }
         .submenu .submenu .nav-link { padding-left: 4.5rem; font-size: 0.85rem; }
         .submenu .submenu .submenu .nav-link { padding-left: 6rem; font-size: 0.8rem; border-left-width: 2px; }
-        .sidebar-footer { flex-shrink: 0; padding: 1rem 1.5rem; border-top: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); }
+        .sidebar-footer { position: absolute; bottom: 0; left: 0; right: 0; padding: 1rem 1.5rem; border-top: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); }
         .user-info { display: flex; align-items: center; gap: 10px; color: rgba(255,255,255,0.8); }
         .user-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--primary-gradient); display: flex; align-items: center; justify-content: center; font-weight: 600; color: #fff; }
         .main-content { margin-left: var(--sidebar-width); flex: 1; min-height: 100vh; background: #f8f9fa; }
@@ -62,68 +62,48 @@
         </div>
         <div class="sidebar-nav">
             <!-- PRINCIPAL -->
-            <div class="nav-section">{{ t('sidebar_section_main') }}</div>
+            <div class="nav-section">PRINCIPAL</div>
             <ul class="nav flex-column">
                 <li class="nav-item">
                     <a class="nav-link {{ 'active' if request.endpoint == 'dashboard.index' }}" href="{{ url_for('dashboard.index') }}">
-                        <i class="bi bi-speedometer2"></i> {{ t('sidebar_dashboard') }}
+                        <i class="bi bi-speedometer2"></i> Tableau de bord
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link {{ 'active' if request.endpoint and 'cmdb' in request.endpoint }}" href="{{ url_for('cmdb.list') }}">
-                        <i class="bi bi-database"></i> {{ t('sidebar_cmdb') }}
+                        <i class="bi bi-database"></i> CMDB
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link has-submenu {{ 'active' if request.endpoint and ('altaview' in request.endpoint or 'import_history' in request.endpoint) }}" data-bs-toggle="collapse" href="#submenuJobs" role="button" aria-expanded="{{ 'true' if request.endpoint and ('altaview' in request.endpoint or 'import_history' in request.endpoint) else 'false' }}" aria-controls="submenuJobs">
-                        <i class="bi bi-activity"></i> {{ t('sidebar_jobs') }}
-                        <i class="bi bi-chevron-right"></i>
+                    <a class="nav-link {{ 'active' if request.endpoint and 'altaview' in request.endpoint }}" href="{{ url_for('altaview.list') }}">
+                        <i class="bi bi-activity"></i> Jobs
                     </a>
-                    <div class="collapse {{ 'show' if request.endpoint and ('altaview' in request.endpoint or 'import_history' in request.endpoint) else '' }}" id="submenuJobs">
-                        <ul class="submenu nav flex-column">
-                            <li class="nav-item">
-                                <a class="nav-link {{ 'active' if request.endpoint == 'altaview.list' }}" href="{{ url_for('altaview.list') }}">
-                                    <i class="bi bi-list-ul"></i> Liste des jobs
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {{ 'active' if request.endpoint == 'altaview.import_history' }}" href="{{ url_for('altaview.import_history') }}">
-                                    <i class="bi bi-clock-history"></i> Historique imports
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
                 </li>
             </ul>
 
             <!-- RAPPORT -->
-            <div class="nav-section">{{ t('sidebar_section_report') }}</div>
+            <div class="nav-section">RAPPORT</div>
             <ul class="nav flex-column">
                 <li class="nav-item">
                     <a class="nav-link {{ 'active' if request.endpoint and 'rapport' in request.endpoint }}" href="{{ url_for('rapport.index') }}">
-                        <i class="bi bi-file-earmark-bar-graph"></i> {{ t('sidebar_report') }}
+                        <i class="bi bi-file-earmark-bar-graph"></i> Rapport
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link has-submenu {{ 'active' if request.endpoint and ('archives' in request.endpoint or 'archive_schedule' in request.endpoint) }}" data-bs-toggle="collapse" href="#submenuArchives" role="button" aria-expanded="{{ 'true' if request.endpoint and ('archives' in request.endpoint or 'archive_schedule' in request.endpoint) else 'false' }}" aria-controls="submenuArchives">
-                        <i class="bi bi-archive"></i> {{ t('sidebar_archives') }}
+                    <a class="nav-link has-submenu" data-bs-toggle="collapse" href="#submenuArchives" role="button" aria-expanded="false" aria-controls="submenuArchives">
+                        <i class="bi bi-archive"></i> Archives
                         <i class="bi bi-chevron-right"></i>
                     </a>
-                    <div class="collapse {{ 'show' if request.endpoint and ('archives' in request.endpoint or 'archive_schedule' in request.endpoint) else '' }}" id="submenuArchives">
+                    <div class="collapse" id="submenuArchives">
                         <ul class="submenu nav flex-column">
                             <li class="nav-item">
-                                <a class="nav-link {{ 'active' if request.endpoint == 'archives.quotidiennes' }}" href="{{ url_for('archives.quotidiennes') }}" style="{{ 'background: rgba(255, 193, 7, 0.15); border-left-color: #ffc107;' if request.endpoint == 'archives.quotidiennes' else '' }}">
-                                    <i class="bi bi-calendar-fill" style="color: #ffc107;"></i> {{ t('sidebar_archives_daily') }}
+                                <a class="nav-link {{ 'active' if request.endpoint == 'archives.index' }}" href="{{ url_for('archives.index') }}">
+                                    <i class="bi bi-folder-fill"></i> Archivage Manuel
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link {{ 'active' if request.endpoint == 'archives.manuel' }}" href="{{ url_for('archives.manuel') }}" style="{{ 'background: rgba(220, 53, 69, 0.15); border-left-color: #dc3545;' if request.endpoint == 'archives.manuel' else '' }}">
-                                    <i class="bi bi-folder-fill" style="color: #dc3545;"></i> {{ t('sidebar_archives_manual') }}
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {{ 'active' if request.endpoint == 'admin.archive_schedule' }}" href="{{ url_for('admin.archive_schedule') }}">
-                                    <i class="bi bi-calendar-check"></i> {{ t('sidebar_archives_schedule') }}
+                                <a class="nav-link" href="#">
+                                    <i class="bi bi-calendar-check"></i> Planification Archivage
                                 </a>
                             </li>
                         </ul>
@@ -131,133 +111,92 @@
                 </li>
             </ul>
 
-            <!-- GESTION -->
-            <div class="nav-section">{{ t('sidebar_section_management') }}</div>
-            <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a class="nav-link {{ 'active' if request.endpoint and 'recipients' in request.endpoint }}" href="{{ url_for('recipients.index') }}">
-                        <i class="bi bi-people"></i> {{ t('sidebar_recipients') }}
-                    </a>
-                </li>
-            </ul>
-
-            <!-- ADMINISTRATION -->
-            <div class="nav-section">{{ t('sidebar_section_administration') }}</div>
+            <!-- CONFIGURATION -->
+            <div class="nav-section">CONFIGURATION</div>
             <ul class="nav flex-column">
                 {% if current_user.is_admin() %}
-                <!-- Configuration Email (SMTP/IMAP uniquement) -->
+                <!-- SMTP -->
                 <li class="nav-item">
-                    <a class="nav-link has-submenu {{ 'active' if request.endpoint and ('smtp' in request.endpoint or 'imap' in request.endpoint) and 'api' not in request.endpoint }}" data-bs-toggle="collapse" href="#submenuEmail" role="button" aria-expanded="{{ 'true' if request.endpoint and ('smtp' in request.endpoint or 'imap' in request.endpoint) and 'api' not in request.endpoint else 'false' }}" aria-controls="submenuEmail">
-                        <i class="bi bi-envelope-at-fill"></i> {{ t('sidebar_email_config') }}
+                    <a class="nav-link has-submenu" data-bs-toggle="collapse" href="#submenuSMTP" role="button" aria-expanded="false" aria-controls="submenuSMTP">
+                        <i class="bi bi-envelope-at"></i> SMTP
                         <i class="bi bi-chevron-right"></i>
                     </a>
-                    <div class="collapse {{ 'show' if request.endpoint and ('smtp' in request.endpoint or 'imap' in request.endpoint) and 'api' not in request.endpoint else '' }}" id="submenuEmail">
+                    <div class="collapse" id="submenuSMTP">
                         <ul class="submenu nav flex-column">
-                            <!-- SMTP -->
                             <li class="nav-item">
-                                <a class="nav-link has-submenu {{ 'active' if request.endpoint and 'smtp' in request.endpoint }}" data-bs-toggle="collapse" href="#submenuSMTP" role="button" aria-expanded="{{ 'true' if request.endpoint and 'smtp' in request.endpoint else 'false' }}" aria-controls="submenuSMTP">
-                                    <i class="bi bi-send"></i> {{ t('sidebar_smtp') }}
-                                    <i class="bi bi-chevron-right"></i>
+                                <a class="nav-link" href="{{ url_for('admin.index') }}#smtp">
+                                    <i class="bi bi-calendar-week"></i> Planification envoi vers destinataires
                                 </a>
-                                <div class="collapse {{ 'show' if request.endpoint and 'smtp' in request.endpoint else '' }}" id="submenuSMTP">
-                                    <ul class="submenu nav flex-column">
-                                        <li class="nav-item">
-                                            <a class="nav-link {{ 'active' if request.endpoint == 'admin.smtp' }}" href="{{ url_for('admin.smtp') }}">
-                                                <i class="bi bi-gear"></i> {{ t('smtp_config_title') }}
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link {{ 'active' if request.endpoint == 'admin.smtp_schedule' }}" href="{{ url_for('admin.smtp_schedule') }}">
-                                                <i class="bi bi-calendar-week"></i> {{ t('sidebar_smtp_schedule') }}
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-
-                            <!-- IMAP -->
-                            <li class="nav-item">
-                                <a class="nav-link has-submenu {{ 'active' if request.endpoint and 'imap' in request.endpoint }}" data-bs-toggle="collapse" href="#submenuIMAP" role="button" aria-expanded="{{ 'true' if request.endpoint and 'imap' in request.endpoint else 'false' }}" aria-controls="submenuIMAP">
-                                    <i class="bi bi-inbox"></i> {{ t('sidebar_imap') }}
-                                    <i class="bi bi-chevron-right"></i>
-                                </a>
-                                <div class="collapse {{ 'show' if request.endpoint and 'imap' in request.endpoint else '' }}" id="submenuIMAP">
-                                    <ul class="submenu nav flex-column">
-                                        <li class="nav-item">
-                                            <a class="nav-link {{ 'active' if request.endpoint == 'admin.imap' }}" href="{{ url_for('admin.imap') }}">
-                                                <i class="bi bi-gear"></i> {{ t('imap_config_title') }}
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
                             </li>
                         </ul>
                     </div>
                 </li>
 
-                <!-- API Altaview (SÉPARÉ) -->
+                <!-- IMAP -->
                 <li class="nav-item">
-                    <a class="nav-link has-submenu {{ 'active' if request.endpoint and 'api' in request.endpoint }}" data-bs-toggle="collapse" href="#submenuAPI" role="button" aria-expanded="{{ 'true' if request.endpoint and 'api' in request.endpoint else 'false' }}" aria-controls="submenuAPI">
-                        <i class="bi bi-cloud-arrow-down"></i> {{ t('sidebar_api_altaview') }}
+                    <a class="nav-link has-submenu" data-bs-toggle="collapse" href="#submenuIMAP" role="button" aria-expanded="false" aria-controls="submenuIMAP">
+                        <i class="bi bi-inbox"></i> IMAP
                         <i class="bi bi-chevron-right"></i>
                     </a>
-                    <div class="collapse {{ 'show' if request.endpoint and 'api' in request.endpoint else '' }}" id="submenuAPI">
+                    <div class="collapse" id="submenuIMAP">
                         <ul class="submenu nav flex-column">
                             <li class="nav-item">
-                                <a class="nav-link {{ 'active' if request.endpoint == 'admin.api' }}" href="{{ url_for('admin.api') }}">
-                                    <i class="bi bi-gear"></i> Configuration
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {{ 'active' if request.endpoint == 'admin.api_schedule' }}" href="{{ url_for('admin.api_schedule') }}">
-                                    <i class="bi bi-clock"></i> Planification
+                                <a class="nav-link" href="{{ url_for('admin.index') }}#imap">
+                                    <i class="bi bi-clock-history"></i> Historique des imports
                                 </a>
                             </li>
                         </ul>
                     </div>
+                </li>
+
+                <!-- API Altaview -->
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('admin.index') }}#api">
+                        <i class="bi bi-cloud-arrow-down"></i> API Altaview
+                    </a>
                 </li>
 
                 <!-- Gestion des utilisateurs -->
                 <li class="nav-item">
                     <a class="nav-link {{ 'active' if request.endpoint == 'auth.users' }}" href="{{ url_for('auth.users') }}">
-                        <i class="bi bi-person-gear"></i> {{ t('nav_users') }}
+                        <i class="bi bi-person-gear"></i> Gestion des utilisateurs
                     </a>
                 </li>
 
                 <!-- Maintenance -->
                 <li class="nav-item">
-                    <a class="nav-link has-submenu {{ 'active' if request.endpoint and ('maintenance' in request.endpoint or 'backup' in request.endpoint) }}" data-bs-toggle="collapse" href="#submenuMaintenance" role="button" aria-expanded="{{ 'true' if request.endpoint and ('maintenance' in request.endpoint or 'backup' in request.endpoint) else 'false' }}" aria-controls="submenuMaintenance">
-                        <i class="bi bi-tools"></i> {{ t('sidebar_maintenance') }}
+                    <a class="nav-link has-submenu" data-bs-toggle="collapse" href="#submenuMaintenance" role="button" aria-expanded="false" aria-controls="submenuMaintenance">
+                        <i class="bi bi-tools"></i> Maintenance
                         <i class="bi bi-chevron-right"></i>
                     </a>
-                    <div class="collapse {{ 'show' if request.endpoint and ('maintenance' in request.endpoint or 'backup' in request.endpoint) else '' }}" id="submenuMaintenance">
+                    <div class="collapse" id="submenuMaintenance">
                         <ul class="submenu nav flex-column">
                             <!-- DB -->
                             <li class="nav-item">
-                                <a class="nav-link has-submenu {{ 'active' if request.endpoint and 'maintenance_db' in request.endpoint }}" data-bs-toggle="collapse" href="#submenuDB" role="button" aria-expanded="{{ 'true' if request.endpoint and 'maintenance_db' in request.endpoint else 'false' }}" aria-controls="submenuDB">
-                                    <i class="bi bi-database"></i> {{ t('sidebar_db') }}
+                                <a class="nav-link has-submenu" data-bs-toggle="collapse" href="#submenuDB" role="button" aria-expanded="false" aria-controls="submenuDB">
+                                    <i class="bi bi-database"></i> DB
                                     <i class="bi bi-chevron-right"></i>
                                 </a>
-                                <div class="collapse {{ 'show' if request.endpoint and 'maintenance_db' in request.endpoint else '' }}" id="submenuDB">
+                                <div class="collapse" id="submenuDB">
                                     <ul class="submenu nav flex-column">
                                         <li class="nav-item">
-                                            <a class="nav-link text-danger {{ 'active' if request.endpoint == 'admin.maintenance_db_purge_cmdb' }}" href="{{ url_for('admin.maintenance_db_purge_cmdb') }}">
-                                                <i class="bi bi-exclamation-triangle"></i> {{ t('sidebar_purge_cmdb') }}
+                                            <a class="nav-link text-danger" href="{{ url_for('admin.index') }}#purge-cmdb">
+                                                <i class="bi bi-exclamation-triangle"></i> DANGER : Vidage CMDB
                                             </a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link text-danger {{ 'active' if request.endpoint == 'admin.maintenance_db_purge_jobs' }}" href="{{ url_for('admin.maintenance_db_purge_jobs') }}">
-                                                <i class="bi bi-exclamation-triangle"></i> {{ t('sidebar_purge_jobs') }}
+                                            <a class="nav-link text-danger" href="{{ url_for('admin.index') }}#purge-jobs">
+                                                <i class="bi bi-exclamation-triangle"></i> DANGER : Vidage Jobs
                                             </a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link {{ 'active' if request.endpoint == 'admin.maintenance_db_cleanup_old' }}" href="{{ url_for('admin.maintenance_db_cleanup_old') }}">
-                                                <i class="bi bi-broom"></i> {{ t('sidebar_cleanup_old') }}
+                                            <a class="nav-link" href="{{ url_for('admin.index') }}#cleanup">
+                                                <i class="bi bi-broom"></i> Nettoyer jobs > 6mois
                                             </a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link {{ 'active' if request.endpoint == 'admin.maintenance_db_deduplication' }}" href="{{ url_for('admin.maintenance_db_deduplication') }}">
-                                                <i class="bi bi-layers"></i> {{ t('sidebar_deduplication') }}
+                                            <a class="nav-link" href="{{ url_for('admin.index') }}#dedup">
+                                                <i class="bi bi-layers"></i> Supprimer les doublons
                                             </a>
                                         </li>
                                     </ul>
@@ -266,15 +205,15 @@
 
                             <!-- FS -->
                             <li class="nav-item">
-                                <a class="nav-link has-submenu {{ 'active' if request.endpoint == 'admin.maintenance_fs' }}" data-bs-toggle="collapse" href="#submenuFS" role="button" aria-expanded="{{ 'true' if request.endpoint == 'admin.maintenance_fs' else 'false' }}" aria-controls="submenuFS">
-                                    <i class="bi bi-hdd"></i> {{ t('sidebar_fs') }}
+                                <a class="nav-link has-submenu" data-bs-toggle="collapse" href="#submenuFS" role="button" aria-expanded="false" aria-controls="submenuFS">
+                                    <i class="bi bi-hdd"></i> FS
                                     <i class="bi bi-chevron-right"></i>
                                 </a>
-                                <div class="collapse {{ 'show' if request.endpoint == 'admin.maintenance_fs' else '' }}" id="submenuFS">
+                                <div class="collapse" id="submenuFS">
                                     <ul class="submenu nav flex-column">
                                         <li class="nav-item">
-                                            <a class="nav-link" href="{{ url_for('admin.maintenance_fs') }}">
-                                                <i class="bi bi-files"></i> {{ t('sidebar_fs_cleanup') }}
+                                            <a class="nav-link" href="{{ url_for('admin.index') }}#cleanup-files">
+                                                <i class="bi bi-files"></i> Nettoyage Fichiers Auto-Import
                                             </a>
                                         </li>
                                     </ul>
@@ -283,28 +222,28 @@
 
                             <!-- Sauvegarde & Restauration -->
                             <li class="nav-item">
-                                <a class="nav-link has-submenu {{ 'active' if request.endpoint and 'backup' in request.endpoint }}" data-bs-toggle="collapse" href="#submenuBackup" role="button" aria-expanded="{{ 'true' if request.endpoint and 'backup' in request.endpoint else 'false' }}" aria-controls="submenuBackup">
-                                    <i class="bi bi-database-fill-gear"></i> {{ t('sidebar_backup_restore') }}
+                                <a class="nav-link has-submenu" data-bs-toggle="collapse" href="#submenuBackup" role="button" aria-expanded="false" aria-controls="submenuBackup">
+                                    <i class="bi bi-database-fill-gear"></i> Sauvegarde & Restauration
                                     <i class="bi bi-chevron-right"></i>
                                 </a>
-                                <div class="collapse {{ 'show' if request.endpoint and 'backup' in request.endpoint else '' }}" id="submenuBackup">
+                                <div class="collapse" id="submenuBackup">
                                     <ul class="submenu nav flex-column">
                                         <!-- Sauvegardes -->
                                         <li class="nav-item">
-                                            <a class="nav-link has-submenu {{ 'active' if request.endpoint and 'backups' in request.endpoint }}" data-bs-toggle="collapse" href="#submenuBackups" role="button" aria-expanded="{{ 'true' if request.endpoint and 'backups' in request.endpoint else 'false' }}" aria-controls="submenuBackups">
-                                                <i class="bi bi-save"></i> {{ t('sidebar_backups') }}
+                                            <a class="nav-link has-submenu" data-bs-toggle="collapse" href="#submenuBackups" role="button" aria-expanded="false" aria-controls="submenuBackups">
+                                                <i class="bi bi-save"></i> Sauvegardes
                                                 <i class="bi bi-chevron-right"></i>
                                             </a>
-                                            <div class="collapse {{ 'show' if request.endpoint and 'backups' in request.endpoint else '' }}" id="submenuBackups">
+                                            <div class="collapse" id="submenuBackups">
                                                 <ul class="submenu nav flex-column">
                                                     <li class="nav-item">
-                                                        <a class="nav-link {{ 'active' if request.endpoint == 'backup.backups_db' }}" href="{{ url_for('backup.backups_db') }}">
-                                                            <i class="bi bi-database"></i> {{ t('sidebar_backups_db') }}
+                                                        <a class="nav-link" href="{{ url_for('backup.index') }}#db">
+                                                            <i class="bi bi-database"></i> Sauvegardes DB
                                                         </a>
                                                     </li>
                                                     <li class="nav-item">
-                                                        <a class="nav-link {{ 'active' if request.endpoint == 'backup.backups_fs' }}" href="{{ url_for('backup.backups_fs') }}">
-                                                            <i class="bi bi-hdd"></i> {{ t('sidebar_backups_fs') }}
+                                                        <a class="nav-link" href="{{ url_for('backup.index') }}#fs">
+                                                            <i class="bi bi-hdd"></i> Sauvegardes FS
                                                         </a>
                                                     </li>
                                                 </ul>
@@ -313,20 +252,20 @@
 
                                         <!-- Restaurations -->
                                         <li class="nav-item">
-                                            <a class="nav-link has-submenu {{ 'active' if request.endpoint and 'restore' in request.endpoint }}" data-bs-toggle="collapse" href="#submenuRestores" role="button" aria-expanded="{{ 'true' if request.endpoint and 'restore' in request.endpoint else 'false' }}" aria-controls="submenuRestores">
-                                                <i class="bi bi-arrow-clockwise"></i> {{ t('sidebar_restores') }}
+                                            <a class="nav-link has-submenu" data-bs-toggle="collapse" href="#submenuRestores" role="button" aria-expanded="false" aria-controls="submenuRestores">
+                                                <i class="bi bi-arrow-clockwise"></i> Restaurations
                                                 <i class="bi bi-chevron-right"></i>
                                             </a>
-                                            <div class="collapse {{ 'show' if request.endpoint and 'restore' in request.endpoint else '' }}" id="submenuRestores">
+                                            <div class="collapse" id="submenuRestores">
                                                 <ul class="submenu nav flex-column">
                                                     <li class="nav-item">
-                                                        <a class="nav-link {{ 'active' if request.endpoint == 'backup.restore_db' }}" href="{{ url_for('backup.restore_db') }}">
-                                                            <i class="bi bi-database"></i> {{ t('sidebar_restores_db') }}
+                                                        <a class="nav-link" href="{{ url_for('backup.index') }}#restore-db">
+                                                            <i class="bi bi-database"></i> Restaurations DB
                                                         </a>
                                                     </li>
                                                     <li class="nav-item">
-                                                        <a class="nav-link {{ 'active' if request.endpoint == 'backup.restore_fs' }}" href="{{ url_for('backup.restore_fs') }}">
-                                                            <i class="bi bi-hdd"></i> {{ t('sidebar_restores_fs') }}
+                                                        <a class="nav-link" href="{{ url_for('backup.index') }}#restore-fs">
+                                                            <i class="bi bi-hdd"></i> Restaurations FS
                                                         </a>
                                                     </li>
                                                 </ul>
@@ -335,33 +274,33 @@
 
                                         <!-- Planification Sauvegardes -->
                                         <li class="nav-item">
-                                            <a class="nav-link has-submenu {{ 'active' if request.endpoint and 'schedule' in request.endpoint and 'backup' in request.endpoint }}" data-bs-toggle="collapse" href="#submenuBackupSchedule" role="button" aria-expanded="{{ 'true' if request.endpoint and 'schedule' in request.endpoint and 'backup' in request.endpoint else 'false' }}" aria-controls="submenuBackupSchedule">
-                                                <i class="bi bi-calendar-check"></i> {{ t('sidebar_backup_schedule') }}
+                                            <a class="nav-link has-submenu" data-bs-toggle="collapse" href="#submenuBackupSchedule" role="button" aria-expanded="false" aria-controls="submenuBackupSchedule">
+                                                <i class="bi bi-calendar-check"></i> Planification Sauvegardes
                                                 <i class="bi bi-chevron-right"></i>
                                             </a>
-                                            <div class="collapse {{ 'show' if request.endpoint and 'schedule' in request.endpoint and 'backup' in request.endpoint else '' }}" id="submenuBackupSchedule">
+                                            <div class="collapse" id="submenuBackupSchedule">
                                                 <ul class="submenu nav flex-column">
                                                     <!-- DB Schedule -->
                                                     <li class="nav-item">
-                                                        <a class="nav-link has-submenu {{ 'active' if request.endpoint and 'schedule_db' in request.endpoint }}" data-bs-toggle="collapse" href="#submenuBackupScheduleDB" role="button" aria-expanded="{{ 'true' if request.endpoint and 'schedule_db' in request.endpoint else 'false' }}" aria-controls="submenuBackupScheduleDB">
-                                                            <i class="bi bi-database"></i> {{ t('sidebar_db') }}
+                                                        <a class="nav-link has-submenu" data-bs-toggle="collapse" href="#submenuBackupScheduleDB" role="button" aria-expanded="false" aria-controls="submenuBackupScheduleDB">
+                                                            <i class="bi bi-database"></i> DB
                                                             <i class="bi bi-chevron-right"></i>
                                                         </a>
-                                                        <div class="collapse {{ 'show' if request.endpoint and 'schedule_db' in request.endpoint else '' }}" id="submenuBackupScheduleDB">
+                                                        <div class="collapse" id="submenuBackupScheduleDB">
                                                             <ul class="submenu nav flex-column">
                                                                 <li class="nav-item">
-                                                                    <a class="nav-link {{ 'active' if request.endpoint == 'backup.schedule_db_daily' }}" href="{{ url_for('backup.schedule_db_daily') }}">
-                                                                        <i class="bi bi-sun"></i> {{ t('sidebar_schedule_daily') }}
+                                                                    <a class="nav-link" href="{{ url_for('backup.index') }}#schedule-db-daily">
+                                                                        <i class="bi bi-sun"></i> Quotidienne
                                                                     </a>
                                                                 </li>
                                                                 <li class="nav-item">
-                                                                    <a class="nav-link {{ 'active' if request.endpoint == 'backup.schedule_db_weekly' }}" href="{{ url_for('backup.schedule_db_weekly') }}">
-                                                                        <i class="bi bi-calendar-week"></i> {{ t('sidebar_schedule_weekly') }}
+                                                                    <a class="nav-link" href="{{ url_for('backup.index') }}#schedule-db-weekly">
+                                                                        <i class="bi bi-calendar-week"></i> Hebdomadaire
                                                                     </a>
                                                                 </li>
                                                                 <li class="nav-item">
-                                                                    <a class="nav-link {{ 'active' if request.endpoint == 'backup.schedule_db_monthly' }}" href="{{ url_for('backup.schedule_db_monthly') }}">
-                                                                        <i class="bi bi-calendar-month"></i> {{ t('sidebar_schedule_monthly') }}
+                                                                    <a class="nav-link" href="{{ url_for('backup.index') }}#schedule-db-monthly">
+                                                                        <i class="bi bi-calendar-month"></i> Mensuel
                                                                     </a>
                                                                 </li>
                                                             </ul>
@@ -370,25 +309,25 @@
 
                                                     <!-- FS Schedule -->
                                                     <li class="nav-item">
-                                                        <a class="nav-link has-submenu {{ 'active' if request.endpoint and 'schedule_fs' in request.endpoint }}" data-bs-toggle="collapse" href="#submenuBackupScheduleFS" role="button" aria-expanded="{{ 'true' if request.endpoint and 'schedule_fs' in request.endpoint else 'false' }}" aria-controls="submenuBackupScheduleFS">
-                                                            <i class="bi bi-hdd"></i> {{ t('sidebar_fs') }}
+                                                        <a class="nav-link has-submenu" data-bs-toggle="collapse" href="#submenuBackupScheduleFS" role="button" aria-expanded="false" aria-controls="submenuBackupScheduleFS">
+                                                            <i class="bi bi-hdd"></i> FS
                                                             <i class="bi bi-chevron-right"></i>
                                                         </a>
-                                                        <div class="collapse {{ 'show' if request.endpoint and 'schedule_fs' in request.endpoint else '' }}" id="submenuBackupScheduleFS">
+                                                        <div class="collapse" id="submenuBackupScheduleFS">
                                                             <ul class="submenu nav flex-column">
                                                                 <li class="nav-item">
-                                                                    <a class="nav-link {{ 'active' if request.endpoint == 'backup.schedule_fs_daily' }}" href="{{ url_for('backup.schedule_fs_daily') }}">
-                                                                        <i class="bi bi-sun"></i> {{ t('sidebar_schedule_daily') }}
+                                                                    <a class="nav-link" href="{{ url_for('backup.index') }}#schedule-fs-daily">
+                                                                        <i class="bi bi-sun"></i> Quotidienne
                                                                     </a>
                                                                 </li>
                                                                 <li class="nav-item">
-                                                                    <a class="nav-link {{ 'active' if request.endpoint == 'backup.schedule_fs_weekly' }}" href="{{ url_for('backup.schedule_fs_weekly') }}">
-                                                                        <i class="bi bi-calendar-week"></i> {{ t('sidebar_schedule_weekly') }}
+                                                                    <a class="nav-link" href="{{ url_for('backup.index') }}#schedule-fs-weekly">
+                                                                        <i class="bi bi-calendar-week"></i> Hebdomadaire
                                                                     </a>
                                                                 </li>
                                                                 <li class="nav-item">
-                                                                    <a class="nav-link {{ 'active' if request.endpoint == 'backup.schedule_fs_monthly' }}" href="{{ url_for('backup.schedule_fs_monthly') }}">
-                                                                        <i class="bi bi-calendar-month"></i> {{ t('sidebar_schedule_monthly') }}
+                                                                    <a class="nav-link" href="{{ url_for('backup.index') }}#schedule-fs-monthly">
+                                                                        <i class="bi bi-calendar-month"></i> Mensuel
                                                                     </a>
                                                                 </li>
                                                             </ul>

@@ -185,158 +185,89 @@ def fetch_imap_attachments(force=False):
 
 def fetch_altaview_api():
     """
-    Importe les données depuis l'API Altaview.
+    Importe les données depuis l'API Altaview/Veritas Analytics.
+    Télécharge un fichier CSV/TXT et utilise la fonction d'import standard.
     """
     try:
         config = get_config('altaview_api', {})
         
         if not config.get('actif'):
+            current_app.logger.debug("API: Import désactivé")
             return False
         
-        base_url = config.get('url', '').strip()
-        token = config.get('token')
+        api_url = config.get('url', '').strip()
+        token = config.get('token', '').strip()
         
-        if not base_url or not token:
-            current_app.logger.warning("API: Configuration incomplète")
+        if not api_url or not token:
+            current_app.logger.warning("API: Configuration incomplète (URL ou token manquant)")
             return False
         
-        current_app.logger.info("API: Démarrage import...")
+        current_app.logger.info("API: Démarrage import depuis Veritas Analytics...")
         
-        # Nettoyer l'URL
-        clean_url = base_url.rstrip('/').replace('/run', '').replace('/results', '')
-        
+        # Headers pour l'API Veritas Analytics
         headers = {
-            'Authorization': f'Bearer {token}',
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
+            'Authorization': token,  # Token direct, pas "Bearer"
+            'Accept': '*/*'
         }
         
-        # Essayer différentes méthodes
-        attempts = [
-            ('GET', clean_url),
-            ('GET', f"{clean_url}/results"),
-            ('POST', f"{clean_url}/run")
-        ]
-        
-        data = None
-        
-        for method, url in attempts:
-            try:
-                if method == 'POST':
-                    response = requests.post(url, headers=headers, json={}, timeout=30)
-                else:
-                    response = requests.get(url, headers=headers, timeout=30)
-                
-                if response.status_code == 200:
-                    json_data = response.json()
-                    if isinstance(json_data, list) or (isinstance(json_data, dict) and ('data' in json_data or 'rows' in json_data)):
-                        data = json_data
-                        current_app.logger.info(f"API: Connexion OK via {method} {url}")
-                        break
-            except requests.RequestException as e:
-                current_app.logger.debug(f"API: Tentative {method} {url} échouée: {e}")
-                continue
-        
-        if not data:
-            current_app.logger.warning("API: Aucune donnée récupérée")
+        # Appel API avec timeout
+        try:
+            response = requests.get(api_url, headers=headers, timeout=60)
+            response.raise_for_status()  # Lève une exception si erreur HTTP
+        except requests.exceptions.RequestException as e:
+            current_app.logger.error(f"API: Erreur connexion - {e}")
             return False
         
-        # Extraire les jobs
-        jobs_list = []
-        if isinstance(data, list):
-            jobs_list = data
-        elif isinstance(data, dict):
-            if 'data' in data:
-                jobs_list = data['data']
-            elif 'rows' in data:
-                jobs_list = data['rows']
-            elif 'reportData' in data:
-                jobs_list = data['reportData'].get('rows', [])
+        # Vérifier que nous avons bien reçu du contenu
+        if not response.text or len(response.text) < 10:
+            current_app.logger.warning("API: Réponse vide ou invalide")
+            return False
         
-        nb_ajoutes = 0
+        current_app.logger.info(f"API: Fichier récupéré ({len(response.text)} octets)")
         
-        for row in jobs_list:
-            try:
-                hostname = (
-                    row.get('hostname') or
-                    row.get('client') or
-                    row.get('clientName') or
-                    row.get('assetName')
-                )
-                
-                if not hostname:
-                    continue
-                
-                # Date
-                date_raw = row.get('backup_time') or row.get('startDate') or row.get('date')
-                backup_time = datetime.now()
-                
-                if date_raw:
-                    if isinstance(date_raw, (int, float)):
-                        # Timestamp Unix (millisecondes)
-                        backup_time = datetime.fromtimestamp(date_raw / 1000.0)
-                    else:
-                        try:
-                            backup_time = datetime.fromisoformat(
-                                str(date_raw).replace('Z', '').replace('T', ' ')[:19]
-                            )
-                        except:
-                            pass
-                
-                # Taille
-                size_raw = str(row.get('sizeGB') or row.get('taille_gb') or row.get('size') or 0).strip()
-                
-                import re
-                match = re.match(r'([\d.]+)\s*(KB|MB|GB|K|M|G)?', size_raw, re.IGNORECASE)
-                if match:
-                    value = float(match.group(1).replace(',', ''))
-                    unit = match.group(2).upper() if match.group(2) else None
-                    
-                    if unit in ['KB', 'K']:
-                        size_gb = value / (1024 * 1024)
-                    elif unit in ['MB', 'M']:
-                        size_gb = value / 1024
-                    elif unit in ['GB', 'G']:
-                        size_gb = value
-                    else:
-                        size_gb = value
-                        if size_gb > 100000:
-                            size_gb /= (1024 * 1024 * 1024)
-                else:
-                    size_gb = 0.0
-                
-                # Créer le job
-                job = JobAltaview(
-                    hostname=normalize_hostname(hostname),
-                    backup_time=backup_time,
-                    job_id=str(row.get('jobId') or row.get('job_id') or secrets.token_hex(4)),
-                    policy_name=str(row.get('policyName') or row.get('policy_name') or ''),
-                    schedule_name=str(row.get('scheduleName') or row.get('schedule_name') or ''),
-                    status=str(row.get('statusCode') or row.get('status') or 'UNKNOWN'),
-                    taille_gb=round(size_gb, 2),
-                    duree_minutes=int(row.get('duration') or row.get('duree_minutes') or 0)
-                )
-                db.session.add(job)
-                nb_ajoutes += 1
-                
-            except Exception as e:
-                current_app.logger.debug(f"API: Erreur traitement ligne: {e}")
-                continue
+        # Sauvegarder le fichier dans le répertoire d'import
+        import_dir = current_app.config.get('ALTAVIEW_AUTO_IMPORT_DIR', '/app/data/altaview_auto_import')
+        os.makedirs(import_dir, exist_ok=True)
         
-        db.session.commit()
+        # Nom du fichier avec timestamp
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        filename = f'altaview_api_{timestamp}.csv'
+        filepath = os.path.join(import_dir, filename)
         
-        ImportHistory(
-            type_import='altaview_api',
-            filename='API_AUTO',
-            nb_lignes=nb_ajoutes,
-            statut='success',
-            message=f'{nb_ajoutes} jobs importés',
-            utilisateur='api-auto'
-        ).save()
+        # Écrire le contenu dans le fichier
+        with open(filepath, 'w', encoding='utf-8') as f:
+            f.write(response.text)
         
-        current_app.logger.info(f"API: {nb_ajoutes} jobs importés")
-        return True
+        current_app.logger.info(f"API: Fichier sauvegardé: {filename}")
+        
+        # Utiliser la fonction d'import standard pour traiter le fichier
+        success, stats = import_altaview_file(filepath, filename, 'api-auto')
+        
+        if success:
+            current_app.logger.info(f"API: Import réussi - {stats.get('nb_ajoutes', 0)} ajoutés, {stats.get('nb_mis_a_jour', 0)} mis à jour")
+            
+            # Déplacer le fichier dans processed
+            processed_dir = os.path.join(import_dir, 'processed')
+            os.makedirs(processed_dir, exist_ok=True)
+            
+            import shutil
+            processed_path = os.path.join(processed_dir, filename)
+            shutil.move(filepath, processed_path)
+            
+            return True
+        else:
+            current_app.logger.error(f"API: Erreur import - {stats.get('error', 'Erreur inconnue')}")
+            
+            # Garder le fichier en erreur pour analyse
+            error_filename = f'ERROR_{filename}'
+            error_path = os.path.join(import_dir, 'processed', error_filename)
+            os.makedirs(os.path.dirname(error_path), exist_ok=True)
+            
+            import shutil
+            shutil.move(filepath, error_path)
+            
+            return False
         
     except Exception as e:
-        current_app.logger.error(f"API: Erreur: {e}", exc_info=True)
+        current_app.logger.error(f"API: Erreur générale: {e}", exc_info=True)
         return False

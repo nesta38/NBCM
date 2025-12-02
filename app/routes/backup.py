@@ -2,9 +2,10 @@
 Routes pour la gestion des backups/restaurations
 Accessible uniquement par les administrateurs
 Support du rechargement dynamique du scheduler via Redis pub/sub
+✅ RESTAURATION ASYNCHRONE avec suivi en temps réel
 """
 from datetime import datetime
-from flask import Blueprint, render_template, request, flash, redirect, url_for, send_from_directory
+from flask import Blueprint, render_template, request, flash, redirect, url_for, send_from_directory, jsonify
 from flask_login import login_required, current_user
 from app.services.backup_service import BackupService
 from app.services.cache_service import CacheService
@@ -90,13 +91,94 @@ def backups_fs():
 @admin_required
 def restore_db():
     """Restaurations DB"""
-    return render_template('admin/backup_restore_db.html', **_get_backup_data())
+    from app.services.async_restore_service import get_async_restore_service
+    
+    # Vérifier si une restauration est en cours
+    async_restore = get_async_restore_service()
+    restore_running = async_restore.is_restore_running()
+    
+    data = _get_backup_data()
+    data['restore_running'] = restore_running
+    
+    return render_template('admin/backup_restore_db.html', **data)
 
 @backup_bp.route('/restore/fs')
 @admin_required
 def restore_fs():
     """Restaurations FS"""
     return render_template('admin/backup_restore_fs.html', **_get_backup_data())
+
+# ============================================================================
+# RESTAURATION ASYNCHRONE (NOUVEAU)
+# ============================================================================
+
+@backup_bp.route('/restore/<filename>', methods=['POST'])
+@admin_required
+def restore(filename):
+    """Restaurer une sauvegarde DB (ASYNCHRONE)"""
+    from app.services.async_restore_service import get_async_restore_service
+    from flask import current_app
+    
+    # Confirmation obligatoire
+    confirm = request.form.get('confirm')
+    if confirm != 'RESTORE':
+        flash('⚠️ Restauration annulée : confirmation requise', 'warning')
+        return redirect(url_for('backup.restore_db'))
+    
+    # Vérifier qu'aucune restauration n'est en cours
+    async_restore = get_async_restore_service()
+    if async_restore.is_restore_running():
+        flash('⚠️ Une restauration est déjà en cours', 'warning')
+        return redirect(url_for('backup.restore_status'))
+    
+    # Démarrer la restauration asynchrone
+    backup_service = BackupService()
+    # ✅ FIX: Passer current_app directement sans _get_current_object()
+    result = async_restore.start_restore_db(filename, backup_service, current_app)
+    
+    if result['success']:
+        flash('✅ Restauration démarrée - Suivi en cours...', 'info')
+        return redirect(url_for('backup.restore_status'))
+    else:
+        flash(f"❌ {result['error']}", 'danger')
+        return redirect(url_for('backup.restore_db'))
+
+
+@backup_bp.route('/restore/status')
+@admin_required
+def restore_status():
+    """Page de suivi de restauration en temps réel"""
+    from app.services.async_restore_service import get_async_restore_service
+    
+    async_restore = get_async_restore_service()
+    task = async_restore.get_current_task()
+    
+    if not task:
+        flash('⚠️ Aucune restauration en cours', 'warning')
+        return redirect(url_for('backup.restore_db'))
+    
+    return render_template('admin/backup_restore_status.html', task=task.to_dict())
+
+
+@backup_bp.route('/api/restore/status')
+@admin_required
+def api_restore_status():
+    """API JSON - Statut de la restauration en cours"""
+    from app.services.async_restore_service import get_async_restore_service
+    
+    async_restore = get_async_restore_service()
+    task = async_restore.get_current_task()
+    
+    if not task:
+        return jsonify({
+            'running': False,
+            'message': 'Aucune restauration en cours'
+        })
+    
+    return jsonify({
+        'running': True,
+        'task': task.to_dict()
+    })
 
 # ============================================================================
 # PLANIFICATION DB - Routes GET
@@ -170,7 +252,7 @@ def configure_schedule_db(frequency):
     config_key = f'backup_schedule_db_{frequency}'
     set_config(config_key, config, f'Planification Backup DB {frequency}', current_user.username)
     
-    # 🔥 NOUVEAU: Envoyer signal Redis pour recharger le scheduler SANS REDÉMARRAGE
+    # Envoyer signal Redis pour recharger le scheduler
     try:
         from app.services.scheduler_reload_service import get_reload_service
         reload_service = get_reload_service()
@@ -214,7 +296,7 @@ def configure_schedule_fs(frequency):
     config_key = f'backup_schedule_fs_{frequency}'
     set_config(config_key, config, f'Planification Backup FS {frequency}', current_user.username)
     
-    # 🔥 NOUVEAU: Envoyer signal Redis pour recharger le scheduler SANS REDÉMARRAGE
+    # Envoyer signal Redis pour recharger le scheduler
     try:
         from app.services.scheduler_reload_service import get_reload_service
         reload_service = get_reload_service()
@@ -263,32 +345,6 @@ def create_fs():
         flash(f"❌ Erreur lors de la sauvegarde FS : {result['error']}", 'danger')
     
     return redirect(request.referrer or url_for('backup.backups_fs'))
-
-@backup_bp.route('/restore/<filename>', methods=['POST'])
-@admin_required
-def restore(filename):
-    """Restaurer une sauvegarde DB"""
-    # Confirmation obligatoire
-    confirm = request.form.get('confirm')
-    if confirm != 'RESTORE':
-        flash('⚠️ Restauration annulée : confirmation requise', 'warning')
-        return redirect(url_for('backup.restore_db'))
-    
-    backup_service = BackupService()
-    result = backup_service.restore_backup(filename)
-    
-    if result['success']:
-        flash('✅ Base de données restaurée avec succès', 'success')
-        
-        # Invalider tout le cache Redis
-        cache_service = CacheService()
-        if cache_service.is_enabled():
-            cache_service.invalidate_all()
-            flash('🔄 Cache Redis invalidé', 'info')
-    else:
-        flash(f"❌ Erreur lors de la restauration : {result['error']}", 'danger')
-    
-    return redirect(url_for('backup.restore_db'))
 
 @backup_bp.route('/restore-fs/<filename>', methods=['POST'])
 @admin_required

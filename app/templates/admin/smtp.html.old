@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}Configuration SMTP{% endblock %}
+{% block page_title %}Configuration SMTP{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card shadow-sm border-secondary">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-envelope-at"></i> Configuration SMTP
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">
+                    <i class="bi bi-info-circle"></i>
+                    Configurez les paramètres SMTP pour l'envoi automatique des rapports de conformité par email.
+                </p>
+
+                <form action="{{ url_for('admin.config_email') }}" method="POST">
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label class="form-label fw-bold">Serveur SMTP</label>
+                            <input type="text" class="form-control" name="smtp_server" 
+                                   value="{{ email_config.get('smtp_server', '') }}" 
+                                   placeholder="smtp.example.com" required>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Port</label>
+                            <input type="number" class="form-control" name="smtp_port" 
+                                   value="{{ email_config.get('smtp_port', '587') }}" 
+                                   placeholder="587" required>
+                            <small class="text-muted">Généralement 587 (STARTTLS) ou 465 (SSL)</small>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Utilisateur SMTP</label>
+                            <input type="text" class="form-control" name="smtp_user" 
+                                   value="{{ email_config.get('smtp_user', '') }}" 
+                                   placeholder="user@example.com" required>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Mot de passe SMTP</label>
+                            <input type="password" class="form-control" name="smtp_password" 
+                                   value="{{ email_config.get('smtp_password', '') }}" 
+                                   placeholder="••••••••" required>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Email expéditeur (From)</label>
+                            <input type="email" class="form-control" name="email_from" 
+                                   value="{{ email_config.get('email_from', '') }}" 
+                                   placeholder="nbcm@example.com" required>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Email(s) destinataire(s) (To)</label>
+                            <input type="text" class="form-control" name="email_to" 
+                                   value="{{ email_config.get('email_to', '') }}" 
+                                   placeholder="admin@example.com, team@example.com" required>
+                            <small class="text-muted">Séparer plusieurs emails par des virgules</small>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="actif" 
+                                   id="smtpSwitch" {% if email_config.get('actif') %}checked{% endif %}>
+                            <label class="form-check-label fw-bold" for="smtpSwitch">
+                                {% if email_config.get('actif') %}
+                                    <span class="badge bg-success">
+                                        <i class="bi bi-check-circle"></i> Envoi automatique activé
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-secondary">
+                                        <i class="bi bi-pause-circle"></i> Envoi automatique désactivé
+                                    </span>
+                                {% endif %}
+                            </label>
+                        </div>
+
+                        <div>
+                            <button type="submit" formaction="{{ url_for('admin.test_email') }}" 
+                                    class="btn btn-outline-secondary">
+                                <i class="bi bi-send-check"></i> Tester l'envoi
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save"></i> Enregistrer
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mt-4 border-info">
+            <div class="card-header bg-info text-white">
+                <h6 class="mb-0">
+                    <i class="bi bi-lightbulb"></i> Informations
+                </h6>
+            </div>
+            <div class="card-body">
+                <ul class="mb-0">
+                    <li><strong>Planification</strong> : Configurez les horaires d'envoi dans 
+                        <a href="{{ url_for('admin.smtp_schedule') }}">Planification envoi vers destinataires</a>
+                    </li>
+                    <li><strong>Destinataires</strong> : Gérez les destinataires dans 
+                        <a href="{{ url_for('recipients.index') }}">Gestion des destinataires</a>
+                    </li>
+                    <li><strong>Test</strong> : Le bouton "Tester l'envoi" envoie un email de test au premier destinataire configuré</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
