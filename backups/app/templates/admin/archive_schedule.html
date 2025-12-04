@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+{% block title %}{{ t('archive_schedule_title') }}{% endblock %}
+{% block page_title %}{{ t('archive_schedule_title') }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <div class="card shadow-sm border-info">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-calendar-check"></i> {{ t('archive_auto_config') }}
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">
+                    <i class="bi bi-info-circle"></i>
+                    {{ t('archive_config_subtitle') }}
+                </p>
+
+                <form action="{{ url_for('admin.config_archive') }}" method="POST">
+                    <div class="row align-items-end mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">
+                                <i class="bi bi-clock"></i> {{ t('archive_time') }}
+                            </label>
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-text">
+                                    <i class="bi bi-clock-history"></i>
+                                </span>
+                                <input type="number" name="heure" class="form-control" 
+                                       value="{{ arch_config.get('heure', 18) }}" 
+                                       min="0" max="23" required>
+                                <span class="input-group-text">:</span>
+                                <input type="number" name="minute" class="form-control" 
+                                       value="{{ arch_config.get('minute', 0) }}" 
+                                       min="0" max="59" required>
+                            </div>
+                            <small class="text-muted">{{ t('archive_time_format') }}</small>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input form-check-input-lg" type="checkbox" 
+                                       name="actif" id="archActive" 
+                                       {% if arch_config.get('actif', True) %}checked{% endif %}>
+                                <label class="form-check-label fw-bold" for="archActive">
+                                    {{ t('archive_auto_enabled') }}
+                                </label>
+                            </div>
+                            <button type="submit" class="btn btn-info text-white btn-lg w-100">
+                                <i class="bi bi-save"></i> {{ t('archive_save_schedule') }}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <hr class="my-4">
+
+                <h6 class="text-primary mb-3">
+                    <i class="bi bi-list-check"></i> {{ t('archive_scheduler_status') }}
+                </h6>
+
+                {% if scheduler_status.get('running') %}
+                    <div class="alert alert-success">
+                        <i class="bi bi-check-circle"></i>
+                        <strong>{{ t('archive_scheduler_active') }}</strong>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>{{ t('archive_job_id') }}</th>
+                                    <th>{{ t('archive_description') }}</th>
+                                    <th>{{ t('archive_next_run') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% set archive_jobs = [] %}
+                                {% for job in scheduler_status.get('jobs', []) %}
+                                    {% if 'archive' in job.id.lower() %}
+                                        {% set _ = archive_jobs.append(job) %}
+                                    <tr>
+                                        <td><code>{{ job.id }}</code></td>
+                                        <td>{{ job.name }}</td>
+                                        <td>
+                                            <strong class="text-primary">{{ job.next_run }}</strong>
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                {% endfor %}
+                                {% if archive_jobs|length == 0 %}
+                                <tr>
+                                    <td colspan="3" class="text-center text-muted">
+                                        <em>{{ t('archive_no_scheduled_job') }}</em><br>
+                                        <small>{{ t('archive_enable_to_see_job') }}</small>
+                                    </td>
+                                </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <strong>{{ t('archive_scheduler_inactive') }}</strong>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Test manuel -->
+        <div class="card shadow-sm mt-4 border-success">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-play-circle"></i> {{ t('archive_manual_test') }}
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">
+                    {{ t('archive_manual_test_desc') }}
+                </p>
+
+                <form action="{{ url_for('admin.test_archive') }}" method="POST"
+                      onsubmit="return confirm('Créer une archive de test maintenant ?');">
+                    <button type="submit" class="btn btn-success btn-lg w-100">
+                        <i class="bi bi-file-earmark-arrow-down"></i> {{ t('archive_create_now') }}
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Informations -->
+        <div class="card shadow-sm mt-4 border-primary">
+            <div class="card-header bg-primary text-white">
+                <h6 class="mb-0">
+                    <i class="bi bi-info-circle"></i> {{ t('archive_how_it_works') }}
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-primary">{{ t('archive_auto_desc_title') }}</h6>
+                        <ul>
+                            <li>{{ t('archive_auto_desc_1') }}</li>
+                            <li>{{ t('archive_auto_desc_2') }}</li>
+                            <li>{{ t('archive_auto_desc_3') }}</li>
+                            <li>{{ t('archive_auto_desc_4') }}</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-success">{{ t('archive_content_title') }}</h6>
+                        <ul>
+                            <li>{{ t('archive_content_1') }}</li>
+                            <li>{{ t('archive_content_2') }}</li>
+                            <li>{{ t('archive_content_3') }}</li>
+                            <li>{{ t('archive_content_4') }}</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <hr>
+
+                <p class="mb-0">
+                    <i class="bi bi-folder"></i>
+                    <strong>{{ t('archive_access_info_1') }}</strong> 
+                    {{ t('archive_access_info_2') }} 
+                    <a href="{{ url_for('archives.index') }}">{{ t('archive_access_info_3') }}</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

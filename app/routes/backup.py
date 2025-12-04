@@ -348,9 +348,13 @@ def create():
 def create_fs():
     """Créer une nouvelle sauvegarde FS"""
     description = request.form.get('description', '').strip()
+    directories = request.form.get('directories', '').strip()
+    
+    # Créer une config pour passer les directories
+    config = {'directories': directories}
     
     backup_service = BackupService()
-    result = backup_service.create_fs_backup(description)
+    result = backup_service.create_fs_backup(description, config)
     
     if result['success']:
         flash(f"✅ Sauvegarde FS créée : {result['filename']} ({result['size'] / (1024*1024):.1f} MB)", 'success')

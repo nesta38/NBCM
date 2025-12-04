@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block title %}{{ t('purge_jobs_page_title') }}{% endblock %}
+{% block page_title %}{{ t('purge_jobs_danger_title') }}{% endblock %}
+
+{% block content %}
+<!-- Warning banner -->
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <h4 class="alert-heading"><i class="bi bi-shield-exclamation"></i> {{ t('purge_warning_irreversible') }}</h4>
+    <p class="mb-0">
+        {{ t('purge_cmdb_action_will') }} <strong>{{ t('purge_delete_all_jobs') }} {{ "{:,}".format(stats.jobs_count).replace(',', ' ') }}</strong>.
+        {{ t('all_backup_history_lost') }}. {{ t('ensure_full_backup') }}.
+    </p>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+
+<!-- Stats -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h6 class="text-muted mb-3">{{ t('stats_jobs') }}</h6>
+                <div class="row">
+                    <div class="col-6 mb-3">
+                        <div class="d-flex align-items-center">
+                            <div class="p-3 bg-success bg-opacity-10 rounded-circle me-3">
+                                <i class="bi bi-activity fs-4 text-success"></i>
+                            </div>
+                            <div>
+                                <small class="text-muted">{{ t('total_jobs') }}</small>
+                                <h4 class="mb-0">{{ "{:,}".format(stats.jobs_count).replace(',', ' ') }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <div class="d-flex align-items-center">
+                            <div class="p-3 bg-warning bg-opacity-10 rounded-circle me-3">
+                                <i class="bi bi-clock-history fs-4 text-warning"></i>
+                            </div>
+                            <div>
+                                <small class="text-muted">{{ t('jobs_older_6_months') }}</small>
+                                <h4 class="mb-0">{{ "{:,}".format(stats.jobs_old_count).replace(',', ' ') }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow-sm bg-light">
+            <div class="card-body">
+                <h6 class="text-muted mb-3">{{ t('recommended_alternative') }}</h6>
+                <p class="small mb-2">{{ t('rather_than_purge_all') }}</p>
+                <ul class="small mb-0">
+                    <li><a href="{{ url_for('backup.index') }}">{{ t('create_full_backup') }}</a></li>
+                    <li><a href="{{ url_for('admin.maintenance_db_cleanup_old') }}">{{ t('cleanup_only_old_jobs') }}</a> ({{ "{:,}".format(stats.jobs_old_count).replace(',', ' ') }} {{ t('jobs_word') }})</li>
+                    <li>{{ t('export_important_data') }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Action de purge -->
+<div class="card shadow-sm border-danger">
+    <div class="card-header bg-danger text-white">
+        <h5 class="mb-0"><i class="bi bi-activity"></i> {{ t('complete_jobs_purge') }}</h5>
+    </div>
+    <div class="card-body">
+        <div class="alert alert-warning">
+            <strong>{{ t('verify_checklist') }}</strong>
+            <ul class="mb-0">
+                <li>{{ t('you_created_db_backup') }}</li>
+                <li>{{ t('complete_purge_necessary') }}</li>
+                <li>{{ t('understand_history_lost') }}</li>
+                <li>{{ t('reports_wont_work_until_import') }}</li>
+            </ul>
+        </div>
+
+        {% set confirm_msg = t('last_confirmation') ~ ' : ' ~ t('really_delete_all_jobs') %}
+        <form action="{{ url_for('admin.purge_altaview') }}" method="POST" onsubmit="return confirm('{{ confirm_msg }}');">
+            <div class="mb-3">
+                <label class="form-label fw-bold">
+                    {{ t('to_confirm_type_exactly') }} <code class="bg-dark text-white px-2 py-1">DELETE</code> :
+                </label>
+                <input type="text" 
+                       class="form-control form-control-lg" 
+                       name="confirmation" 
+                       placeholder="{{ t('type_delete_caps') }}" 
+                       autocomplete="off"
+                       required>
+                <small class="form-text text-muted">{{ t('case_sensitive_uppercase') }}</small>
+            </div>
+
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-danger btn-lg">
+                    <i class="bi bi-trash3-fill"></i> {{ t('btn_purge_jobs') }} {{ "{:,}".format(stats.jobs_count).replace(',', ' ') }}
+                </button>
+                <a href="{{ url_for('admin.maintenance_db') }}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> {{ t('btn_cancel_return') }}
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Info complémentaire -->
+<div class="card shadow-sm border-info mt-4">
+    <div class="card-header bg-info text-white">
+        <h6 class="mb-0"><i class="bi bi-info-circle"></i> {{ t('what_happens_after_purge') }}</h6>
+    </div>
+    <div class="card-body">
+        <ol class="mb-0">
+            <li>{{ t('purge_jobs_info_1') }}</li>
+            <li>{{ t('purge_cmdb_info_2') }}</li>
+            <li>{{ t('purge_jobs_info_3') }}</li>
+            <li>{{ t('purge_jobs_info_4') }}</li>
+            <li>{{ t('purge_jobs_info_5') }}</li>
+        </ol>
+    </div>
+</div>
+{% endblock %}

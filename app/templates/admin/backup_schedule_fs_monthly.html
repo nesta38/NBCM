@@ -35,6 +35,13 @@
                         <small class="text-muted">{{ t('backup_schedule_retention_help') }}</small>
                     </div>
                     
+                    <div class="mb-3">
+                        <label class="form-label">{{ t('backup_directories_to_save') }}</label>
+                        <textarea class="form-control" name="directories" rows="6" required
+                                  placeholder="{{ t('backup_directories_placeholder') }}">{{ schedule_config.get('directories', '/app/data/db\n/app/data/logs\n/app/data/altaview_auto_import') }}</textarea>
+                        <small class="text-muted">{{ t('backup_directories_help') }}</small>
+                    </div>
+                    
                     <div class="form-check form-switch mb-3">
                         <input class="form-check-input" type="checkbox" name="enabled" id="enabledSwitch"
                                {{ 'checked' if schedule_config.get('enabled', False) }}>
@@ -62,9 +69,10 @@
             </div>
             <div class="card-body">
                 <p>{{ t('backup_create_new') }}</p>
-                <form action="{{ url_for('backup.create_fs') }}" method="POST">
+                <form action="{{ url_for('backup.create_fs') }}" method="POST" id="testForm">
                     <input type="hidden" name="description" value="Test sauvegarde mensuelle FS">
-                    <button type="submit" class="btn btn-warning">
+                    <input type="hidden" name="directories" id="testDirectories" value="">
+                    <button type="submit" class="btn btn-warning" onclick="copyDirectories()">
                         <i class="bi bi-play-fill"></i> {{ t('btn_test') }}
                     </button>
                 </form>
@@ -130,4 +138,16 @@
         </div>
     </div>
 </div>
+
+<script>
+function copyDirectories() {
+    // Récupérer la valeur du textarea directories du formulaire principal
+    const directoriesTextarea = document.querySelector('textarea[name="directories"]');
+    const testDirectoriesInput = document.getElementById('testDirectories');
+    
+    if (directoriesTextarea && testDirectoriesInput) {
+        testDirectoriesInput.value = directoriesTextarea.value;
+    }
+}
+</script>
 {% endblock %}

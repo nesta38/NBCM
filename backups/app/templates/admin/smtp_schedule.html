@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% block title %}{{ t('smtp_schedule_title') }}{% endblock %}
+{% block page_title %}{{ t('smtp_schedule_title') }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <div class="card shadow-sm border-primary">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-calendar-week"></i> {{ t('smtp_auto_config') }}
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i>
+                    <strong>{{ t('configuration') }} :</strong>
+                    {% if email_config.get('actif') %}
+                        <span class="badge bg-success ms-2">{{ t('smtp_auto_send') }} {{ t('status_enabled') }}</span>
+                    {% else %}
+                        <span class="badge bg-secondary ms-2">{{ t('smtp_auto_send') }} {{ t('status_disabled') }}</span>
+                    {% endif %}
+                </div>
+
+                <h6 class="text-primary mb-3">
+                    <i class="bi bi-clock"></i> {{ t('archive_scheduler_status') }}
+                </h6>
+
+                {% if scheduler_status.get('running') %}
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th><i class="bi bi-tag"></i> {{ t('archive_job_id') }}</th>
+                                    <th><i class="bi bi-info-circle"></i> {{ t('th_name') }}</th>
+                                    <th><i class="bi bi-calendar"></i> {{ t('archive_next_run') }}</th>
+                                    <th><i class="bi bi-check-circle"></i> {{ t('th_status') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% set email_jobs = [] %}
+                                {% for job in scheduler_status.get('jobs', []) %}
+                                    {% if 'email' in job.id or 'rapport' in job.id %}
+                                        {% set _ = email_jobs.append(job) %}
+                                    <tr>
+                                        <td><code>{{ job.id }}</code></td>
+                                        <td>{{ job.name }}</td>
+                                        <td>
+                                            <strong class="text-primary">{{ job.next_run }}</strong>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-success">
+                                                <i class="bi bi-check-circle"></i> {{ t('status_active') }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                {% endfor %}
+                                {% if email_jobs|length == 0 %}
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted">
+                                        <em>{{ t('smtp_no_scheduled_job') }}</em><br>
+                                        <small>{{ t('smtp_check_config') }}</small>
+                                    </td>
+                                </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        {{ t('archive_scheduler_inactive') }}
+                    </div>
+                {% endif %}
+
+                <hr class="my-4">
+
+                <h6 class="text-secondary mb-3">
+                    <i class="bi bi-gear"></i> {{ t('configuration') }}
+                </h6>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6 class="card-title">
+                                    <i class="bi bi-envelope"></i> {{ t('smtp_title') }}
+                                </h6>
+                                <p class="card-text small text-muted">
+                                    {{ t('smtp_server') }} : <strong>{{ email_config.get('smtp_server', t('not_configured')) }}</strong><br>
+                                    {{ t('smtp_port') }} : <strong>{{ email_config.get('smtp_port', t('not_configured')) }}</strong><br>
+                                    {{ t('smtp_user') }} : <strong>{{ email_config.get('smtp_user', t('not_configured')) }}</strong>
+                                </p>
+                                <a href="{{ url_for('admin.smtp') }}" class="btn btn-sm btn-outline-secondary">
+                                    <i class="bi bi-pencil"></i> {{ t('btn_edit') }}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6 class="card-title">
+                                    <i class="bi bi-people"></i> {{ t('recipients_management') }}
+                                </h6>
+                                <p class="card-text small text-muted">
+                                    {{ email_config.get('email_to', t('recipients_none')) }}
+                                </p>
+                                <a href="{{ url_for('recipients.index') }}" class="btn btn-sm btn-outline-secondary">
+                                    <i class="bi bi-pencil"></i> {{ t('recipients_management') }}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mt-4 border-success">
+            <div class="card-header bg-success text-white">
+                <h6 class="mb-0">
+                    <i class="bi bi-lightbulb"></i> {{ t('info') }}
+                </h6>
+            </div>
+            <div class="card-body">
+                <ul class="mb-0">
+                    <li>{{ t('smtp_schedule_info_1') }}</li>
+                    <li>{{ t('smtp_schedule_info_2') }}</li>
+                    <li>{{ t('smtp_schedule_info_3') }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -365,7 +365,8 @@ class BackupService:
         backups = []
         
         for file in sorted(directory.glob(f'*{extension}'), reverse=True):
-            meta_file = file.with_suffix(f'{extension}.meta' if extension == '.sql.gz' else '.meta')
+            # ✅ FIX: Utiliser concatenation directe au lieu de with_suffix() pour les extensions multiples
+            meta_file = Path(str(file) + '.meta')
             meta = {}
             
             if meta_file.exists():
@@ -426,13 +427,8 @@ class BackupService:
             
             if filepath.exists():
                 try:
-                    # Déterminer l'extension pour trouver le fichier meta
-                    if filename.endswith('.sql.gz'):
-                        meta_file = filepath.with_suffix('.sql.gz.meta')
-                    elif filename.endswith('.tar.gz'):
-                        meta_file = filepath.with_suffix('.meta')
-                    else:
-                        meta_file = None
+                    # ✅ FIX: Utiliser concatenation directe pour trouver le fichier meta
+                    meta_file = Path(str(filepath) + '.meta')
                     
                     filepath.unlink()
                     if meta_file and meta_file.exists():

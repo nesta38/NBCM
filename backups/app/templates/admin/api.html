@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+{% block title %}{{ t('api_config_title') }}{% endblock %}
+{% block page_title %}{{ t('api_config_title') }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card shadow-sm border-success">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-cloud-arrow-down"></i> {{ t('api_config_title') }}
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">
+                    <i class="bi bi-info-circle"></i>
+                    {{ t('api_config_subtitle') }}
+                </p>
+
+                <form action="{{ url_for('admin.config_api') }}" method="POST">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">
+                            <i class="bi bi-link-45deg"></i> {{ t('api_url') }}
+                        </label>
+                        <input type="url" class="form-control form-control-lg" name="url" 
+                               value="{{ api_config.get('url', '') }}" 
+                               placeholder="https://analytics.eu.veritas.com/api/v1/dashboards/XXXXX/export?format=txt&delimiter=%2C&addQuotes=true" required>
+                        <small class="text-muted d-block mt-2">
+                            <i class="bi bi-info-circle"></i> <strong>Exemple Veritas Analytics:</strong><br>
+                            <code style="font-size: 0.85rem;">https://analytics.eu.veritas.com/api/v1/dashboards/100130/export?format=txt&delimiter=%2C&addQuotes=true</code>
+                        </small>
+                        <small class="text-muted d-block mt-1">
+                            <i class="bi bi-lightbulb"></i> L'URL doit inclure les paramètres: <code>format=txt</code>, <code>delimiter=%2C</code> (virgule), <code>addQuotes=true</code>
+                        </small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">
+                            <i class="bi bi-key"></i> {{ t('api_token') }}
+                        </label>
+                        <input type="password" class="form-control form-control-lg" name="token" 
+                               value="{{ api_config.get('token', '') }}" 
+                               placeholder="••••••••••••••••••••••••••••••••" required>
+                        <small class="text-muted d-block mt-2">
+                            <i class="bi bi-info-circle"></i> <strong>Format du token:</strong> Ne PAS ajouter "Bearer", juste le token complet<br>
+                            <code style="font-size: 0.85rem;">Exemple: NzU4ZmQzNWUtM2EzMC00N2JmLWFlYWItODcyZjlmZGFiNzY0@EXJGJ0bj_k-Zr9m0FNsBuK144d_6IYZlqOkAGdvBLBd3sYoAp7y_VgH6cWYu7AiQ</code>
+                        </small>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input form-check-input-lg" type="checkbox" 
+                                   name="actif" id="apiSwitch" {% if api_config.get('actif') %}checked{% endif %}>
+                            <label class="form-check-label fw-bold fs-5" for="apiSwitch">
+                                {% if api_config.get('actif') %}
+                                    <span class="badge bg-success fs-6">
+                                        <i class="bi bi-check-circle-fill"></i> {{ t('api_enabled') }}
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-secondary fs-6">
+                                        <i class="bi bi-pause-circle-fill"></i> {{ t('api_disabled') }}
+                                    </span>
+                                {% endif %}
+                            </label>
+                        </div>
+
+                        <div>
+                            <button type="submit" formaction="{{ url_for('admin.test_api') }}" 
+                                    class="btn btn-outline-success btn-lg">
+                                <i class="bi bi-cloud-download"></i> {{ t('api_test') }}
+                            </button>
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-save"></i> {{ t('btn_save') }}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card shadow-sm border-primary">
+                    <div class="card-header bg-primary text-white">
+                        <h6 class="mb-0">
+                            <i class="bi bi-info-circle"></i> {{ t('api_how_it_works') }}
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <ol class="mb-0">
+                            <li>{{ t('api_how_step_1') }}</li>
+                            <li>{{ t('api_how_step_2') }}</li>
+                            <li>{{ t('api_how_step_3') }}</li>
+                            <li>{{ t('api_how_step_4') }}</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card shadow-sm border-warning">
+                    <div class="card-header bg-warning">
+                        <h6 class="mb-0">
+                            <i class="bi bi-exclamation-triangle"></i> {{ t('api_important') }}
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <ul class="mb-0">
+                            <li><strong>{{ t('api_security') }}</strong> : {{ t('api_security_desc') }}</li>
+                            <li><strong>{{ t('api_frequency') }}</strong> : {{ t('api_frequency_desc') }}</li>
+                            <li><strong>{{ t('api_logs') }}</strong> : {{ t('api_logs_desc') }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mt-4 border-info">
+            <div class="card-header bg-info text-white">
+                <h6 class="mb-0">
+                    <i class="bi bi-graph-up"></i> {{ t('api_vs_imap_title') }}
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-success">
+                            <i class="bi bi-check-circle"></i> {{ t('api_advantages') }}
+                        </h6>
+                        <ul>
+                            <li>{{ t('api_adv_1') }}</li>
+                            <li>{{ t('api_adv_2') }}</li>
+                            <li>{{ t('api_adv_3') }}</li>
+                            <li>{{ t('api_adv_4') }}</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-warning">
+                            <i class="bi bi-envelope"></i> {{ t('api_imap_still_useful') }}
+                        </h6>
+                        <ul>
+                            <li>{{ t('api_imap_1') }}</li>
+                            <li>{{ t('api_imap_2') }}</li>
+                            <li>{{ t('api_imap_3') }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

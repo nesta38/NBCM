@@ -19,14 +19,13 @@
                 <input type="text" class="form-control" name="description" placeholder="{{ t('fs_backup_placeholder') }}">
             </div>
             
-            <div class="alert alert-secondary">
-                <strong>{{ t('default_backed_dirs') }}</strong>
-                <ul class="mb-0">
-                    <li><code>/app/data/db</code> - {{ t('sqlite_database') }}</li>
-                    <li><code>/app/data/logs</code> - {{ t('application_logs') }}</li>
-                    <li><code>/app/data/altaview_auto_import</code> - {{ t('import_files') }}</li>
-                </ul>
-                <small class="text-muted">{{ t('configure_other_dirs_fs') }}</small>
+            <div class="mb-3">
+                <label class="form-label">{{ t('backup_directories_to_save') }}</label>
+                <textarea class="form-control" name="directories" rows="6" required
+                          placeholder="{{ t('backup_directories_placeholder') }}">/app/data/db
+/app/data/logs
+/app/data/altaview_auto_import</textarea>
+                <small class="text-muted">{{ t('backup_directories_help') }}</small>
             </div>
             
             <button type="submit" class="btn btn-success">

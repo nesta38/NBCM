@@ -283,9 +283,8 @@
 
                             <!-- Sauvegarde & Restauration -->
                             <li class="nav-item">
-                                <a class="nav-link has-submenu {{ 'active' if request.endpoint and 'backup' in request.endpoint }}" data-bs-toggle="collapse" href="#submenuBackup" role="button" aria-expanded="{{ 'true' if request.endpoint and 'backup' in request.endpoint else 'false' }}" aria-controls="submenuBackup">
+                                <a class="nav-link {{ 'active' if request.endpoint == 'backup.index' }}" href="{{ url_for('backup.index') }}">
                                     <i class="bi bi-database-fill-gear"></i> {{ t('sidebar_backup_restore') }}
-                                    <i class="bi bi-chevron-right"></i>
                                 </a>
                                 <div class="collapse {{ 'show' if request.endpoint and 'backup' in request.endpoint else '' }}" id="submenuBackup">
                                     <ul class="submenu nav flex-column">

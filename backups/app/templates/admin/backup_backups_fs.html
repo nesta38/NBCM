@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}{{ t('backups_fs_page_title') }}{% endblock %}
+{% block page_title %}{{ t('backups_fs_heading') }}{% endblock %}
+
+{% block content %}
+<div class="alert alert-info mb-4">
+    <i class="bi bi-info-circle"></i> {{ t('create_tarball_backups').replace('{path}', '/app/backups/fs/') }}
+</div>
+
+<!-- Créer nouvelle sauvegarde FS -->
+<div class="card shadow-sm border-success mb-4">
+    <div class="card-header bg-success text-white">
+        <h5 class="mb-0"><i class="bi bi-plus-circle"></i> {{ t('backups_fs_create') }}</h5>
+    </div>
+    <div class="card-body">
+        <form action="{{ url_for('backup.create_fs') }}" method="POST">
+            <div class="mb-3">
+                <label class="form-label">{{ t('description_optional') }}</label>
+                <input type="text" class="form-control" name="description" placeholder="{{ t('fs_backup_placeholder') }}">
+            </div>
+            
+            <div class="alert alert-secondary">
+                <strong>{{ t('default_backed_dirs') }}</strong>
+                <ul class="mb-0">
+                    <li><code>/app/data/db</code> - {{ t('sqlite_database') }}</li>
+                    <li><code>/app/data/logs</code> - {{ t('application_logs') }}</li>
+                    <li><code>/app/data/altaview_auto_import</code> - {{ t('import_files') }}</li>
+                </ul>
+                <small class="text-muted">{{ t('configure_other_dirs_fs') }}</small>
+            </div>
+            
+            <button type="submit" class="btn btn-success">
+                <i class="bi bi-save"></i> {{ t('btn_create_fs_backup') }}
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Liste des sauvegardes FS -->
+<div class="card shadow-sm">
+    <div class="card-header bg-light">
+        <h5 class="mb-0"><i class="bi bi-archive"></i> {{ t('available_fs_backups') }} ({{ backups.fs|length }})</h5>
+    </div>
+    <div class="card-body">
+        {% if backups.fs %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>{{ t('th_file') }}</th>
+                        <th>{{ t('th_date') }}</th>
+                        <th>{{ t('th_size') }}</th>
+                        <th>{{ t('th_description') }}</th>
+                        <th>{{ t('th_actions') }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for backup in backups.fs %}
+                    <tr>
+                        <td><code>{{ backup.filename }}</code></td>
+                        <td>{{ backup.date }}</td>
+                        <td>{{ backup.size_mb }} MB</td>
+                        <td>{{ backup.description or t('no_description') }}</td>
+                        <td>
+                            <a href="{{ url_for('backup.download', filename=backup.filename) }}" class="btn btn-sm btn-outline-primary" title="{{ t('btn_title_download') }}">
+                                <i class="bi bi-download"></i>
+                            </a>
+                            <form action="{{ url_for('backup.delete', filename=backup.filename) }}" method="POST" class="d-inline" onsubmit="return confirm('{{ t('confirm_delete_fs_backup') }}');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" title="{{ t('btn_title_delete') }}">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted text-center">{{ t('no_fs_backups') }}</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}{{ t('deduplication_page_title') }}{% endblock %}
+{% block page_title %}{{ t('deduplication_page_heading') }}{% endblock %}
+
+{% block content %}
+<div class="alert alert-info mb-4">
+    <p class="mb-0">{{ t('dedup_detects_info') }}</p>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">{{ t('config_auto_dedup') }}</h5>
+    </div>
+    <div class="card-body">
+        <form action="{{ url_for('admin.config_dedup') }}" method="POST">
+            <div class="form-check form-switch mb-3">
+                <input class="form-check-input" type="checkbox" name="actif" id="dedupSwitch" {% if stats.dedup_active %}checked{% endif %}>
+                <label class="form-check-label" for="dedupSwitch">{{ t('auto_deduplication') }}</label>
+            </div>
+            <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> {{ t('btn_save') }}</button>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header bg-info text-white">
+        <h5 class="mb-0">{{ t('manual_deduplication') }}</h5>
+    </div>
+    <div class="card-body">
+        {% set confirm_msg = t('confirm_run_dedup') %}
+        <form action="{{ url_for('admin.supprimer_doublons') }}" method="POST" onsubmit="return confirm('{{ confirm_msg }}');">
+            <button type="submit" class="btn btn-info text-white"><i class="bi bi-play-circle"></i> {{ t('btn_run_now') }}</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

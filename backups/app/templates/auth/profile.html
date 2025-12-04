@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}{{ t('profile_title') }}{% endblock %}
+{% block page_title %}{{ t('profile_title') }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white"><h5 class="mb-0"><i class="bi bi-person-circle"></i> {{ user.display_name or user.username }}</h5></div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row mb-3">
+                        <div class="col-md-6"><label class="form-label fw-bold">{{ t('auth_username') }}</label><input type="text" class="form-control" value="{{ user.username }}" disabled></div>
+                        <div class="col-md-6"><label class="form-label fw-bold">{{ t('profile_role') }}</label><input type="text" class="form-control" value="{{ user.role }}" disabled></div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6"><label class="form-label fw-bold">{{ t('profile_display_name') }}</label><input type="text" class="form-control" name="display_name" value="{{ user.display_name or '' }}"></div>
+                        <div class="col-md-6"><label class="form-label fw-bold">{{ t('profile_email') }}</label><input type="email" class="form-control" name="email" value="{{ user.email or '' }}"></div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold"><i class="bi bi-translate"></i> {{ t('profile_language') }}</label>
+                            <select name="language" class="form-select">
+                                <option value="en" {% if user.language == 'en' %}selected{% endif %}>🇬🇧 English</option>
+                                <option value="fr" {% if user.language == 'fr' %}selected{% endif %}>🇫🇷 Français</option>
+                                <option value="pl" {% if user.language == 'pl' %}selected{% endif %}>🇵🇱 Polski</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6"><label class="form-label fw-bold">{{ t('profile_last_login') }}</label><input type="text" class="form-control" value="{{ user.last_login.strftime('%Y-%m-%d %H:%M') if user.last_login else 'N/A' }}" disabled></div>
+                    </div>
+                    <hr>
+                    <h6 class="text-muted mb-3"><i class="bi bi-key"></i> {{ t('profile_change_password') }}</h6>
+                    <div class="row mb-3">
+                        <div class="col-md-6"><label class="form-label">{{ t('profile_new_password') }}</label><input type="password" class="form-control" name="new_password"></div>
+                        <div class="col-md-6"><label class="form-label">{{ t('profile_confirm_password') }}</label><input type="password" class="form-control" name="confirm_password"></div>
+                    </div>
+                    <hr>
+                    <h6 class="text-muted mb-3"><i class="bi bi-shield-lock"></i> Clé API</h6>
+                    <div class="input-group mb-3"><input type="text" class="form-control font-monospace" value="{{ user.api_key or 'Non générée' }}" readonly><button type="submit" name="regenerate_api_key" value="1" class="btn btn-outline-secondary"><i class="bi bi-arrow-repeat"></i> {{ t('profile_regenerate') or 'Régénérer' }}</button></div>
+                    <div class="d-flex justify-content-end gap-2"><a href="{{ url_for('dashboard.index') }}" class="btn btn-secondary">{{ t('btn_cancel') }}</a><button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> {{ t('btn_save') }}</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1549,7 +1549,12 @@ TRANSLATIONS = {
     
     # === SMTP SCHEDULE ===
     'smtp_no_scheduled_job': {'en': 'No email job scheduled', 'fr': 'Aucune tâche d\'envoi email planifiée', 'pl': 'Brak zaplanowanego zadania e-mail'},
-    'smtp_check_config': {'en': 'Check that SMTP is configured and emails have recipients', 'fr': 'Vérifiez que le SMTP est configuré et que les emails ont des destinataires', 'pl': 'Sprawdź, czy SMTP jest skonfigurowany i czy e-maile mają odbiorców'}
+    'smtp_check_config': {'en': 'Check that SMTP is configured and emails have recipients', 'fr': 'Vérifiez que le SMTP est configuré et que les emails ont des destinataires', 'pl': 'Sprawdź, czy SMTP jest skonfigurowany i czy e-maile mają odbiorców'},
+    
+    # === BACKUP SCHEDULE - FS DIRECTORIES ===
+    'backup_directories_to_save': {'en': 'Directories/Files to backup', 'fr': 'Répertoires/Fichiers à sauvegarder', 'pl': 'Katalogi/Pliki do zapisania'},
+    'backup_directories_placeholder': {'en': 'One path per line, e.g.:\n/app/data/db\n/app/data/logs', 'fr': 'Un chemin par ligne, ex:\n/app/data/db\n/app/data/logs', 'pl': 'Jedna ścieżka na linię, np.:\n/app/data/db\n/app/data/logs'},
+    'backup_directories_help': {'en': 'Enter one absolute path per line. Non-existent paths will be ignored.', 'fr': 'Saisissez un chemin absolu par ligne. Les chemins inexistants seront ignorés.', 'pl': 'Wprowadź jedną ścieżkę absolutną na linię. Nieistniejące ścieżki zostaną zignorowane.'}
 
 }
 

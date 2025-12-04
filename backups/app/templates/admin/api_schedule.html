@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+{% block title %}{{ t('api_schedule_title') }}{% endblock %}
+{% block page_title %}{{ t('api_schedule_title') }}{% endblock %}
+
+{% block content %}
+<div class="alert alert-info mb-4">
+    <i class="bi bi-info-circle"></i> {{ t('api_config_subtitle') }}
+</div>
+
+<!-- Configuration de la planification -->
+<div class="card shadow-sm border-primary mb-4">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">
+            <i class="bi bi-clock"></i> {{ t('api_auto_config') }}
+        </h5>
+    </div>
+    <div class="card-body">
+        <form action="{{ url_for('admin.config_api_schedule') }}" method="POST">
+            <div class="row">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">
+                        <i class="bi bi-hourglass-split"></i> {{ t('api_interval') }}
+                    </label>
+                    <input type="number" class="form-control form-control-lg" name="interval_minutes" 
+                           value="{{ schedule_config.get('interval_minutes', 60) }}" 
+                           min="5" max="1440" step="5" required>
+                    <small class="text-muted">
+                        <i class="bi bi-info-circle"></i> {{ t('api_interval_info') }}
+                    </small>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">{{ t('api_quick_suggestions') }}</label>
+                    <div class="btn-group w-100" role="group">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="document.querySelector('[name=interval_minutes]').value=15">15 min</button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="document.querySelector('[name=interval_minutes]').value=30">30 min</button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="document.querySelector('[name=interval_minutes]').value=60">1h</button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="document.querySelector('[name=interval_minutes]').value=120">2h</button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="document.querySelector('[name=interval_minutes]').value=360">6h</button>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="my-4">
+
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="form-check form-switch">
+                    <input class="form-check-input form-check-input-lg" type="checkbox" 
+                           name="actif" id="scheduleSwitch" {% if schedule_config.get('actif', True) %}checked{% endif %}>
+                    <label class="form-check-label fw-bold fs-5" for="scheduleSwitch">
+                        {% if schedule_config.get('actif', True) %}
+                            <span class="badge bg-success fs-6">
+                                <i class="bi bi-check-circle-fill"></i> {{ t('schedule_enabled') }}
+                            </span>
+                        {% else %}
+                            <span class="badge bg-secondary fs-6">
+                                <i class="bi bi-pause-circle-fill"></i> {{ t('schedule_disabled') }}
+                            </span>
+                        {% endif %}
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="bi bi-save"></i> {{ t('btn_save') }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Statut de la configuration API -->
+<div class="row">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header {% if api_config.get('actif') %}bg-success{% else %}bg-secondary{% endif %} text-white">
+                <h6 class="mb-0">
+                    <i class="bi bi-gear"></i> {{ t('api_title') }}
+                </h6>
+            </div>
+            <div class="card-body">
+                {% if api_config.get('actif') %}
+                    <p class="mb-2">
+                        <i class="bi bi-check-circle text-success"></i> 
+                        <strong>{{ t('api_configured_active') }}</strong>
+                    </p>
+                    <p class="mb-2">
+                        <i class="bi bi-link"></i> <small><code>{{ api_config.get('url', 'N/A')[:60] }}...</code></small>
+                    </p>
+                    <p class="mb-0">
+                        <i class="bi bi-clock"></i> {{ t('api_interval') }}: <strong>{{ schedule_config.get('interval_minutes', 60) }} {{ t('time_minutes') }}</strong>
+                    </p>
+                {% else %}
+                    <p class="text-warning mb-0">
+                        <i class="bi bi-exclamation-triangle"></i> 
+                        {{ t('api_not_active') }}. 
+                        <a href="{{ url_for('admin.api') }}">{{ t('api_activate') }}</a>
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-info text-white">
+                <h6 class="mb-0">
+                    <i class="bi bi-calendar-event"></i> {{ t('archive_next_run') }}
+                </h6>
+            </div>
+            <div class="card-body">
+                {% if api_config.get('actif') and schedule_config.get('actif', True) %}
+                    <p class="mb-2">
+                        <i class="bi bi-arrow-repeat"></i> 
+                        <strong>{{ t('api_every') }} {{ schedule_config.get('interval_minutes', 60) }} {{ t('time_minutes') }}</strong>
+                    </p>
+                    <p class="mb-0 small text-muted">
+                        <i class="bi bi-info-circle"></i> 
+                        {{ t('api_auto_import_desc') }}
+                    </p>
+                {% else %}
+                    <p class="text-muted mb-0">
+                        <i class="bi bi-pause-circle"></i> {{ t('schedule_disabled') }}
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Guide d'utilisation -->
+<div class="card shadow-sm mt-4 border-warning">
+    <div class="card-header bg-warning">
+        <h6 class="mb-0">
+            <i class="bi bi-lightbulb"></i> {{ t('archive_how_it_works') }}
+        </h6>
+    </div>
+    <div class="card-body">
+        <ol class="mb-0">
+            <li><strong>{{ t('api_step_1_title') }}</strong> : {{ t('api_step_1_desc') }}</li>
+            <li><strong>{{ t('api_step_2_title') }}</strong> : {{ t('api_step_2_desc') }}</li>
+            <li><strong>{{ t('api_step_3_title') }}</strong> : {{ t('api_step_3_desc') }}</li>
+            <li><strong>{{ t('api_step_4_title') }}</strong> : {{ t('api_step_4_desc') }}</li>
+            <li><strong>{{ t('api_step_5_title') }}</strong> : {{ t('api_step_5_desc') }}</li>
+            <li><strong>{{ t('api_step_6_title') }}</strong> : {{ t('api_step_6_desc') }}</li>
+        </ol>
+    </div>
+</div>
+
+<!-- Recommandations -->
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h6><i class="bi bi-speedometer text-success"></i> {{ t('api_recommended_intervals') }}</h6>
+                <ul class="list-unstyled mb-0 small">
+                    <li><strong>15-30 min</strong> : {{ t('api_interval_15_30') }}</li>
+                    <li><strong>60 min (1h)</strong> : {{ t('api_interval_60') }}</li>
+                    <li><strong>2-6h</strong> : {{ t('api_interval_2_6') }}</li>
+                    <li><strong>12-24h</strong> : {{ t('api_interval_12_24') }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h6><i class="bi bi-exclamation-triangle text-warning"></i> {{ t('api_limitations') }}</h6>
+                <ul class="list-unstyled mb-0 small">
+                    <li>{{ t('api_min_interval') }}</li>
+                    <li>{{ t('api_max_interval') }}</li>
+                    <li>{{ t('api_rate_limits') }}</li>
+                    <li>{{ t('api_restart_required') }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h6><i class="bi bi-bug text-danger"></i> {{ t('api_troubleshooting') }}</h6>
+                <ul class="list-unstyled mb-0 small">
+                    <li><a href="{{ url_for('altaview.import_history') }}">{{ t('api_check_logs') }}</a></li>
+                    <li><a href="{{ url_for('admin.api') }}">{{ t('api_test_manually') }}</a></li>
+                    <li>{{ t('api_check_url_token') }}</li>
+                    <li>{{ t('api_check_docker_logs') }}<code>docker-compose logs nbcm-app</code></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,273 @@
+{% extends "base.html" %}
+{% block title %}Restauration en cours{% endblock %}
+{% block page_title %}Restauration DB - Suivi en temps réel{% endblock %}
+
+{% block extra_css %}
+<style>
+    .progress-container {
+        margin: 2rem 0;
+    }
+    .progress {
+        height: 40px;
+        font-size: 1.1rem;
+        font-weight: bold;
+    }
+    .log-container {
+        background: #1a1a2e;
+        color: #00ff00;
+        font-family: 'Courier New', monospace;
+        padding: 1.5rem;
+        border-radius: 8px;
+        max-height: 500px;
+        overflow-y: auto;
+        font-size: 0.9rem;
+    }
+    .log-entry {
+        margin-bottom: 0.5rem;
+        padding: 0.25rem;
+    }
+    .log-entry .timestamp {
+        color: #ffaa00;
+        font-weight: bold;
+    }
+    .log-entry.info .message { color: #00ff00; }
+    .log-entry.success .message { color: #00ff00; font-weight: bold; }
+    .log-entry.warning .message { color: #ffaa00; }
+    .log-entry.error .message { color: #ff0000; font-weight: bold; }
+    
+    .status-badge {
+        font-size: 1.5rem;
+        padding: 1rem 2rem;
+        border-radius: 12px;
+    }
+    .status-running { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .status-completed { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+    .status-failed { background: linear-gradient(135deg, #cb2d3e 0%, #ef473a 100%); }
+    
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.6; }
+    }
+    .pulsing {
+        animation: pulse 2s infinite;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Statut principal -->
+    <div class="text-center mb-4">
+        <div id="statusBadge" class="status-badge status-{{ task.status }} text-white d-inline-block">
+            {% if task.status == 'pending' %}
+                ⏳ En attente...
+            {% elif task.status == 'running' %}
+                <span class="pulsing">🔄 Restauration en cours...</span>
+            {% elif task.status == 'completed' %}
+                ✅ Terminé avec succès
+            {% elif task.status == 'failed' %}
+                ❌ Échec
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Carte principale -->
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">
+                <i class="bi bi-database-fill-gear"></i> 
+                Restauration: <code class="text-white">{{ task.filename }}</code>
+            </h5>
+        </div>
+        
+        <div class="card-body">
+            <!-- Barre de progression -->
+            <div class="progress-container">
+                <div class="progress">
+                    <div id="progressBar" 
+                         class="progress-bar progress-bar-striped {% if task.status == 'running' %}progress-bar-animated{% endif %} 
+                                {% if task.status == 'completed' %}bg-success{% elif task.status == 'failed' %}bg-danger{% else %}bg-primary{% endif %}"
+                         role="progressbar" 
+                         style="width: {{ task.progress }}%"
+                         aria-valuenow="{{ task.progress }}" 
+                         aria-valuemin="0" 
+                         aria-valuemax="100">
+                        <span id="progressText">{{ task.progress }}%</span>
+                    </div>
+                </div>
+                <div id="statusMessage" class="text-center mt-2 fw-bold">{{ task.message }}</div>
+            </div>
+
+            <!-- Statistiques -->
+            <div class="row text-center mb-4">
+                <div class="col-md-4">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h6 class="text-muted">Démarré à</h6>
+                            <p class="mb-0 fw-bold">{{ task.started_at }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h6 class="text-muted">Durée</h6>
+                            <p class="mb-0 fw-bold" id="duration">
+                                {% if task.duration_seconds %}
+                                    {{ task.duration_seconds }}s
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h6 class="text-muted">Statut</h6>
+                            <p class="mb-0 fw-bold" id="statusText">
+                                {% if task.status == 'pending' %}⏳ En attente
+                                {% elif task.status == 'running' %}🔄 En cours
+                                {% elif task.status == 'completed' %}✅ Terminé
+                                {% elif task.status == 'failed' %}❌ Échec
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Logs en temps réel -->
+            <h6 class="mb-3"><i class="bi bi-terminal"></i> Logs en temps réel</h6>
+            <div id="logContainer" class="log-container">
+                {% for log in task.logs %}
+                <div class="log-entry {{ log.level }}">
+                    <span class="timestamp">[{{ log.timestamp }}]</span>
+                    <span class="message">{{ log.message }}</span>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Erreur (si présente) -->
+            {% if task.error %}
+            <div class="alert alert-danger mt-4">
+                <h6><i class="bi bi-exclamation-triangle-fill"></i> Erreur</h6>
+                <pre class="mb-0"><code>{{ task.error }}</code></pre>
+            </div>
+            {% endif %}
+
+            <!-- Actions -->
+            <div class="mt-4 text-center">
+                {% if task.status == 'completed' %}
+                <a href="{{ url_for('backup.restore_db') }}" class="btn btn-success btn-lg">
+                    <i class="bi bi-check-circle"></i> Retour aux restaurations
+                </a>
+                <a href="{{ url_for('dashboard.index') }}" class="btn btn-primary btn-lg">
+                    <i class="bi bi-house"></i> Retour au dashboard
+                </a>
+                {% elif task.status == 'failed' %}
+                <a href="{{ url_for('backup.restore_db') }}" class="btn btn-danger btn-lg">
+                    <i class="bi bi-arrow-left"></i> Retour aux restaurations
+                </a>
+                {% else %}
+                <button class="btn btn-secondary btn-lg" disabled>
+                    <span class="spinner-border spinner-border-sm me-2"></span>
+                    Restauration en cours...
+                </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Avertissement -->
+    <div class="alert alert-warning mt-4">
+        <i class="bi bi-info-circle"></i> 
+        <strong>Important :</strong> Ne fermez pas cette page pendant la restauration. 
+        La progression est mise à jour automatiquement toutes les 2 secondes.
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Polling automatique pour mettre à jour le statut
+let pollInterval;
+let startTime = new Date('{{ task.started_at }}');
+
+function updateDuration() {
+    const now = new Date();
+    const diff = Math.floor((now - startTime) / 1000);
+    document.getElementById('duration').textContent = diff + 's';
+}
+
+function pollStatus() {
+    fetch('{{ url_for("backup.api_restore_status") }}')
+        .then(response => response.json())
+        .then(data => {
+            if (!data.running) {
+                // Restauration terminée ou aucune restauration
+                clearInterval(pollInterval);
+                location.reload();
+                return;
+            }
+            
+            const task = data.task;
+            
+            // Mettre à jour la progression
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            progressBar.style.width = task.progress + '%';
+            progressBar.setAttribute('aria-valuenow', task.progress);
+            progressText.textContent = task.progress + '%';
+            
+            // Mettre à jour le message
+            document.getElementById('statusMessage').textContent = task.message;
+            
+            // Mettre à jour les logs
+            const logContainer = document.getElementById('logContainer');
+            logContainer.innerHTML = '';
+            
+            task.logs.forEach(log => {
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry ' + log.level;
+                logEntry.innerHTML = `
+                    <span class="timestamp">[${log.timestamp}]</span>
+                    <span class="message">${log.message}</span>
+                `;
+                logContainer.appendChild(logEntry);
+            });
+            
+            // Auto-scroll vers le bas
+            logContainer.scrollTop = logContainer.scrollHeight;
+            
+            // Mettre à jour la durée
+            updateDuration();
+            
+            // Si terminé ou échoué, arrêter le polling et recharger
+            if (task.status === 'completed' || task.status === 'failed') {
+                clearInterval(pollInterval);
+                
+                // Attendre 2 secondes pour laisser voir le résultat final
+                setTimeout(() => {
+                    location.reload();
+                }, 2000);
+            }
+        })
+        .catch(error => {
+            console.error('Erreur polling:', error);
+        });
+}
+
+// Démarrer le polling si la restauration est en cours
+{% if task.status in ['pending', 'running'] %}
+pollInterval = setInterval(pollStatus, 2000);  // Toutes les 2 secondes
+setInterval(updateDuration, 1000);  // Mise à jour durée chaque seconde
+{% endif %}
+
+// Premier appel immédiat
+{% if task.status in ['pending', 'running'] %}
+pollStatus();
+{% endif %}
+</script>
+{% endblock %}

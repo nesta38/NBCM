@@ -10,6 +10,8 @@ import pytz
 from datetime import datetime
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
+from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
+from apscheduler.executors.pool import ThreadPoolExecutor
 from flask import current_app
 
 # Timezone Europe/Paris
@@ -19,6 +21,66 @@ PARIS_TZ = pytz.timezone('Europe/Paris')
 scheduler = None
 scheduler_lock = None
 _flask_app = None  # Stocker l'app Flask pour les jobs
+
+
+# =============================================================================
+# FONCTIONS WRAPPER SÉRIALISABLES POUR APScheduler
+# Ces fonctions sont au niveau module pour permettre la sérialisation
+# =============================================================================
+
+def _scheduled_check_emails():
+    """Wrapper sérialisable pour check_scheduled_emails_job"""
+    if _flask_app:
+        with _flask_app.app_context():
+            check_scheduled_emails_job()
+
+def _scheduled_auto_import():
+    """Wrapper sérialisable pour check_auto_import_job"""
+    if _flask_app:
+        with _flask_app.app_context():
+            check_auto_import_job()
+
+def _scheduled_imap_fetch():
+    """Wrapper sérialisable pour fetch_imap_job"""
+    if _flask_app:
+        with _flask_app.app_context():
+            fetch_imap_job()
+
+def _scheduled_api_fetch():
+    """Wrapper sérialisable pour fetch_api_job"""
+    if _flask_app:
+        with _flask_app.app_context():
+            fetch_api_job()
+
+def _scheduled_cleanup_duplicates():
+    """Wrapper sérialisable pour cleanup_duplicates_job"""
+    if _flask_app:
+        with _flask_app.app_context():
+            cleanup_duplicates_job()
+
+def _scheduled_cleanup_files():
+    """Wrapper sérialisable pour cleanup_processed_files_job"""
+    if _flask_app:
+        with _flask_app.app_context():
+            cleanup_processed_files_job()
+
+def _scheduled_archive_daily():
+    """Wrapper sérialisable pour archive_daily_job"""
+    if _flask_app:
+        with _flask_app.app_context():
+            archive_daily_job()
+
+def _scheduled_backup_db(frequency, config):
+    """Wrapper sérialisable pour backup_db_job"""
+    if _flask_app:
+        with _flask_app.app_context():
+            backup_db_job(frequency, config)
+
+def _scheduled_backup_fs(frequency, config):
+    """Wrapper sérialisable pour backup_fs_job"""
+    if _flask_app:
+        with _flask_app.app_context():
+            backup_fs_job(frequency, config)
 
 
 def init_scheduler(app):
@@ -39,33 +101,56 @@ def init_scheduler(app):
         with app.app_context():
             from app.services.config_service import get_config
             
-            scheduler = BackgroundScheduler()
+            # Configuration jobstore persistant dans PostgreSQL
+            jobstores = {
+                'default': SQLAlchemyJobStore(url=app.config['SQLALCHEMY_DATABASE_URI'])
+            }
+            
+            executors = {
+                'default': ThreadPoolExecutor(20)
+            }
+            
+            job_defaults = {
+                'coalesce': False,
+                'max_instances': 1,
+                'misfire_grace_time': 3600
+            }
+            
+            scheduler = BackgroundScheduler(
+                jobstores=jobstores,
+                executors=executors,
+                job_defaults=job_defaults,
+                timezone=PARIS_TZ
+            )
             
             # Tâche: Vérification des emails programmés (chaque minute)
             scheduler.add_job(
-                func=lambda: run_in_context(app, check_scheduled_emails_job),
+                func=_scheduled_check_emails,
                 trigger="interval",
                 seconds=60,
                 id='check_scheduled_emails',
-                name='Vérification emails programmés'
+                name='Vérification emails programmés',
+                replace_existing=True
             )
             
             # Tâche: Import automatique des fichiers (chaque minute)
             scheduler.add_job(
-                func=lambda: run_in_context(app, check_auto_import_job),
+                func=_scheduled_auto_import,
                 trigger="interval",
                 seconds=60,
                 id='auto_import_files',
-                name='Import automatique fichiers'
+                name='Import automatique fichiers',
+                replace_existing=True
             )
             
             # Tâche: Import IMAP (selon config)
             scheduler.add_job(
-                func=lambda: run_in_context(app, fetch_imap_job),
+                func=_scheduled_imap_fetch,
                 trigger="interval",
                 minutes=1,
                 id='imap_check',
-                name='Vérification IMAP'
+                name='Vérification IMAP',
+                replace_existing=True
             )
             
             # Tâche: Import API (selon config - intervalle dynamique)
@@ -77,49 +162,59 @@ def init_scheduler(app):
             if api_schedule_config.get('actif', True):
                 interval_minutes = int(api_schedule_config.get('interval_minutes', 60))
                 scheduler.add_job(
-                    func=lambda: run_in_context(app, fetch_api_job),
+                    func=_scheduled_api_fetch,
                     trigger="interval",
                     minutes=interval_minutes,
                     id='api_import',
-                    name=f'Import API Altaview ({interval_minutes} min)'
+                    name=f'Import API Altaview ({interval_minutes} min)',
+                    replace_existing=True
                 )
             
             # Tâche: Nettoyage des doublons (toutes les heures)
             scheduler.add_job(
-                func=lambda: run_in_context(app, cleanup_duplicates_job),
+                func=_scheduled_cleanup_duplicates,
                 trigger="interval",
                 hours=1,
                 id='cleanup_duplicates',
-                name='Nettoyage doublons'
+                name='Nettoyage doublons',
+                replace_existing=True
             )
             
             # Tâche: Nettoyage fichiers processed/ > 48h (tous les jours à 3h)
             scheduler.add_job(
-                func=lambda: run_in_context(app, cleanup_processed_files_job),
+                func=_scheduled_cleanup_files,
                 trigger=CronTrigger(hour=3, minute=0, timezone=PARIS_TZ),
                 id='cleanup_processed_files',
-                name='Nettoyage fichiers processed/ > 48h'
+                name='Nettoyage fichiers processed/ > 48h',
+                replace_existing=True
             )
             
             # Tâche: Archivage quotidien (selon config)
             arch_config = get_config('archive_config', {'heure': 18, 'minute': 0, 'actif': True})
             if arch_config.get('actif', True):
                 scheduler.add_job(
-                    func=lambda: run_in_context(app, archive_daily_job),
+                    func=_scheduled_archive_daily,
                     trigger=CronTrigger(
                         hour=int(arch_config.get('heure', 18)),
                         minute=int(arch_config.get('minute', 0)),
                         timezone=PARIS_TZ
                     ),
                     id='archive_daily',
-                    name='Archivage quotidien'
+                    name='Archivage quotidien',
+                    replace_existing=True
                 )
             
             # Charger et ajouter les tâches de backup configurées
             load_backup_schedules(app)
             
             scheduler.start()
-            app.logger.info("Scheduler démarré (processus maître)")
+            
+            # Lister tous les jobs après démarrage
+            all_jobs = scheduler.get_jobs()
+            app.logger.info(f"📋 Scheduler démarré avec {len(all_jobs)} jobs persistants")
+            for job in all_jobs:
+                next_run = job.next_run_time.strftime('%Y-%m-%d %H:%M:%S') if job.next_run_time else 'N/A'
+                app.logger.info(f"  • {job.id}: next_run={next_run}")
             
             # Démarrer le listener Redis avec l'app pour le contexte
             try:
@@ -131,7 +226,7 @@ def init_scheduler(app):
                 app.logger.warning(f"Listener Redis non disponible: {e}")
             
             # Arrêt propre
-            atexit.register(lambda: shutdown_scheduler())
+            atexit.register(shutdown_scheduler)
             
             return True
             
@@ -483,15 +578,13 @@ def reschedule_archive(heure, minute, actif):
     try:
         if actif:
             trigger = CronTrigger(hour=heure, minute=minute, timezone=PARIS_TZ)
-            if scheduler.get_job(job_id):
-                scheduler.reschedule_job(job_id, trigger=trigger)
-            else:
-                scheduler.add_job(
-                    func=lambda: run_in_context(_flask_app, archive_daily_job),
-                    trigger=trigger,
-                    id=job_id,
-                    name='Archivage quotidien'
-                )
+            scheduler.add_job(
+                func=_scheduled_archive_daily,
+                trigger=trigger,
+                id=job_id,
+                name='Archivage quotidien',
+                replace_existing=True
+            )
         else:
             if scheduler.get_job(job_id):
                 scheduler.remove_job(job_id)
@@ -538,29 +631,27 @@ def reschedule_backup(backup_type, frequency, config):
             else:
                 return False
             
-            # 🔥 FIX: Utiliser _flask_app au lieu de current_app
-            # Fonction de backup appropriée
+            # Sélectionner la fonction wrapper appropriée
             if backup_type == 'db':
-                job_func = lambda: run_in_context(
-                    _flask_app, 
-                    lambda: backup_db_job(frequency, config)
-                )
+                job_func = _scheduled_backup_db
             else:  # fs
-                job_func = lambda: run_in_context(
-                    _flask_app, 
-                    lambda: backup_fs_job(frequency, config)
-                )
+                job_func = _scheduled_backup_fs
             
-            # Ajouter ou reprogrammer le job
-            if scheduler.get_job(job_id):
-                scheduler.reschedule_job(job_id, trigger=trigger)
-            else:
-                scheduler.add_job(
-                    func=job_func,
-                    trigger=trigger,
-                    id=job_id,
-                    name=f'Backup {backup_type.upper()} {frequency}'
-                )
+            # Ajouter ou remplacer le job (jobstore persistant)
+            # Les arguments sont passés via args pour permettre la sérialisation
+            scheduler.add_job(
+                func=job_func,
+                args=[frequency, config],
+                trigger=trigger,
+                id=job_id,
+                name=f'Backup {backup_type.upper()} {frequency}',
+                replace_existing=True
+            )
+            
+            if _flask_app:
+                with _flask_app.app_context():
+                    from flask import current_app
+                    current_app.logger.info(f"✅ Job backup ajouté/mis à jour: {job_id}")
         else:
             # Désactiver le job
             if scheduler.get_job(job_id):
@@ -597,25 +688,15 @@ def reschedule_api_import(interval_minutes, actif):
             # Valider l'intervalle
             interval_minutes = max(5, min(1440, int(interval_minutes)))
             
-            # Ajouter ou reprogrammer le job
-            if scheduler.get_job(job_id):
-                scheduler.reschedule_job(
-                    job_id,
-                    trigger='interval',
-                    minutes=interval_minutes
-                )
-                scheduler.modify_job(
-                    job_id,
-                    name=f'Import API Altaview ({interval_minutes} min)'
-                )
-            else:
-                scheduler.add_job(
-                    func=lambda: run_in_context(_flask_app, fetch_api_job),
-                    trigger='interval',
-                    minutes=interval_minutes,
-                    id=job_id,
-                    name=f'Import API Altaview ({interval_minutes} min)'
-                )
+            # Ajouter ou remplacer le job
+            scheduler.add_job(
+                func=_scheduled_api_fetch,
+                trigger='interval',
+                minutes=interval_minutes,
+                id=job_id,
+                name=f'Import API Altaview ({interval_minutes} min)',
+                replace_existing=True
+            )
         else:
             # Désactiver le job
             if scheduler.get_job(job_id):
