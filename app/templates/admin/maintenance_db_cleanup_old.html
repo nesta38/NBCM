@@ -1,18 +1,19 @@
 {% extends "base.html" %}
-{% block title %}Nettoyage Jobs{% endblock %}
-{% block page_title %}Nettoyer jobs de plus de 6 mois{% endblock %}
+{% block title %}{{ t('cleanup_old_page_title') }}{% endblock %}
+{% block page_title %}{{ t('cleanup_old_page_heading') }}{% endblock %}
 
 {% block content %}
 <div class="alert alert-warning mb-4">
-    <h5><i class="bi bi-info-circle"></i> Nettoyage sélectif</h5>
-    <p class="mb-0">Cette opération va supprimer <strong>{{ "{:,}".format(stats.jobs_old_count).replace(',', ' ') }} jobs</strong> de plus de 6 mois.</p>
+    <h5><i class="bi bi-info-circle"></i> {{ t('selective_cleanup') }}</h5>
+    <p class="mb-0">{{ t('cleanup_will_delete') }} <strong>{{ "{:,}".format(stats.jobs_old_count).replace(',', ' ') }} {{ t('jobs_word') }}</strong> {{ t('jobs_older_than_6_months') }}.</p>
 </div>
 
 <div class="card">
     <div class="card-body">
-        <form action="{{ url_for('admin.cleanup_old_jobs') }}" method="POST" onsubmit="return confirm('Supprimer {{ stats.jobs_old_count }} jobs ?');">
+        {% set confirm_msg = t('confirm_delete_jobs')|replace('{count}', stats.jobs_old_count|string) %}
+        <form action="{{ url_for('admin.cleanup_old_jobs') }}" method="POST" onsubmit="return confirm('{{ confirm_msg }}');">
             <button type="submit" class="btn btn-warning">
-                <i class="bi bi-trash"></i> Nettoyer {{ "{:,}".format(stats.jobs_old_count).replace(',', ' ') }} jobs
+                <i class="bi bi-trash"></i> {{ t('btn_cleanup') }} {{ "{:,}".format(stats.jobs_old_count).replace(',', ' ') }} {{ t('jobs_word') }}
             </button>
         </form>
     </div>

@@ -124,3 +124,47 @@ def get_lock_service():
         _lock_service = LockService()
     
     return _lock_service
+
+
+# ==============================================================================
+# Fonctions wrapper pour simplifier l'utilisation
+# ==============================================================================
+
+def acquire_lock(lock_key, timeout=60):
+    """
+    Acquiert un lock distribué.
+    
+    Args:
+        lock_key: Nom du lock
+        timeout: Durée de vie du lock en secondes
+    
+    Returns:
+        bool: True si lock acquis, False sinon
+    """
+    service = get_lock_service()
+    return service.acquire_lock(lock_key, ttl=timeout)
+
+
+def release_lock(lock_key):
+    """
+    Libère un lock distribué.
+    
+    Args:
+        lock_key: Nom du lock à libérer
+    """
+    service = get_lock_service()
+    service.release_lock(lock_key)
+
+
+def check_lock(lock_key):
+    """
+    Vérifie si un lock existe.
+    
+    Args:
+        lock_key: Nom du lock
+    
+    Returns:
+        bool: True si le lock existe, False sinon
+    """
+    service = get_lock_service()
+    return service.check_lock(lock_key)

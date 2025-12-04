@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+{% block title %}Planification API Altaview{% endblock %}
+{% block page_title %}Planification import API Altaview{% endblock %}
+
+{% block content %}
+<div class="alert alert-info mb-4">
+    <i class="bi bi-info-circle"></i> Configurez l'intervalle d'exécution automatique de l'import API
+</div>
+
+<!-- Configuration de la planification -->
+<div class="card shadow-sm border-primary mb-4">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">
+            <i class="bi bi-clock"></i> Planification automatique
+        </h5>
+    </div>
+    <div class="card-body">
+        <form action="{{ url_for('admin.config_api_schedule') }}" method="POST">
+            <div class="row">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">
+                        <i class="bi bi-hourglass-split"></i> Intervalle (minutes)
+                    </label>
+                    <input type="number" class="form-control form-control-lg" name="interval_minutes" 
+                           value="{{ schedule_config.get('interval_minutes', 60) }}" 
+                           min="5" max="1440" step="5" required>
+                    <small class="text-muted">
+                        <i class="bi bi-info-circle"></i> Entre 5 minutes et 1440 minutes (24h)
+                    </small>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Suggestions rapides</label>
+                    <div class="btn-group w-100" role="group">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="document.querySelector('[name=interval_minutes]').value=15">15 min</button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="document.querySelector('[name=interval_minutes]').value=30">30 min</button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="document.querySelector('[name=interval_minutes]').value=60">1h</button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="document.querySelector('[name=interval_minutes]').value=120">2h</button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="document.querySelector('[name=interval_minutes]').value=360">6h</button>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="my-4">
+
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="form-check form-switch">
+                    <input class="form-check-input form-check-input-lg" type="checkbox" 
+                           name="actif" id="scheduleSwitch" {% if schedule_config.get('actif', True) %}checked{% endif %}>
+                    <label class="form-check-label fw-bold fs-5" for="scheduleSwitch">
+                        {% if schedule_config.get('actif', True) %}
+                            <span class="badge bg-success fs-6">
+                                <i class="bi bi-check-circle-fill"></i> Planification active
+                            </span>
+                        {% else %}
+                            <span class="badge bg-secondary fs-6">
+                                <i class="bi bi-pause-circle-fill"></i> Planification désactivée
+                            </span>
+                        {% endif %}
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="bi bi-save"></i> Enregistrer
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Statut de la configuration API -->
+<div class="row">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header {% if api_config.get('actif') %}bg-success{% else %}bg-secondary{% endif %} text-white">
+                <h6 class="mb-0">
+                    <i class="bi bi-gear"></i> Configuration API
+                </h6>
+            </div>
+            <div class="card-body">
+                {% if api_config.get('actif') %}
+                    <p class="mb-2">
+                        <i class="bi bi-check-circle text-success"></i> 
+                        <strong>API configurée et active</strong>
+                    </p>
+                    <p class="mb-2">
+                        <i class="bi bi-link"></i> <small><code>{{ api_config.get('url', 'N/A')[:60] }}...</code></small>
+                    </p>
+                    <p class="mb-0">
+                        <i class="bi bi-clock"></i> Intervalle: <strong>{{ schedule_config.get('interval_minutes', 60) }} minutes</strong>
+                    </p>
+                {% else %}
+                    <p class="text-warning mb-0">
+                        <i class="bi bi-exclamation-triangle"></i> 
+                        L'API n'est pas active. 
+                        <a href="{{ url_for('admin.api') }}">Activer l'API</a>
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-info text-white">
+                <h6 class="mb-0">
+                    <i class="bi bi-calendar-event"></i> Prochaine exécution
+                </h6>
+            </div>
+            <div class="card-body">
+                {% if api_config.get('actif') and schedule_config.get('actif', True) %}
+                    <p class="mb-2">
+                        <i class="bi bi-arrow-repeat"></i> 
+                        <strong>Toutes les {{ schedule_config.get('interval_minutes', 60) }} minutes</strong>
+                    </p>
+                    <p class="mb-0 small text-muted">
+                        <i class="bi bi-info-circle"></i> 
+                        L'import s'exécutera automatiquement selon l'intervalle configuré
+                    </p>
+                {% else %}
+                    <p class="text-muted mb-0">
+                        <i class="bi bi-pause-circle"></i> Planification désactivée
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Guide d'utilisation -->
+<div class="card shadow-sm mt-4 border-warning">
+    <div class="card-header bg-warning">
+        <h6 class="mb-0">
+            <i class="bi bi-lightbulb"></i> Comment ça fonctionne ?
+        </h6>
+    </div>
+    <div class="card-body">
+        <ol class="mb-0">
+            <li><strong>Configurer l'API</strong> : Assurez-vous que l'API est configurée avec l'URL et le token dans <a href="{{ url_for('admin.api') }}">Configuration API</a></li>
+            <li><strong>Définir l'intervalle</strong> : Choisissez la fréquence d'import (ex: 60 minutes = 1 fois par heure)</li>
+            <li><strong>Activer la planification</strong> : Cochez la case "Planification active"</li>
+            <li><strong>Redémarrer l'application</strong> : Exécutez <code>docker-compose restart nbcm</code> pour appliquer les changements</li>
+            <li><strong>Vérifier les logs</strong> : Consultez les logs pour voir les imports automatiques : <code>docker-compose logs -f nbcm-app | grep API</code></li>
+            <li><strong>Historique</strong> : Consultez l'<a href="{{ url_for('altaview.import_history') }}">historique des imports</a> pour voir les résultats</li>
+        </ol>
+    </div>
+</div>
+
+<!-- Recommandations -->
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h6><i class="bi bi-speedometer text-success"></i> Intervalles recommandés</h6>
+                <ul class="list-unstyled mb-0 small">
+                    <li><strong>15-30 min</strong> : Environnements avec backups fréquents</li>
+                    <li><strong>60 min (1h)</strong> : Usage standard recommandé</li>
+                    <li><strong>2-6h</strong> : Environnements peu actifs</li>
+                    <li><strong>12-24h</strong> : Imports ponctuels</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h6><i class="bi bi-exclamation-triangle text-warning"></i> Limitations</h6>
+                <ul class="list-unstyled mb-0 small">
+                    <li><strong>Minimum</strong> : 5 minutes (éviter la surcharge)</li>
+                    <li><strong>Maximum</strong> : 1440 minutes (24h)</li>
+                    <li>L'API Veritas peut avoir des limites de taux</li>
+                    <li>Redémarrage requis après modification</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h6><i class="bi bi-bug text-danger"></i> Dépannage</h6>
+                <ul class="list-unstyled mb-0 small">
+                    <li>Vérifier les <a href="{{ url_for('altaview.import_history') }}">logs d'import</a></li>
+                    <li>Tester manuellement dans <a href="{{ url_for('admin.api') }}">Config API</a></li>
+                    <li>Vérifier l'URL et le token</li>
+                    <li>Consulter les logs Docker : <code>docker-compose logs nbcm-app</code></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

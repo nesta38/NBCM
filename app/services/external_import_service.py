@@ -229,19 +229,26 @@ def fetch_altaview_api():
         import_dir = current_app.config.get('ALTAVIEW_AUTO_IMPORT_DIR', '/app/data/altaview_auto_import')
         os.makedirs(import_dir, exist_ok=True)
         
+        # Créer le dossier processing
+        processing_dir = os.path.join(import_dir, 'processing')
+        os.makedirs(processing_dir, exist_ok=True)
+        
         # Nom du fichier avec timestamp
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         filename = f'altaview_api_{timestamp}.csv'
-        filepath = os.path.join(import_dir, filename)
+        
+        # 🔒 IMPORTANT: Créer le fichier directement dans processing/
+        # pour éviter qu'il soit traité par check_auto_import_job en même temps
+        processing_path = os.path.join(processing_dir, filename)
         
         # Écrire le contenu dans le fichier
-        with open(filepath, 'w', encoding='utf-8') as f:
+        with open(processing_path, 'w', encoding='utf-8') as f:
             f.write(response.text)
         
         current_app.logger.info(f"API: Fichier sauvegardé: {filename}")
         
         # Utiliser la fonction d'import standard pour traiter le fichier
-        success, stats = import_altaview_file(filepath, filename, 'api-auto')
+        success, stats = import_altaview_file(processing_path, filename, 'api-auto')
         
         if success:
             current_app.logger.info(f"API: Import réussi - {stats.get('nb_ajoutes', 0)} ajoutés, {stats.get('nb_mis_a_jour', 0)} mis à jour")
@@ -252,7 +259,12 @@ def fetch_altaview_api():
             
             import shutil
             processed_path = os.path.join(processed_dir, filename)
-            shutil.move(filepath, processed_path)
+            
+            # Vérifier que le fichier existe avant de le déplacer
+            if os.path.exists(processing_path):
+                shutil.move(processing_path, processed_path)
+            else:
+                current_app.logger.warning(f"API: Fichier {filename} introuvable (déjà traité?)")
             
             return True
         else:
@@ -264,7 +276,11 @@ def fetch_altaview_api():
             os.makedirs(os.path.dirname(error_path), exist_ok=True)
             
             import shutil
-            shutil.move(filepath, error_path)
+            # Vérifier que le fichier existe avant de le déplacer
+            if os.path.exists(processing_path):
+                shutil.move(processing_path, error_path)
+            else:
+                current_app.logger.warning(f"API: Fichier {filename} introuvable")
             
             return False
         

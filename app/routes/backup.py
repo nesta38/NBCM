@@ -36,25 +36,38 @@ def _get_backup_data():
 
 def _get_schedule_data(backup_type, frequency):
     """Helper pour récupérer les données de planification"""
+    from app.services.translations import get_translation, get_user_language
+    
     config_key = f'backup_schedule_{backup_type}_{frequency}'
     schedule_config = get_config(config_key, {})
     
+    # Récupérer la langue de l'utilisateur
+    lang = get_user_language()
+    
     # Calculer la prochaine exécution (approximation)
-    next_run = 'Non planifiée'
+    next_run = get_translation('schedule_not_planned', lang)
     if schedule_config.get('enabled', False):
         try:
             time_str = schedule_config.get('time', '03:00')
             if frequency == 'weekly':
-                days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche']
+                # Traduire le jour de la semaine
+                day_keys = ['day_monday', 'day_tuesday', 'day_wednesday', 'day_thursday', 
+                           'day_friday', 'day_saturday', 'day_sunday']
                 day_idx = int(schedule_config.get('day_of_week', 6))
-                next_run = f"Chaque {days[day_idx]} à {time_str}"
+                day_name = get_translation(day_keys[day_idx], lang)
+                
+                # Utiliser le template de traduction
+                next_run = get_translation('schedule_every_week_on', lang)
+                next_run = next_run.replace('{day}', day_name).replace('{time}', time_str)
             elif frequency == 'monthly':
                 day_num = schedule_config.get('day_of_month', 1)
-                next_run = f"Le {day_num} de chaque mois à {time_str}"
+                next_run = get_translation('schedule_every_month_on', lang)
+                next_run = next_run.replace('{day}', str(day_num)).replace('{time}', time_str)
             else:  # daily
-                next_run = f"Tous les jours à {time_str}"
-        except:
-            next_run = 'Erreur de calcul'
+                next_run = get_translation('schedule_every_day_at', lang)
+                next_run = next_run.replace('{time}', time_str)
+        except Exception as e:
+            next_run = get_translation('calculation_error', lang)
     
     data = _get_backup_data()
     data['schedule_config'] = schedule_config

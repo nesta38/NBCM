@@ -234,7 +234,18 @@ def get_trend_data(days=7):
 def archiver_conformite_quotidienne(force_now=False):
     """
     Archive la conformité quotidienne.
+    Avec lock distribué Redis pour éviter les doublons.
     """
+    from app.services.lock_service import acquire_lock, release_lock
+    
+    # 🔒 Acquérir un lock distribué pour éviter les doublons
+    lock_key = 'archive_daily_lock'
+    lock_acquired = acquire_lock(lock_key, timeout=300)  # Lock de 5 minutes max
+    
+    if not lock_acquired:
+        current_app.logger.warning("Archive déjà en cours (lock actif), ignorée")
+        return {'skipped': True, 'reason': 'Archive already running (locked)'}
+    
     try:
         current_app.logger.info(f"Démarrage archivage ({'MANUEL' if force_now else 'AUTO'})...")
         maintenant = datetime.now()
@@ -348,3 +359,7 @@ def archiver_conformite_quotidienne(force_now=False):
         current_app.logger.error(f"Erreur archivage: {e}", exc_info=True)
         db.session.rollback()
         return {'error': str(e)}
+    finally:
+        # 🔓 Libérer le lock
+        release_lock(lock_key)
+        current_app.logger.debug("Lock archivage libéré")

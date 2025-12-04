@@ -7,7 +7,7 @@
     <div class="row g-3">
         <div class="col-auto"><div class="card bg-light"><div class="card-body py-2"><i class="bi bi-database"></i> {{ t('jobs_total') }}: <strong>{{ stats.total }}</strong></div></div></div>
         <div class="col-auto"><div class="card bg-info text-white"><div class="card-body py-2"><i class="bi bi-clock-history"></i> {{ t('jobs_last_24h') }}: <strong>{{ stats.recent }}</strong></div></div></div>
-        <div class="col-auto"><div class="card bg-primary text-white"><div class="card-body py-2"><i class="bi bi-funnel"></i> Filtered: <strong>{{ stats.filtered }}</strong></div></div></div>
+        <div class="col-auto"><div class="card bg-primary text-white"><div class="card-body py-2"><i class="bi bi-funnel"></i> {{ t('cmdb_servers_shown') }}: <strong>{{ stats.filtered }}</strong></div></div></div>
     </div>
     {% if current_user.is_operator() %}
     <a href="{{ url_for('altaview.import_page') }}" class="btn btn-success"><i class="bi bi-upload"></i> {{ t('jobs_manual_import') }}</a>

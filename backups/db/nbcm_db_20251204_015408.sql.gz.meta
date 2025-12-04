@@ -1,0 +1,5 @@
+timestamp=20251204_015408
+description=Test restore
+db_type=postgresql
+backup_type=db
+size=279553

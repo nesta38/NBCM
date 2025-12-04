@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}{{ t('smtp_config_title') }}{% endblock %}
+{% block page_title %}{{ t('smtp_config_title') }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card shadow-sm border-secondary">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-envelope-at"></i> {{ t('smtp_config_title') }}
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">
+                    <i class="bi bi-info-circle"></i>
+                    {{ t('smtp_config_subtitle') }}
+                </p>
+
+                <form action="{{ url_for('admin.config_email') }}" method="POST">
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label class="form-label fw-bold">{{ t('smtp_server') }}</label>
+                            <input type="text" class="form-control" name="smtp_server" 
+                                   value="{{ email_config.get('smtp_server', '') }}" 
+                                   placeholder="smtp.example.com" required>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">{{ t('smtp_port') }}</label>
+                            <input type="number" class="form-control" name="smtp_port" 
+                                   value="{{ email_config.get('smtp_port', '587') }}" 
+                                   placeholder="587" required>
+                            <small class="text-muted">{{ t('smtp_port_help') }}</small>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">{{ t('smtp_user') }}</label>
+                            <input type="text" class="form-control" name="smtp_user" 
+                                   value="{{ email_config.get('smtp_user', '') }}" 
+                                   placeholder="user@example.com" required>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">{{ t('smtp_password') }}</label>
+                            <input type="password" class="form-control" name="smtp_password" 
+                                   value="{{ email_config.get('smtp_password', '') }}" 
+                                   placeholder="••••••••" required>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">{{ t('smtp_from') }}</label>
+                            <input type="email" class="form-control" name="email_from" 
+                                   value="{{ email_config.get('email_from', '') }}" 
+                                   placeholder="nbcm@example.com" required>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">{{ t('smtp_to') }}</label>
+                            <input type="text" class="form-control" name="email_to" 
+                                   value="{{ email_config.get('email_to', '') }}" 
+                                   placeholder="admin@example.com, team@example.com" required>
+                            <small class="text-muted">{{ t('smtp_multiple_emails') }}</small>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="actif" 
+                                   id="smtpSwitch" {% if email_config.get('actif') %}checked{% endif %}>
+                            <label class="form-check-label fw-bold" for="smtpSwitch">
+                                {% if email_config.get('actif') %}
+                                    <span class="badge bg-success">
+                                        <i class="bi bi-check-circle"></i> {{ t('smtp_auto_send_enabled') }}
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-secondary">
+                                        <i class="bi bi-pause-circle"></i> {{ t('smtp_auto_send_disabled') }}
+                                    </span>
+                                {% endif %}
+                            </label>
+                        </div>
+
+                        <div>
+                            <button type="submit" formaction="{{ url_for('admin.test_email') }}" 
+                                    class="btn btn-outline-secondary">
+                                <i class="bi bi-send-check"></i> {{ t('smtp_test_send') }}
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save"></i> {{ t('btn_save') }}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mt-4 border-info">
+            <div class="card-header bg-info text-white">
+                <h6 class="mb-0">
+                    <i class="bi bi-lightbulb"></i> {{ t('smtp_info_planning') }}
+                </h6>
+            </div>
+            <div class="card-body">
+                <ul class="mb-0">
+                    <li><strong>{{ t('smtp_info_planning') }}</strong> : {{ t('smtp_info_planning_desc') }} 
+                        <a href="{{ url_for('admin.smtp_schedule') }}">{{ t('smtp_schedule_subtitle') }}</a>
+                    </li>
+                    <li><strong>{{ t('smtp_info_recipients') }}</strong> : {{ t('smtp_info_recipients_desc') }} 
+                        <a href="{{ url_for('recipients.index') }}">{{ t('recipients_title') }}</a>
+                    </li>
+                    <li><strong>{{ t('smtp_info_test') }}</strong> : {{ t('smtp_info_test_desc') }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

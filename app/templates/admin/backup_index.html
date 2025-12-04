@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-{% block title %}Sauvegardes{% endblock %}
-{% block page_title %}Sauvegarde & Restauration - Vue d'ensemble{% endblock %}
+{% block title %}{{ t('backup_index_title') }}{% endblock %}
+{% block page_title %}{{ t('backup_index_overview') }}{% endblock %}
 
 {% block content %}
 <!-- Stats -->
@@ -8,26 +8,26 @@
     <div class="col-md-4">
         <div class="card shadow-sm bg-primary text-white">
             <div class="card-body">
-                <h6 class="card-title"><i class="bi bi-database"></i> Sauvegardes DB</h6>
+                <h6 class="card-title"><i class="bi bi-database"></i> {{ t('backup_db_count') }}</h6>
                 <h3 class="mb-0">{{ backups.db|length }}</h3>
-                <small>Fichiers disponibles</small>
+                <small>{{ t('files_available') }}</small>
             </div>
         </div>
     </div>
     <div class="col-md-4">
         <div class="card shadow-sm bg-success text-white">
             <div class="card-body">
-                <h6 class="card-title"><i class="bi bi-hdd"></i> Sauvegardes FS</h6>
+                <h6 class="card-title"><i class="bi bi-hdd"></i> {{ t('backup_fs_count') }}</h6>
                 <h3 class="mb-0">{{ backups.fs|length }}</h3>
-                <small>Fichiers disponibles</small>
+                <small>{{ t('files_available') }}</small>
             </div>
         </div>
     </div>
     <div class="col-md-4">
         <div class="card shadow-sm {% if redis_enabled %}bg-info{% else %}bg-secondary{% endif %} text-white">
             <div class="card-body">
-                <h6 class="card-title"><i class="bi bi-lightning"></i> Cache Redis</h6>
-                <h3 class="mb-0">{% if redis_enabled %}Actif{% else %}Inactif{% endif %}</h3>
+                <h6 class="card-title"><i class="bi bi-lightning"></i> {{ t('cache_redis') }}</h6>
+                <h3 class="mb-0">{% if redis_enabled %}{{ t('status_active') }}{% else %}{{ t('status_inactive') }}{% endif %}</h3>
             </div>
         </div>
     </div>
@@ -38,16 +38,16 @@
     <div class="col-lg-4 mb-4">
         <div class="card shadow-sm border-primary">
             <div class="card-header bg-primary text-white">
-                <h5 class="mb-0"><i class="bi bi-save"></i> Sauvegardes</h5>
+                <h5 class="mb-0"><i class="bi bi-save"></i> {{ t('backups_section') }}</h5>
             </div>
             <div class="card-body">
-                <p class="text-muted">Créer et gérer les sauvegardes manuelles</p>
+                <p class="text-muted">{{ t('backups_section_desc') }}</p>
                 <div class="d-grid gap-2">
                     <a href="{{ url_for('backup.backups_db') }}" class="btn btn-primary">
-                        <i class="bi bi-database"></i> Sauvegardes DB
+                        <i class="bi bi-database"></i> {{ t('backup_db_count') }}
                     </a>
                     <a href="{{ url_for('backup.backups_fs') }}" class="btn btn-outline-primary">
-                        <i class="bi bi-hdd"></i> Sauvegardes FS
+                        <i class="bi bi-hdd"></i> {{ t('backup_fs_count') }}
                     </a>
                 </div>
             </div>
@@ -57,16 +57,16 @@
     <div class="col-lg-4 mb-4">
         <div class="card shadow-sm border-success">
             <div class="card-header bg-success text-white">
-                <h5 class="mb-0"><i class="bi bi-arrow-clockwise"></i> Restaurations</h5>
+                <h5 class="mb-0"><i class="bi bi-arrow-clockwise"></i> {{ t('restores_section') }}</h5>
             </div>
             <div class="card-body">
-                <p class="text-muted">Restaurer depuis une sauvegarde existante</p>
+                <p class="text-muted">{{ t('restores_section_desc') }}</p>
                 <div class="d-grid gap-2">
                     <a href="{{ url_for('backup.restore_db') }}" class="btn btn-success">
-                        <i class="bi bi-database"></i> Restaurations DB
+                        <i class="bi bi-database"></i> {{ t('restore_db_heading') }}
                     </a>
                     <a href="{{ url_for('backup.restore_fs') }}" class="btn btn-outline-success">
-                        <i class="bi bi-hdd"></i> Restaurations FS
+                        <i class="bi bi-hdd"></i> {{ t('restore_fs_heading') }}
                     </a>
                 </div>
             </div>
@@ -76,16 +76,16 @@
     <div class="col-lg-4 mb-4">
         <div class="card shadow-sm border-warning">
             <div class="card-header bg-warning">
-                <h5 class="mb-0"><i class="bi bi-calendar-check"></i> Planification</h5>
+                <h5 class="mb-0"><i class="bi bi-calendar-check"></i> {{ t('schedule_section') }}</h5>
             </div>
             <div class="card-body">
-                <p class="text-muted">Configurer les sauvegardes automatiques</p>
+                <p class="text-muted">{{ t('schedule_section_desc') }}</p>
                 <div class="d-grid gap-2 mb-2">
                     <a href="{{ url_for('backup.schedule_db_daily') }}" class="btn btn-sm btn-outline-warning">
-                        <i class="bi bi-database"></i> DB Quotidienne
+                        <i class="bi bi-database"></i> {{ t('db_daily') }}
                     </a>
                     <a href="{{ url_for('backup.schedule_fs_daily') }}" class="btn btn-sm btn-outline-warning">
-                        <i class="bi bi-hdd"></i> FS Quotidienne
+                        <i class="bi bi-hdd"></i> {{ t('fs_daily') }}
                     </a>
                 </div>
             </div>
@@ -96,15 +96,15 @@
 <!-- Informations -->
 <div class="card shadow-sm border-info">
     <div class="card-header bg-info text-white">
-        <h6 class="mb-0"><i class="bi bi-info-circle"></i> Informations</h6>
+        <h6 class="mb-0"><i class="bi bi-info-circle"></i> {{ t('information') }}</h6>
     </div>
     <div class="card-body">
         <ul class="mb-0">
-            <li><strong>Sauvegardes DB</strong> : Fichiers SQL compressés de la base de données</li>
-            <li><strong>Sauvegardes FS</strong> : Archives tar.gz des fichiers applicatifs</li>
-            <li><strong>Planification</strong> : Sauvegardes automatiques quotidiennes/hebdo/mensuelles via APScheduler</li>
-            <li><strong>Restauration</strong> : Processus sécurisé avec confirmation obligatoire</li>
-            <li><strong>Cache Redis</strong> : Invalidé automatiquement après restauration DB</li>
+            <li>{{ t('backup_info_db') }}</li>
+            <li>{{ t('backup_info_fs') }}</li>
+            <li>{{ t('backup_info_schedule') }}</li>
+            <li>{{ t('backup_info_restore') }}</li>
+            <li>{{ t('backup_info_redis') }}</li>
         </ul>
     </div>
 </div>

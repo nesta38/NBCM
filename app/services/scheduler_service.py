@@ -6,10 +6,14 @@ Support du rechargement dynamique via Redis pub/sub
 import os
 import fcntl
 import atexit
+import pytz
 from datetime import datetime
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from flask import current_app
+
+# Timezone Europe/Paris
+PARIS_TZ = pytz.timezone('Europe/Paris')
 
 # Scheduler global
 scheduler = None
@@ -92,7 +96,7 @@ def init_scheduler(app):
             # Tâche: Nettoyage fichiers processed/ > 48h (tous les jours à 3h)
             scheduler.add_job(
                 func=lambda: run_in_context(app, cleanup_processed_files_job),
-                trigger=CronTrigger(hour=3, minute=0),
+                trigger=CronTrigger(hour=3, minute=0, timezone=PARIS_TZ),
                 id='cleanup_processed_files',
                 name='Nettoyage fichiers processed/ > 48h'
             )
@@ -104,7 +108,8 @@ def init_scheduler(app):
                     func=lambda: run_in_context(app, archive_daily_job),
                     trigger=CronTrigger(
                         hour=int(arch_config.get('heure', 18)),
-                        minute=int(arch_config.get('minute', 0))
+                        minute=int(arch_config.get('minute', 0)),
+                        timezone=PARIS_TZ
                     ),
                     id='archive_daily',
                     name='Archivage quotidien'
@@ -246,31 +251,86 @@ def run_in_context(app, func):
 def check_scheduled_emails_job():
     """Tâche: Vérifier et envoyer les emails programmés."""
     from app.services.email_service import check_scheduled_emails
-    check_scheduled_emails()
+    from app.services.lock_service import acquire_lock, release_lock
+    from flask import current_app
+    
+    lock_key = 'scheduled_emails_lock'
+    if not acquire_lock(lock_key, timeout=120):
+        current_app.logger.debug("Emails programmés déjà en cours de traitement")
+        return
+    
+    try:
+        check_scheduled_emails()
+    finally:
+        release_lock(lock_key)
 
 
 def check_auto_import_job():
     """Tâche: Vérifier et importer les fichiers CSV."""
     from app.services.external_import_service import check_altaview_auto_import
-    check_altaview_auto_import()
+    from app.services.lock_service import acquire_lock, release_lock
+    from flask import current_app
+    
+    lock_key = 'auto_import_lock'
+    if not acquire_lock(lock_key, timeout=300):  # 5 min max
+        current_app.logger.debug("Import automatique déjà en cours")
+        return
+    
+    try:
+        check_altaview_auto_import()
+    finally:
+        release_lock(lock_key)
 
 
 def fetch_imap_job():
     """Tâche: Récupérer les pièces jointes IMAP."""
     from app.services.external_import_service import fetch_imap_attachments
-    fetch_imap_attachments()
+    from app.services.lock_service import acquire_lock, release_lock
+    from flask import current_app
+    
+    lock_key = 'imap_fetch_lock'
+    if not acquire_lock(lock_key, timeout=300):  # 5 min max
+        current_app.logger.debug("Récupération IMAP déjà en cours")
+        return
+    
+    try:
+        fetch_imap_attachments()
+    finally:
+        release_lock(lock_key)
 
 
 def fetch_api_job():
     """Tâche: Importer depuis l'API Altaview."""
     from app.services.external_import_service import fetch_altaview_api
-    fetch_altaview_api()
+    from app.services.lock_service import acquire_lock, release_lock
+    from flask import current_app
+    
+    lock_key = 'api_fetch_lock'
+    if not acquire_lock(lock_key, timeout=600):  # 10 min max
+        current_app.logger.debug("Import API déjà en cours")
+        return
+    
+    try:
+        fetch_altaview_api()
+    finally:
+        release_lock(lock_key)
 
 
 def cleanup_duplicates_job():
     """Tâche: Nettoyer les doublons."""
     from app.services.import_service import supprimer_doublons_altaview
-    supprimer_doublons_altaview()
+    from app.services.lock_service import acquire_lock, release_lock
+    from flask import current_app
+    
+    lock_key = 'cleanup_duplicates_lock'
+    if not acquire_lock(lock_key, timeout=600):  # 10 min max
+        current_app.logger.debug("Nettoyage doublons déjà en cours")
+        return
+    
+    try:
+        supprimer_doublons_altaview()
+    finally:
+        release_lock(lock_key)
 
 
 def archive_daily_job():
@@ -282,13 +342,31 @@ def archive_daily_job():
 def cleanup_processed_files_job():
     """Tâche: Nettoyer les fichiers processed/ plus anciens que 48h."""
     from app.services.cleanup_service import cleanup_service
-    cleanup_service.cleanup_old_files()
+    from app.services.lock_service import acquire_lock, release_lock
+    from flask import current_app
+    
+    lock_key = 'cleanup_files_lock'
+    if not acquire_lock(lock_key, timeout=300):  # 5 min max
+        current_app.logger.debug("Nettoyage fichiers déjà en cours")
+        return
+    
+    try:
+        cleanup_service.cleanup_old_files()
+    finally:
+        release_lock(lock_key)
 
 
 def backup_db_job(frequency, config):
     """Tâche: Sauvegarde DB automatique"""
     from app.services.backup_service import BackupService
+    from app.services.lock_service import acquire_lock, release_lock
     from flask import current_app
+    
+    # 🔒 Lock pour éviter doublons
+    lock_key = f'backup_db_{frequency}_lock'
+    if not acquire_lock(lock_key, timeout=600):  # 10 min max
+        current_app.logger.warning(f"Backup DB {frequency} déjà en cours, ignoré")
+        return
     
     try:
         backup_service = BackupService()
@@ -308,12 +386,21 @@ def backup_db_job(frequency, config):
             
     except Exception as e:
         current_app.logger.error(f"Exception backup DB {frequency}: {e}", exc_info=True)
+    finally:
+        release_lock(lock_key)
 
 
 def backup_fs_job(frequency, config):
     """Tâche: Sauvegarde FS automatique"""
     from app.services.backup_service import BackupService
+    from app.services.lock_service import acquire_lock, release_lock
     from flask import current_app
+    
+    # 🔒 Lock pour éviter doublons
+    lock_key = f'backup_fs_{frequency}_lock'
+    if not acquire_lock(lock_key, timeout=600):  # 10 min max
+        current_app.logger.warning(f"Backup FS {frequency} déjà en cours, ignoré")
+        return
     
     try:
         backup_service = BackupService()
@@ -333,6 +420,8 @@ def backup_fs_job(frequency, config):
             
     except Exception as e:
         current_app.logger.error(f"Exception backup FS {frequency}: {e}", exc_info=True)
+    finally:
+        release_lock(lock_key)
 
 
 def get_scheduler_status():
@@ -342,10 +431,18 @@ def get_scheduler_status():
     if scheduler and scheduler.running:
         jobs = []
         for job in scheduler.get_jobs():
+            # Convertir next_run_time en timezone Paris pour affichage
+            next_run_str = '-'
+            if job.next_run_time:
+                # next_run_time est en UTC, on le convertit en Paris
+                next_run_paris = job.next_run_time.astimezone(PARIS_TZ)
+                next_run_str = next_run_paris.strftime('%Y-%m-%d %H:%M:%S %Z')
+            
             jobs.append({
                 'id': job.id,
                 'name': job.name,
-                'next_run': job.next_run_time.strftime('%H:%M:%S') if job.next_run_time else '-'
+                'next_run': next_run_str,
+                'next_run_short': job.next_run_time.strftime('%H:%M:%S') if job.next_run_time else '-'
             })
         return {
             'running': True,
@@ -385,7 +482,7 @@ def reschedule_archive(heure, minute, actif):
     
     try:
         if actif:
-            trigger = CronTrigger(hour=heure, minute=minute)
+            trigger = CronTrigger(hour=heure, minute=minute, timezone=PARIS_TZ)
             if scheduler.get_job(job_id):
                 scheduler.reschedule_job(job_id, trigger=trigger)
             else:
@@ -429,15 +526,15 @@ def reschedule_backup(backup_type, frequency, config):
             hour = int(time_parts[0])
             minute = int(time_parts[1]) if len(time_parts) > 1 else 0
             
-            # Créer le trigger selon la fréquence
+            # Créer le trigger selon la fréquence avec timezone Paris
             if frequency == 'daily':
-                trigger = CronTrigger(hour=hour, minute=minute)
+                trigger = CronTrigger(hour=hour, minute=minute, timezone=PARIS_TZ)
             elif frequency == 'weekly':
                 day_of_week = int(config.get('day_of_week', 6))
-                trigger = CronTrigger(day_of_week=day_of_week, hour=hour, minute=minute)
+                trigger = CronTrigger(day_of_week=day_of_week, hour=hour, minute=minute, timezone=PARIS_TZ)
             elif frequency == 'monthly':
                 day_of_month = int(config.get('day_of_month', 1))
-                trigger = CronTrigger(day=day_of_month, hour=hour, minute=minute)
+                trigger = CronTrigger(day=day_of_month, hour=hour, minute=minute, timezone=PARIS_TZ)
             else:
                 return False
             

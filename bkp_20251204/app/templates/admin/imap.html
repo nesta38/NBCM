@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}{{ t('imap_config_title') }}{% endblock %}
+{% block page_title %}{{ t('imap_config_title') }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card shadow-sm border-info">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-inbox"></i> {{ t('imap_config_title') }}
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">
+                    <i class="bi bi-info-circle"></i>
+                    {{ t('imap_config_subtitle') }}
+                </p>
+
+                <form action="{{ url_for('admin.config_imap') }}" method="POST">
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label class="form-label fw-bold">{{ t('imap_server') }}</label>
+                            <input type="text" class="form-control" name="server" 
+                                   value="{{ imap_config.get('server', '') }}" 
+                                   placeholder="imap.example.com" required>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">{{ t('imap_interval') }}</label>
+                            <input type="number" class="form-control" name="check_interval" 
+                                   value="{{ imap_config.get('check_interval', 15) }}" 
+                                   min="1" max="1440" required>
+                            <small class="text-muted">{{ t('imap_interval_help') }}</small>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">{{ t('imap_user') }}</label>
+                            <input type="text" class="form-control" name="user" 
+                                   value="{{ imap_config.get('user', '') }}" 
+                                   placeholder="user@example.com" required>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">{{ t('imap_password') }}</label>
+                            <input type="password" class="form-control" name="password" 
+                                   value="{{ imap_config.get('password', '') }}" 
+                                   placeholder="••••••••" required>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">{{ t('imap_subject_filter') }}</label>
+                            <input type="text" class="form-control" name="subject_filter" 
+                                   value="{{ imap_config.get('subject_filter', 'NetBackup') }}" 
+                                   placeholder="NetBackup" required>
+                            <small class="text-muted">{{ t('imap_subject_filter_help') }}</small>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">{{ t('imap_archive_folder') }}</label>
+                            <input type="text" class="form-control" name="archive_folder" 
+                                   value="{{ imap_config.get('archive_folder', 'Archives_Altaview') }}" 
+                                   placeholder="Archives_Altaview" required>
+                            <small class="text-muted">{{ t('imap_archive_folder_help') }}</small>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="actif" 
+                                   id="imapSwitch" {% if imap_config.get('actif') %}checked{% endif %}>
+                            <label class="form-check-label fw-bold" for="imapSwitch">
+                                {% if imap_config.get('actif') %}
+                                    <span class="badge bg-success">
+                                        <i class="bi bi-check-circle"></i> {{ t('imap_auto_import_enabled') }}
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-secondary">
+                                        <i class="bi bi-pause-circle"></i> {{ t('imap_auto_import_disabled') }}
+                                    </span>
+                                {% endif %}
+                            </label>
+                        </div>
+
+                        <div>
+                            <button type="submit" formaction="{{ url_for('admin.test_imap') }}" 
+                                    class="btn btn-outline-info">
+                                <i class="bi bi-envelope-open"></i> {{ t('imap_test_connection') }}
+                            </button>
+                            <button type="submit" class="btn btn-info text-white">
+                                <i class="bi bi-save"></i> {{ t('btn_save') }}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mt-4 border-primary">
+            <div class="card-header bg-primary text-white">
+                <h6 class="mb-0">
+                    <i class="bi bi-lightbulb"></i> {{ t('smtp_info_planning') }}
+                </h6>
+            </div>
+            <div class="card-body">
+                <ul class="mb-0">
+                    <li><strong>{{ t('imap_info_history') }}</strong> : {{ t('imap_info_history_desc') }} 
+                        <a href="{{ url_for('admin.imap_history') }}">{{ t('imap_info_import_history') }}</a>
+                    </li>
+                    <li><strong>{{ t('imap_info_operation') }}</strong> : {{ t('imap_info_operation_desc') }}</li>
+                    <li><strong>{{ t('imap_info_archiving') }}</strong> : {{ t('imap_info_archiving_desc') }}</li>
+                    <li><strong>{{ t('smtp_info_test') }}</strong> : {{ t('imap_info_test_desc') }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

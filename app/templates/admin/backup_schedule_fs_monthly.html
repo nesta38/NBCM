@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-{% block title %}Planif FS Mensuelle{% endblock %}
-{% block page_title %}Planification Sauvegarde FS - Mensuelle{% endblock %}
+{% block title %}{{ t('schedule_fs_monthly_title') }}{% endblock %}
+{% block page_title %}{{ t('schedule_fs_monthly_title') }}{% endblock %}
 
 {% block content %}
 <div class="row">
@@ -8,71 +8,47 @@
         <!-- Configuration -->
         <div class="card shadow-sm mb-4">
             <div class="card-header bg-primary text-white">
-                <h5 class="mb-0"><i class="bi bi-calendar-month"></i> Sauvegarde Filesystem Mensuelle Automatique</h5>
+                <h5 class="mb-0"><i class="bi bi-calendar-month"></i> {{ t('schedule_fs_monthly_config') }}</h5>
             </div>
             <div class="card-body">
                 <form action="{{ url_for('backup.configure_schedule_fs', frequency='monthly') }}" method="POST">
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Jour du mois</label>
-                            <select class="form-select" name="day_of_month" required>
-                                {% for day in range(1, 29) %}
-                                <option value="{{ day }}" {{ 'selected' if schedule_config.get('day_of_month', '1') == day|string }}>
-                                    {{ day }}{{ 'er' if day == 1 else '' }}
-                                </option>
-                                {% endfor %}
-                            </select>
-                            <small class="text-muted">Jour 1-28 du mois (évite les problèmes février)</small>
+                            <label class="form-label">{{ t('schedule_day_of_month') }}</label>
+                            <input type="number" class="form-control" name="day_of_month" 
+                                   value="{{ schedule_config.get('day_of_month', 1) }}" min="1" max="28" required>
+                            <small class="text-muted">{{ t('schedule_day_of_month') }} (1-28)</small>
                         </div>
                         
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Heure d'exécution</label>
+                            <label class="form-label">{{ t('schedule_backup_time') }}</label>
                             <input type="time" class="form-control" name="schedule_time" 
-                                   value="{{ schedule_config.get('time', '02:00') }}" required>
-                            <small class="text-muted">Format 24h (ex: 02:00 pour 2h du matin)</small>
+                                   value="{{ schedule_config.get('time', '01:30') }}" required>
+                            <small class="text-muted">{{ t('schedule_time_format') }}</small>
                         </div>
                     </div>
                     
                     <div class="mb-3">
-                        <label class="form-label">Rétention (nombre de sauvegardes)</label>
+                        <label class="form-label">{{ t('schedule_retention_days') }}</label>
                         <input type="number" class="form-control" name="retention" 
                                value="{{ schedule_config.get('retention', 12) }}" min="1" max="24" required>
-                        <small class="text-muted">Les sauvegardes les plus anciennes seront supprimées</small>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Répertoires à sauvegarder</label>
-                        <textarea class="form-control" name="directories" rows="4" required>{{ schedule_config.get('directories', '/app/data/db\n/app/data/logs\n/app/data/altaview_auto_import') }}</textarea>
-                        <small class="text-muted">Un répertoire par ligne. Les répertoires seront archivés en TAR.GZ</small>
-                    </div>
-                    
-                    <div class="form-check form-switch mb-3">
-                        <input class="form-check-input" type="checkbox" name="compression" id="compressionSwitch"
-                               {{ 'checked' if schedule_config.get('compression', True) }}>
-                        <label class="form-check-label" for="compressionSwitch">
-                            <strong>Activer la compression GZIP</strong>
-                        </label>
+                        <small class="text-muted">{{ t('backup_schedule_retention_help') }}</small>
                     </div>
                     
                     <div class="form-check form-switch mb-3">
                         <input class="form-check-input" type="checkbox" name="enabled" id="enabledSwitch"
                                {{ 'checked' if schedule_config.get('enabled', False) }}>
                         <label class="form-check-label" for="enabledSwitch">
-                            <strong>Activer la sauvegarde filesystem mensuelle automatique</strong>
+                            <strong>{{ t('schedule_enabled') }}</strong>
                         </label>
-                    </div>
-                    
-                    <div class="alert alert-info">
-                        <i class="bi bi-info-circle"></i> <strong>Recommandation :</strong> 
-                        Planifiez les sauvegardes FS mensuelles le 1er du mois. Conservez 12 mois minimum pour l'archivage annuel.
                     </div>
                     
                     <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-save"></i> Enregistrer la configuration
+                            <i class="bi bi-save"></i> {{ t('btn_save_config') }}
                         </button>
                         <a href="{{ url_for('backup.index') }}" class="btn btn-secondary">
-                            <i class="bi bi-arrow-left"></i> Retour
+                            <i class="bi bi-arrow-left"></i> {{ t('btn_back') }}
                         </a>
                     </div>
                 </form>
@@ -82,14 +58,14 @@
         <!-- Test manuel -->
         <div class="card shadow-sm">
             <div class="card-header bg-warning">
-                <h5 class="mb-0"><i class="bi bi-play-circle"></i> Test Manuel</h5>
+                <h5 class="mb-0"><i class="bi bi-play-circle"></i> {{ t('test') }}</h5>
             </div>
             <div class="card-body">
-                <p>Créer une sauvegarde maintenant pour tester la configuration.</p>
+                <p>{{ t('backup_create_new') }}</p>
                 <form action="{{ url_for('backup.create_fs') }}" method="POST">
-                    <input type="hidden" name="description" value="Test sauvegarde FS mensuelle">
+                    <input type="hidden" name="description" value="Test sauvegarde mensuelle FS">
                     <button type="submit" class="btn btn-warning">
-                        <i class="bi bi-play-fill"></i> Créer une sauvegarde FS de test
+                        <i class="bi bi-play-fill"></i> {{ t('btn_test') }}
                     </button>
                 </form>
             </div>
@@ -100,30 +76,29 @@
         <!-- Statut -->
         <div class="card shadow-sm mb-4">
             <div class="card-header bg-light">
-                <h5 class="mb-0"><i class="bi bi-info-circle"></i> Statut</h5>
+                <h5 class="mb-0"><i class="bi bi-info-circle"></i> {{ t('status') }}</h5>
             </div>
             <div class="card-body">
                 {% if schedule_config.get('enabled', False) %}
                 <div class="alert alert-success mb-3">
-                    <i class="bi bi-check-circle-fill"></i> <strong>Activé</strong>
+                    <i class="bi bi-check-circle-fill"></i> <strong>{{ t('status_enabled') }}</strong>
                 </div>
-                <p><strong>Prochaine exécution :</strong></p>
-                <p class="text-muted">{{ next_run or 'Calcul en cours...' }}</p>
+                <p><strong>{{ t('schedule_next_backup') }} :</strong></p>
+                <p class="text-muted">{{ next_run or t('loading') }}</p>
                 {% else %}
                 <div class="alert alert-secondary mb-3">
-                    <i class="bi bi-x-circle-fill"></i> <strong>Désactivé</strong>
+                    <i class="bi bi-x-circle-fill"></i> <strong>{{ t('status_disabled') }}</strong>
                 </div>
-                <p class="text-muted">La sauvegarde automatique FS mensuelle n'est pas active.</p>
+                <p class="text-muted">{{ t('schedule_disabled') }}</p>
                 {% endif %}
                 
                 <hr>
                 
-                <p><strong>Configuration actuelle :</strong></p>
+                <p><strong>{{ t('configuration') }} :</strong></p>
                 <ul class="list-unstyled">
-                    <li><i class="bi bi-calendar"></i> Jour du mois : <strong>{{ schedule_config.get('day_of_month', 1) }}</strong></li>
-                    <li><i class="bi bi-clock"></i> Heure : <strong>{{ schedule_config.get('time', '02:00') }}</strong></li>
-                    <li><i class="bi bi-archive"></i> Rétention : <strong>{{ schedule_config.get('retention', 12) }} backups</strong></li>
-                    <li><i class="bi bi-file-zip"></i> Compression : <strong>{{ 'Oui' if schedule_config.get('compression', True) else 'Non' }}</strong></li>
+                    <li><i class="bi bi-calendar"></i> {{ t('schedule_day_of_month') }} : <strong>{{ schedule_config.get('day_of_month', 1) }}</strong></li>
+                    <li><i class="bi bi-clock"></i> {{ t('schedule_time') }} : <strong>{{ schedule_config.get('time', '01:30') }}</strong></li>
+                    <li><i class="bi bi-archive"></i> {{ t('schedule_retention') }} : <strong>{{ schedule_config.get('retention', 12) }} {{ t('backups') }}</strong></li>
                 </ul>
             </div>
         </div>
@@ -131,7 +106,7 @@
         <!-- Sauvegardes récentes -->
         <div class="card shadow-sm">
             <div class="card-header bg-light">
-                <h5 class="mb-0"><i class="bi bi-clock-history"></i> Dernières sauvegardes FS</h5>
+                <h5 class="mb-0"><i class="bi bi-clock-history"></i> {{ t('schedule_last_backup') }}</h5>
             </div>
             <div class="card-body">
                 {% if backups.fs %}
@@ -141,7 +116,7 @@
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
                                 <small class="text-muted">{{ backup.date }}</small>
-                                <div class="small">{{ "%.1f"|format(backup.size / (1024*1024)) }} MB</div>
+                                <div class="small">{{ backup.size_mb }} MB</div>
                             </div>
                             <span class="badge bg-success">✓</span>
                         </div>
@@ -149,7 +124,7 @@
                     {% endfor %}
                 </div>
                 {% else %}
-                <p class="text-muted text-center mb-0">Aucune sauvegarde FS</p>
+                <p class="text-muted text-center mb-0">{{ t('schedule_no_history') }}</p>
                 {% endif %}
             </div>
         </div>

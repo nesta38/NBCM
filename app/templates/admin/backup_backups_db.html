@@ -1,26 +1,26 @@
 {% extends "base.html" %}
-{% block title %}Sauvegardes DB{% endblock %}
-{% block page_title %}Sauvegardes Base de Données{% endblock %}
+{% block title %}{{ t('backups_db_page_title') }}{% endblock %}
+{% block page_title %}{{ t('backups_db_heading') }}{% endblock %}
 
 {% block content %}
 <div class="alert alert-info mb-4">
-    <i class="bi bi-info-circle"></i> Créez des sauvegardes manuelles de la base de données PostgreSQL. Les fichiers sont stockés dans <code>/app/backups/db/</code>
+    <i class="bi bi-info-circle"></i> {{ t('create_manual_db_backups').replace('{path}', '<code>/app/backups/db/</code>')|safe }}
 </div>
 
 <!-- Créer nouvelle sauvegarde -->
 <div class="card shadow-sm border-primary mb-4">
     <div class="card-header bg-primary text-white">
-        <h5 class="mb-0"><i class="bi bi-plus-circle"></i> Créer une nouvelle sauvegarde</h5>
+        <h5 class="mb-0"><i class="bi bi-plus-circle"></i> {{ t('create_new_backup') }}</h5>
     </div>
     <div class="card-body">
         <form action="{{ url_for('backup.create') }}" method="POST">
             <input type="hidden" name="type" value="db">
             <div class="mb-3">
-                <label class="form-label">Description (optionnelle)</label>
-                <input type="text" class="form-control" name="description" placeholder="Ex: Avant mise à jour V2.5">
+                <label class="form-label">{{ t('description_optional') }}</label>
+                <input type="text" class="form-control" name="description" placeholder="{{ t('description_placeholder') }}">
             </div>
             <button type="submit" class="btn btn-primary">
-                <i class="bi bi-save"></i> Créer sauvegarde DB
+                <i class="bi bi-save"></i> {{ t('btn_create_db_backup') }}
             </button>
         </form>
     </div>
@@ -29,7 +29,7 @@
 <!-- Liste des sauvegardes -->
 <div class="card shadow-sm">
     <div class="card-header bg-light">
-        <h5 class="mb-0"><i class="bi bi-archive"></i> Sauvegardes disponibles ({{ backups.db|length }})</h5>
+        <h5 class="mb-0"><i class="bi bi-archive"></i> {{ t('available_backups') }} ({{ backups.db|length }})</h5>
     </div>
     <div class="card-body">
         {% if backups.db %}
@@ -37,11 +37,11 @@
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th>Fichier</th>
-                        <th>Date</th>
-                        <th>Taille</th>
-                        <th>Description</th>
-                        <th>Actions</th>
+                        <th>{{ t('th_file') }}</th>
+                        <th>{{ t('th_date') }}</th>
+                        <th>{{ t('th_size') }}</th>
+                        <th>{{ t('th_description') }}</th>
+                        <th>{{ t('th_actions') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -50,12 +50,13 @@
                         <td><code>{{ backup.filename }}</code></td>
                         <td>{{ backup.date }}</td>
                         <td>{{ "%.1f"|format(backup.size / 1024) }} KB</td>
-                        <td>{{ backup.description or '-' }}</td>
+                        <td>{{ backup.description or t('no_description') }}</td>
                         <td>
                             <a href="{{ url_for('backup.download', filename=backup.filename) }}" class="btn btn-sm btn-outline-primary">
                                 <i class="bi bi-download"></i>
                             </a>
-                            <form action="{{ url_for('backup.delete', filename=backup.filename) }}" method="POST" class="d-inline" onsubmit="return confirm('Supprimer cette sauvegarde ?');">
+                            {% set confirm_msg = t('confirm_delete_backup') %}
+                            <form action="{{ url_for('backup.delete', filename=backup.filename) }}" method="POST" class="d-inline" onsubmit="return confirm('{{ confirm_msg }}');">
                                 <button type="submit" class="btn btn-sm btn-outline-danger">
                                     <i class="bi bi-trash"></i>
                                 </button>
@@ -67,7 +68,7 @@
             </table>
         </div>
         {% else %}
-        <p class="text-muted text-center">Aucune sauvegarde DB disponible</p>
+        <p class="text-muted text-center">{{ t('no_db_backups') }}</p>
         {% endif %}
     </div>
 </div>

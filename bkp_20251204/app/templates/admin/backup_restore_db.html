@@ -1,0 +1,262 @@
+{% extends "base.html" %}
+{% block title %}Restaurations DB{% endblock %}
+{% block page_title %}Restauration Base de Données{% endblock %}
+
+{% block extra_css %}
+<style>
+.restore-loading-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+}
+.restore-loading-overlay.active {
+    display: flex;
+}
+.restore-loading-content {
+    text-align: center;
+    color: white;
+}
+.restore-loading-spinner {
+    width: 80px;
+    height: 80px;
+    border: 8px solid rgba(255, 255, 255, 0.2);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Overlay de chargement -->
+<div id="restoreLoadingOverlay" class="restore-loading-overlay">
+    <div class="restore-loading-content">
+        <div class="restore-loading-spinner"></div>
+        <h3>🔄 Restauration en cours...</h3>
+        <p>Veuillez patienter, redirection vers le suivi...</p>
+        <p class="text-warning"><small>Ne fermez pas cette fenêtre</small></p>
+    </div>
+</div>
+
+{% if restore_running %}
+<div class="alert alert-info mb-4">
+    <h5 class="mb-0"><i class="bi bi-info-circle-fill"></i> ⚠️ RESTAURATION EN COURS</h5>
+    <hr>
+    <p><strong>Une restauration est actuellement en cours.</strong></p>
+    <a href="{{ url_for('backup.restore_status') }}" class="btn btn-primary">
+        <i class="bi bi-eye"></i> Voir le suivi en temps réel
+    </a>
+</div>
+{% endif %}
+
+<div class="alert alert-danger mb-4">
+    <h5 class="mb-0"><i class="bi bi-exclamation-triangle-fill"></i> ⚠️ ATTENTION - OPÉRATION CRITIQUE</h5>
+    <hr>
+    <p><strong>La restauration remplace TOUTES les données actuelles de la base de données.</strong></p>
+    <ul class="mb-0">
+        <li>❌ Les données actuelles seront <strong>définitivement perdues</strong></li>
+        <li>❌ Opération <strong>irréversible</strong></li>
+        <li>✅ Le cache Redis sera automatiquement vidé après restauration</li>
+    </ul>
+</div>
+
+<!-- Instructions -->
+<div class="card shadow-sm border-warning mb-4">
+    <div class="card-header bg-warning">
+        <h5 class="mb-0"><i class="bi bi-info-circle"></i> Instructions</h5>
+    </div>
+    <div class="card-body">
+        <ol class="mb-0">
+            <li>Créez d'abord une <strong>sauvegarde de sécurité</strong> des données actuelles</li>
+            <li>Vérifiez que personne n'utilise l'application</li>
+            <li>Sélectionnez la sauvegarde à restaurer</li>
+            <li>Tapez <code>RESTORE</code> pour confirmer</li>
+            <li>La page de suivi s'affichera automatiquement</li>
+        </ol>
+    </div>
+</div>
+
+<!-- Liste des sauvegardes DB disponibles -->
+<div class="card shadow-sm">
+    <div class="card-header bg-light">
+        <h5 class="mb-0"><i class="bi bi-database"></i> Sauvegardes DB disponibles pour restauration ({{ backups.db|length }})</h5>
+    </div>
+    <div class="card-body">
+        {% if backups.db %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Fichier</th>
+                        <th>Taille</th>
+                        <th>Description</th>
+                        <th style="width: 150px;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for backup in backups.db %}
+                    <tr>
+                        <td>
+                            <strong>{{ backup.date }}</strong><br>
+                            <small class="text-muted">{{ backup.timestamp }}</small>
+                        </td>
+                        <td><code class="small">{{ backup.filename }}</code></td>
+                        <td>{{ "%.1f"|format(backup.size / 1024) }} KB</td>
+                        <td>{{ backup.description or '-' }}</td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-danger w-100" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#restoreModal{{ loop.index }}"
+                                    {% if restore_running %}disabled{% endif %}>
+                                <i class="bi bi-arrow-clockwise"></i> Restaurer
+                            </button>
+                            
+                            <!-- Modal de confirmation -->
+                            <div class="modal fade" id="restoreModal{{ loop.index }}" tabindex="-1">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-danger text-white">
+                                            <h5 class="modal-title">
+                                                <i class="bi bi-exclamation-triangle-fill"></i> Confirmer la restauration
+                                            </h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="alert alert-danger">
+                                                <strong>Vous êtes sur le point de restaurer :</strong>
+                                            </div>
+                                            <ul>
+                                                <li><strong>Fichier :</strong> {{ backup.filename }}</li>
+                                                <li><strong>Date :</strong> {{ backup.date }}</li>
+                                                <li><strong>Description :</strong> {{ backup.description or 'Aucune' }}</li>
+                                            </ul>
+                                            
+                                            <hr>
+                                            
+                                            <p class="text-danger fw-bold mb-2">⚠️ TOUTES LES DONNÉES ACTUELLES SERONT PERDUES</p>
+                                            
+                                            <form class="restore-form" data-filename="{{ backup.filename }}">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Tapez <code>RESTORE</code> pour confirmer :</label>
+                                                    <input type="text" class="form-control confirm-input" name="confirm" 
+                                                           placeholder="RESTORE" required autocomplete="off">
+                                                </div>
+                                                <div class="d-flex gap-2">
+                                                    <button type="button" class="btn btn-secondary flex-fill" data-bs-dismiss="modal">
+                                                        Annuler
+                                                    </button>
+                                                    <button type="submit" class="btn btn-danger flex-fill">
+                                                        <i class="bi bi-arrow-clockwise"></i> Restaurer
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-inbox display-1 text-muted"></i>
+            <p class="text-muted mt-3">Aucune sauvegarde DB disponible pour restauration</p>
+            <a href="{{ url_for('backup.backups_db') }}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Créer une sauvegarde
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Bouton retour -->
+<div class="mt-3">
+    <a href="{{ url_for('backup.index') }}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Retour
+    </a>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Intercepter tous les formulaires de restauration
+document.querySelectorAll('.restore-form').forEach(form => {
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const confirmInput = this.querySelector('.confirm-input').value;
+        const filename = this.dataset.filename;
+        
+        // Vérifier la confirmation
+        if (confirmInput !== 'RESTORE') {
+            alert('Veuillez taper exactement "RESTORE" pour confirmer');
+            return;
+        }
+        
+        // Fermer le modal
+        const modal = bootstrap.Modal.getInstance(this.closest('.modal'));
+        if (modal) {
+            modal.hide();
+        }
+        
+        // Afficher l'overlay de chargement IMMÉDIATEMENT
+        const overlay = document.getElementById('restoreLoadingOverlay');
+        overlay.classList.add('active');
+        
+        // Construire l'URL de restauration
+        const baseUrl = '{{ url_for("backup.restore", filename="PLACEHOLDER") }}';
+        const restoreUrl = baseUrl.replace('PLACEHOLDER', encodeURIComponent(filename));
+        
+        // Envoyer la requête de restauration en AJAX
+        fetch(restoreUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'confirm=RESTORE'
+        })
+        .then(response => {
+            // Rediriger vers la page de suivi IMMÉDIATEMENT
+            // Le serveur a démarré le thread async et redirige
+            if (response.redirected) {
+                window.location.href = response.url;
+            } else {
+                window.location.href = '{{ url_for("backup.restore_status") }}';
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            overlay.classList.remove('active');
+            alert('Erreur lors du démarrage de la restauration: ' + error);
+        });
+    });
+});
+
+// Afficher l'overlay si on revient sur la page pendant une restauration
+{% if restore_running %}
+window.addEventListener('load', function() {
+    const overlay = document.getElementById('restoreLoadingOverlay');
+    overlay.classList.add('active');
+    setTimeout(() => {
+        window.location.href = '{{ url_for("backup.restore_status") }}';
+    }, 2000);
+});
+{% endif %}
+</script>
+{% endblock %}

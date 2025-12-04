@@ -679,7 +679,877 @@ TRANSLATIONS = {
     'sidebar_backup_schedule': {'en': 'Backup Scheduling', 'fr': 'Planification Sauvegardes', 'pl': 'Planowanie Kopii'},
     'sidebar_schedule_daily': {'en': 'Daily', 'fr': 'Quotidienne', 'pl': 'Dzienne'},
     'sidebar_schedule_weekly': {'en': 'Weekly', 'fr': 'Hebdomadaire', 'pl': 'Tygodniowe'},
-    'sidebar_schedule_monthly': {'en': 'Monthly', 'fr': 'Mensuel', 'pl': 'Miesięczne'}
+    'sidebar_schedule_monthly': {'en': 'Monthly', 'fr': 'Mensuel', 'pl': 'Miesięczne'},
+    # === SIDEBAR NAVIGATION ===
+    'sidebar_jobs_list': {'en': 'Jobs List', 'fr': 'Liste des jobs', 'pl': 'Lista zadań'},
+    'sidebar_import_history': {'en': 'Import History', 'fr': 'Historique imports', 'pl': 'Historia importów'},
+    'sidebar_api_config': {'en': 'Configuration', 'fr': 'Configuration', 'pl': 'Konfiguracja'},
+    'sidebar_api_planning': {'en': 'Planning', 'fr': 'Planification', 'pl': 'Planowanie'},
+    
+    # === DASHBOARD ===
+    'dash_flow_ok': {'en': 'Flow OK', 'fr': 'Flux OK', 'pl': 'Przepływ OK'},
+    'btn_view_detail': {'en': 'View Detail', 'fr': 'Voir le détail', 'pl': 'Zobacz szczegóły'},
+    'help_need_help': {'en': 'Need help?', 'fr': 'Besoin d\'aide ?', 'pl': 'Potrzebujesz pomocy?'},
+    
+    # === CMDB ===
+    'cmdb_btn_add_server': {'en': 'Add Server', 'fr': 'Ajouter un serveur', 'pl': 'Dodaj serwer'},
+    'cmdb_servers_shown': {'en': 'servers displayed', 'fr': 'serveurs affichés', 'pl': 'wyświetlonych serwerów'},
+    'lbl_last_update': {'en': 'Last Update', 'fr': 'Dernière mise à jour', 'pl': 'Ostatnia aktualizacja'},
+    'cmdb_no_servers': {'en': 'No servers', 'fr': 'Aucun serveur', 'pl': 'Brak serwerów'},
+    'cmdb_btn_temp_disable': {'en': 'Temporarily Disable', 'fr': 'Désactiver temporairement', 'pl': 'Tymczasowo dezaktywuj'},
+    'cmdb_btn_reactivate': {'en': 'Reactivate', 'fr': 'Réactiver', 'pl': 'Aktywuj ponownie'},
+    'cmdb_add_title': {'en': 'Add Server to Repository', 'fr': 'Ajouter un serveur au référentiel', 'pl': 'Dodaj serwer do repozytorium'},
+    'cmdb_field_hostname': {'en': 'Server Name', 'fr': 'Nom du serveur', 'pl': 'Nazwa serwera'},
+    'cmdb_placeholder_hostname': {'en': 'Enter hostname', 'fr': 'Saisir le hostname', 'pl': 'Wprowadź nazwę hosta'},
+    'cmdb_field_backup_active': {'en': 'Backup Active', 'fr': 'Backup actif', 'pl': 'Kopia zapasowa aktywna'},
+    'cmdb_field_comment_optional': {'en': 'Optional Comment', 'fr': 'Commentaire optionnel', 'pl': 'Komentarz opcjonalny'},
+    'btn_back_to_list': {'en': 'Back to List', 'fr': 'Retour à la liste', 'pl': 'Powrót do listy'},
+    
+    # === ALTAVIEW / JOBS ===
+    'altaview_page_title': {'en': 'Altaview Jobs', 'fr': 'Jobs Altaview', 'pl': 'Zadania Altaview'},
+    'altaview_last_24h': {'en': 'Last 24 hours', 'fr': 'Dernières 24 heures', 'pl': 'Ostatnie 24 godziny'},
+    'altaview_btn_import_jobs': {'en': 'Import Jobs', 'fr': 'Importer des jobs', 'pl': 'Importuj zadania'},
+    'th_period': {'en': 'Period', 'fr': 'Période', 'pl': 'Okres'},
+    'th_start': {'en': 'Start', 'fr': 'Début', 'pl': 'Początek'},
+    'th_end': {'en': 'End', 'fr': 'Fin', 'pl': 'Koniec'},
+    'th_diagnostic': {'en': 'Diagnostic', 'fr': 'Diagnostic', 'pl': 'Diagnostyka'},
+    'altaview_jobs_shown': {'en': 'jobs displayed', 'fr': 'jobs affichés', 'pl': 'wyświetlonych zadań'},
+    'altaview_no_jobs': {'en': 'No jobs', 'fr': 'Aucun job', 'pl': 'Brak zadań'},
+    'status_failure': {'en': 'Failed', 'fr': 'Échec', 'pl': 'Niepowodzenie'},
+    
+    # === RAPPORT ===
+    'report_title': {'en': 'Compliance Report', 'fr': 'Rapport de conformité', 'pl': 'Raport zgodności'},
+    'report_period_analyzed': {'en': 'Analyzed Period', 'fr': 'Période analysée', 'pl': 'Okres analizowany'},
+    'report_last_24h': {'en': 'Last 24 hours', 'fr': 'Dernières 24 heures', 'pl': 'Ostatnie 24 godziny'},
+    'report_generated_on': {'en': 'Generated on', 'fr': 'Généré le', 'pl': 'Wygenerowano'},
+    'report_expected_servers': {'en': 'Expected Servers', 'fr': 'Serveurs attendus', 'pl': 'Oczekiwane serwery'},
+    'report_compliant_servers': {'en': 'Compliant Servers', 'fr': 'Serveurs conformes', 'pl': 'Serwery zgodne'},
+    'report_failed_servers': {'en': 'Failed Servers', 'fr': 'Serveurs en échec', 'pl': 'Serwery z błędami'},
+    'report_unreferenced_servers': {'en': 'Unreferenced Servers', 'fr': 'Serveurs non référencés', 'pl': 'Serwery bez odniesienia'},
+    'report_failed_details': {'en': 'Failed Servers Details', 'fr': 'Détail des serveurs en échec', 'pl': 'Szczegóły serwerów z błędami'},
+    'report_no_valid_backup': {'en': 'No valid backup in 24h', 'fr': 'Aucun backup valide depuis 24h', 'pl': 'Brak ważnej kopii w 24h'},
+    'report_out_of_cmdb': {'en': 'Servers out of CMDB', 'fr': 'Serveurs hors CMDB', 'pl': 'Serwery poza CMDB'},
+    'report_out_of_cmdb_desc': {'en': 'These servers perform backups but do not appear in CMDB', 'fr': 'Ces serveurs réalisent des backups mais n\'apparaissent pas dans la CMDB', 'pl': 'Te serwery wykonują kopie zapasowe, ale nie znajdują się w CMDB'},
+    'btn_download_report': {'en': 'Download Report', 'fr': 'Télécharger le rapport', 'pl': 'Pobierz raport'},
+    'format_excel': {'en': 'Excel Format', 'fr': 'Format Excel', 'pl': 'Format Excel'},
+    'format_pdf': {'en': 'PDF Format', 'fr': 'Format PDF', 'pl': 'Format PDF'},
+    
+    # === ARCHIVES ===
+    'archives_daily_title': {'en': 'Daily Archives', 'fr': 'Archives quotidiennes', 'pl': 'Archiwa dzienne'},
+    'archives_daily_history': {'en': 'Automatic Archives History', 'fr': 'Historique des archives automatiques', 'pl': 'Historia automatycznych archiwów'},
+    'archives_available_count': {'en': 'available archives', 'fr': 'archives disponibles', 'pl': 'dostępne archiwa'},
+    'archives_none_available': {'en': 'No archives available', 'fr': 'Aucune archive disponible', 'pl': 'Brak dostępnych archiwów'},
+    'archives_manual_title': {'en': 'Manual Archive', 'fr': 'Archive manuelle', 'pl': 'Ręczne archiwum'},
+    'archives_manual_create': {'en': 'Create Archive Manually', 'fr': 'Créer une archive manuellement', 'pl': 'Utwórz archiwum ręcznie'},
+    'archives_btn_create_now': {'en': 'Create Archive Now', 'fr': 'Créer une archive maintenant', 'pl': 'Utwórz archiwum teraz'},
+    'archives_content': {'en': 'Archive Content', 'fr': 'Contenu de l\'archive', 'pl': 'Zawartość archiwum'},
+    'archives_snapshot_current': {'en': 'Current Compliance Snapshot', 'fr': 'Snapshot de la conformité actuelle', 'pl': 'Snapshot bieżącej zgodności'},
+    'archives_compliant_list': {'en': 'Compliant Servers List', 'fr': 'Liste des serveurs conformes', 'pl': 'Lista zgodnych serwerów'},
+    'archives_non_compliant_list': {'en': 'Non-Compliant Servers List', 'fr': 'Liste des serveurs non conformes', 'pl': 'Lista niezgodnych serwerów'},
+    'archives_recent_created': {'en': 'Recently Created Archives', 'fr': 'Dernières archives créées', 'pl': 'Ostatnio utworzone archiwa'},
+    
+    # === RECIPIENTS ===
+    'recipients_management': {'en': 'Recipients Management', 'fr': 'Gestion des destinataires', 'pl': 'Zarządzanie odbiorcami'},
+    'recipients_btn_add': {'en': 'Add Recipient', 'fr': 'Ajouter un destinataire', 'pl': 'Dodaj odbiorcę'},
+    'recipients_registered': {'en': 'registered recipients', 'fr': 'destinataires inscrits', 'pl': 'zarejestrowani odbiorcy'},
+    'recipients_active_count': {'en': 'active', 'fr': 'actifs', 'pl': 'aktywni'},
+    'recipients_full_name': {'en': 'Full Name', 'fr': 'Nom complet', 'pl': 'Pełna nazwa'},
+    'recipients_email_address': {'en': 'Email Address', 'fr': 'Adresse email', 'pl': 'Adres email'},
+    'recipients_receives_reports': {'en': 'Receives Reports', 'fr': 'Reçoit les rapports', 'pl': 'Otrzymuje raporty'},
+    'recipients_none': {'en': 'No recipients', 'fr': 'Aucun destinataire', 'pl': 'Brak odbiorców'},
+    
+    # === SMTP ===
+    'smtp_title': {'en': 'SMTP Configuration', 'fr': 'Configuration SMTP', 'pl': 'Konfiguracja SMTP'},
+    'smtp_server_params': {'en': 'SMTP Server Settings', 'fr': 'Paramètres du serveur SMTP', 'pl': 'Ustawienia serwera SMTP'},
+    'smtp_server': {'en': 'SMTP Server', 'fr': 'Serveur SMTP', 'pl': 'Serwer SMTP'},
+    'smtp_port': {'en': 'Port', 'fr': 'Port', 'pl': 'Port'},
+    'smtp_user': {'en': 'User', 'fr': 'Utilisateur', 'pl': 'Użytkownik'},
+    'smtp_password': {'en': 'Password', 'fr': 'Mot de passe', 'pl': 'Hasło'},
+    'smtp_sender_email': {'en': 'Sender Email', 'fr': 'Email expéditeur', 'pl': 'Email nadawcy'},
+    'smtp_recipient_email': {'en': 'Recipient Email', 'fr': 'Email destinataire', 'pl': 'Email odbiorcy'},
+    'smtp_multiple_emails_hint': {'en': 'Separate multiple emails with commas', 'fr': 'Séparer plusieurs emails par des virgules', 'pl': 'Oddziel wiele e-maili przecinkami'},
+    'smtp_auto_send': {'en': 'Automatic Sending', 'fr': 'Envoi automatique', 'pl': 'Automatyczne wysyłanie'},
+    'smtp_btn_test': {'en': 'Test Sending', 'fr': 'Tester l\'envoi', 'pl': 'Testuj wysyłanie'},
+    'smtp_schedule': {'en': 'Scheduling', 'fr': 'Planification', 'pl': 'Planowanie'},
+    'smtp_schedule_config': {'en': 'Configure Sending Schedule', 'fr': 'Configurer les horaires d\'envoi', 'pl': 'Skonfiguruj harmonogram wysyłania'},
+    
+    # === IMAP ===
+    'imap_title': {'en': 'IMAP Configuration', 'fr': 'Configuration IMAP', 'pl': 'Konfiguracja IMAP'},
+    'imap_server_params': {'en': 'IMAP Server Settings', 'fr': 'Paramètres du serveur IMAP', 'pl': 'Ustawienia serwera IMAP'},
+    'imap_server': {'en': 'IMAP Server', 'fr': 'Serveur IMAP', 'pl': 'Serwer IMAP'},
+    'imap_user': {'en': 'User', 'fr': 'Utilisateur', 'pl': 'Użytkownik'},
+    'imap_password': {'en': 'Password', 'fr': 'Mot de passe', 'pl': 'Hasło'},
+    'imap_subject_filter': {'en': 'Subject Filter', 'fr': 'Filtre sujet', 'pl': 'Filtr tematu'},
+    'imap_archive_folder': {'en': 'Archive Folder', 'fr': 'Dossier d\'archivage', 'pl': 'Folder archiwizacji'},
+    'imap_check_interval': {'en': 'Check Interval', 'fr': 'Intervalle de vérification', 'pl': 'Interwał sprawdzania'},
+    'time_minutes': {'en': 'minutes', 'fr': 'minutes', 'pl': 'minuty'},
+    'imap_auto_import': {'en': 'Automatic Import', 'fr': 'Import automatique', 'pl': 'Automatyczny import'},
+    'imap_btn_test': {'en': 'Test Connection', 'fr': 'Tester la connexion', 'pl': 'Testuj połączenie'},
+    
+    # === AUTH / LOGIN ===
+    'login_title': {'en': 'Login', 'fr': 'Connexion', 'pl': 'Logowanie'},
+    'login_welcome': {'en': 'Welcome to NBCM', 'fr': 'Bienvenue sur NBCM', 'pl': 'Witamy w NBCM'},
+    'login_username_email': {'en': 'Username or Email', 'fr': 'Nom d\'utilisateur ou email', 'pl': 'Nazwa użytkownika lub email'},
+    'login_placeholder_username': {'en': 'Enter your username', 'fr': 'Saisissez votre nom d\'utilisateur', 'pl': 'Wprowadź nazwę użytkownika'},
+    'login_password': {'en': 'Password', 'fr': 'Mot de passe', 'pl': 'Hasło'},
+    'login_placeholder_password': {'en': 'Enter your password', 'fr': 'Saisissez votre mot de passe', 'pl': 'Wprowadź hasło'},
+    'login_remember_me': {'en': 'Remember Me', 'fr': 'Se souvenir de moi', 'pl': 'Zapamiętaj mnie'},
+    'login_btn_submit': {'en': 'Sign In', 'fr': 'Se connecter', 'pl': 'Zaloguj się'},
+    
+    # === USERS ===
+    'users_management': {'en': 'Users Management', 'fr': 'Gestion des utilisateurs', 'pl': 'Zarządzanie użytkownikami'},
+    'users_btn_add': {'en': 'Add User', 'fr': 'Ajouter un utilisateur', 'pl': 'Dodaj użytkownika'},
+    'users_count': {'en': 'users', 'fr': 'utilisateurs', 'pl': 'użytkowników'},
+    'users_username': {'en': 'Username', 'fr': 'Nom d\'utilisateur', 'pl': 'Nazwa użytkownika'},
+    'users_email': {'en': 'Email', 'fr': 'Email', 'pl': 'Email'},
+    'users_role': {'en': 'Role', 'fr': 'Rôle', 'pl': 'Rola'},
+    'users_status': {'en': 'Status', 'fr': 'Statut', 'pl': 'Status'},
+    'users_last_login': {'en': 'Last Login', 'fr': 'Dernière connexion', 'pl': 'Ostatnie logowanie'},
+    'users_actions': {'en': 'Actions', 'fr': 'Actions', 'pl': 'Akcje'},
+    'role_admin': {'en': 'Admin', 'fr': 'Admin', 'pl': 'Administrator'},
+    'role_operator': {'en': 'Operator', 'fr': 'Opérateur', 'pl': 'Operator'},
+    'role_viewer': {'en': 'Viewer', 'fr': 'Lecteur', 'pl': 'Widz'},
+    
+    # === BACKUP ===
+    'backup_db_title': {'en': 'Database Backups', 'fr': 'Sauvegardes de la base de données', 'pl': 'Kopie zapasowe bazy danych'},
+    'backup_btn_create': {'en': 'Create Backup', 'fr': 'Créer une sauvegarde', 'pl': 'Utwórz kopię zapasową'},
+    'backup_description': {'en': 'Description', 'fr': 'Description', 'pl': 'Opis'},
+    'backup_optional': {'en': 'Optional', 'fr': 'Optionnel', 'pl': 'Opcjonalny'},
+    'backup_btn_create_backup': {'en': 'Create Backup', 'fr': 'Créer la sauvegarde', 'pl': 'Utwórz kopię zapasową'},
+    'backup_available_list': {'en': 'Available Backups', 'fr': 'Sauvegardes disponibles', 'pl': 'Dostępne kopie zapasowe'},
+    'backup_file': {'en': 'File', 'fr': 'Fichier', 'pl': 'Plik'},
+    'backup_size': {'en': 'Size', 'fr': 'Taille', 'pl': 'Rozmiar'},
+    'backup_date': {'en': 'Date', 'fr': 'Date', 'pl': 'Data'},
+    
+    # === COMMON BUTTONS ===
+    'btn_import': {'en': 'Import', 'fr': 'Importer', 'pl': 'Importuj'},
+    'btn_export_csv': {'en': 'Export CSV', 'fr': 'Exporter CSV', 'pl': 'Eksportuj CSV'},
+    'btn_save_config': {'en': 'Save Configuration', 'fr': 'Enregistrer la configuration', 'pl': 'Zapisz konfigurację'},
+    'btn_edit': {'en': 'Edit', 'fr': 'Éditer', 'pl': 'Edytuj'},
+    'btn_delete': {'en': 'Delete', 'fr': 'Supprimer', 'pl': 'Usuń'},
+    'btn_download': {'en': 'Download', 'fr': 'Télécharger', 'pl': 'Pobierz'},
+    
+    # === COMMON STATUS ===
+    'status_enabled': {'en': 'Enabled', 'fr': 'Activé', 'pl': 'Włączony'},
+    'status_disabled': {'en': 'Disabled', 'fr': 'Désactivé', 'pl': 'Wyłączony'},
+    'status_active': {'en': 'Active', 'fr': 'Actif', 'pl': 'Aktywny'},
+    'status_inactive': {'en': 'Inactive', 'fr': 'Inactif', 'pl': 'Nieaktywny'},
+
+     # NBCM - TRADUCTIONS SUPPLÉMENTAIRES (ADMIN, BACKUP, MAINTENANCE)
+    'import_history_title': {'en': 'Import History', 'fr': 'Historique des imports', 'pl': 'Historia importów'},
+    'import_history_subtitle': {'en': 'History of last 100 imports (IMAP, API, Manual)', 'fr': 'Historique des 100 derniers imports (IMAP, API, Manuels)', 'pl': 'Historia ostatnich 100 importów (IMAP, API, Ręczne)'},
+    'import_recent': {'en': 'Recent imports', 'fr': 'Imports récents', 'pl': 'Ostatnie importy'},
+    'import_type': {'en': 'Type', 'fr': 'Type', 'pl': 'Typ'},
+    'import_file': {'en': 'File', 'fr': 'Fichier', 'pl': 'Plik'},
+    'import_lines': {'en': 'Lines', 'fr': 'Lignes', 'pl': 'Linie'},
+    'import_details': {'en': 'Details', 'fr': 'Détails', 'pl': 'Szczegóły'},
+    'import_duration': {'en': 'Duration', 'fr': 'Durée', 'pl': 'Czas trwania'},
+    'import_user': {'en': 'User', 'fr': 'Utilisateur', 'pl': 'Użytkownik'},
+    'import_type_api': {'en': 'API', 'fr': 'API', 'pl': 'API'},
+    'import_type_imap': {'en': 'IMAP', 'fr': 'IMAP', 'pl': 'IMAP'},
+    'import_type_manual': {'en': 'Manual', 'fr': 'Manuel', 'pl': 'Ręczny'},
+    'import_no_records': {'en': 'No imports recorded', 'fr': 'Aucun import enregistré', 'pl': 'Brak zarejestrowanych importów'},
+    'import_legend': {'en': 'Legend', 'fr': 'Légende', 'pl': 'Legenda'},
+    'import_new_records': {'en': 'New records', 'fr': 'Nouveaux enregistrements', 'pl': 'Nowe rekordy'},
+    'import_updated': {'en': 'Updated', 'fr': 'Mis à jour', 'pl': 'Zaktualizowane'},
+    'import_errors': {'en': 'Errors', 'fr': 'Erreurs', 'pl': 'Błędy'},
+    'import_types_title': {'en': 'Import types', 'fr': 'Types d\'import', 'pl': 'Typy importu'},
+    'import_auto_api': {'en': 'Automatic import via API', 'fr': 'Import automatique via API', 'pl': 'Automatyczny import przez API'},
+    'import_from_emails': {'en': 'Import from emails', 'fr': 'Import depuis emails', 'pl': 'Import z e-maili'},
+    'import_file_upload': {'en': 'File upload', 'fr': 'Upload fichier', 'pl': 'Przesyłanie pliku'},
+    'import_manual_link': {'en': 'Manual import', 'fr': 'Import manuel', 'pl': 'Import ręczny'},
+    
+    # === ARCHIVE SCHEDULE ===
+    'archive_schedule_title': {'en': 'Archive Scheduling', 'fr': 'Planification Archivage', 'pl': 'Planowanie archiwizacji'},
+    'archive_auto_config': {'en': 'Automatic archiving configuration', 'fr': 'Configuration archivage automatique', 'pl': 'Konfiguracja automatycznej archiwizacji'},
+    'archive_config_subtitle': {'en': 'Configure automatic daily archiving of compliance reports', 'fr': 'Configurez l\'archivage automatique quotidien des rapports de conformité', 'pl': 'Skonfiguruj automatyczną dzienną archiwizację raportów zgodności'},
+    'archive_time': {'en': 'Archive time', 'fr': 'Heure d\'archivage', 'pl': 'Godzina archiwizacji'},
+    'archive_time_format': {'en': '24h format (e.g. 18:00 for 6pm)', 'fr': 'Format 24h (ex: 18:00 pour 6h du soir)', 'pl': 'Format 24h (np. 18:00 dla 18:00)'},
+    'archive_auto_enabled': {'en': 'Automatic archiving', 'fr': 'Archivage automatique', 'pl': 'Automatyczna archiwizacja'},
+    'archive_save_schedule': {'en': 'Save schedule', 'fr': 'Enregistrer la planification', 'pl': 'Zapisz harmonogram'},
+    'archive_scheduler_status': {'en': 'Scheduler status', 'fr': 'Statut du scheduler', 'pl': 'Status harmonogramu'},
+    'archive_scheduler_active': {'en': 'Scheduler active - Automatic archiving is operational', 'fr': 'Scheduler actif - L\'archivage automatique est opérationnel', 'pl': 'Harmonogram aktywny - Automatyczna archiwizacja działa'},
+    'archive_scheduler_inactive': {'en': 'Scheduler inactive - Automatic archiving will not work', 'fr': 'Scheduler inactif - L\'archivage automatique ne fonctionnera pas', 'pl': 'Harmonogram nieaktywny - Automatyczna archiwizacja nie będzie działać'},
+    'archive_job_id': {'en': 'Job ID', 'fr': 'Job ID', 'pl': 'ID zadania'},
+    'archive_description': {'en': 'Description', 'fr': 'Description', 'pl': 'Opis'},
+    'archive_next_run': {'en': 'Next execution', 'fr': 'Prochaine exécution', 'pl': 'Następne wykonanie'},
+    'archive_manual_test': {'en': 'Manual test', 'fr': 'Test manuel', 'pl': 'Test ręczny'},
+    'archive_manual_test_desc': {'en': 'Create an archive manually to test functionality. This does not affect automatic scheduling.', 'fr': 'Créez une archive manuellement pour tester le fonctionnement. Cela n\'affecte pas la planification automatique.', 'pl': 'Utwórz archiwum ręcznie, aby przetestować działanie. Nie wpływa to na automatyczne planowanie.'},
+    'archive_create_now': {'en': 'Create archive now', 'fr': 'Créer une archive maintenant', 'pl': 'Utwórz archiwum teraz'},
+    'archive_how_it_works': {'en': 'How does it work?', 'fr': 'Comment ça marche ?', 'pl': 'Jak to działa?'},
+    'archive_auto_desc_title': {'en': 'Automatic archiving:', 'fr': 'Archivage automatique :', 'pl': 'Automatyczna archiwizacja:'},
+    'archive_auto_desc_1': {'en': 'Runs daily at configured time', 'fr': 'S\'exécute tous les jours à l\'heure configurée', 'pl': 'Uruchamia się codziennie o skonfigurowanej godzinie'},
+    'archive_auto_desc_2': {'en': 'Creates a snapshot of compliance data', 'fr': 'Crée un snapshot des données de conformité', 'pl': 'Tworzy migawkę danych zgodności'},
+    'archive_auto_desc_3': {'en': 'Stores archive in database', 'fr': 'Stocke l\'archive dans la base de données', 'pl': 'Przechowuje archiwum w bazie danych'},
+    'archive_auto_desc_4': {'en': 'Maintains complete history', 'fr': 'Conserve l\'historique complet', 'pl': 'Zachowuje pełną historię'},
+    'archive_content_title': {'en': 'Archive content:', 'fr': 'Contenu des archives :', 'pl': 'Zawartość archiwum:'},
+    'archive_content_1': {'en': 'Archive period (date/time)', 'fr': 'Période de l\'archive (date/heure)', 'pl': 'Okres archiwizacji (data/godzina)'},
+    'archive_content_2': {'en': 'Global compliance rate', 'fr': 'Taux de conformité global', 'pl': 'Globalny wskaźnik zgodności'},
+    'archive_content_3': {'en': 'Number of analyzed jobs', 'fr': 'Nombre de jobs analysés', 'pl': 'Liczba przeanalizowanych zadań'},
+    'archive_content_4': {'en': 'Detailed status per server', 'fr': 'État détaillé par serveur', 'pl': 'Szczegółowy status na serwer'},
+    'archive_view_all': {'en': 'Access all archives in', 'fr': 'Accédez à toutes les archives dans', 'pl': 'Dostęp do wszystkich archiwów w'},
+    
+    # === SMTP SCHEDULE ===
+    'smtp_schedule_title': {'en': 'SMTP Scheduling', 'fr': 'Planification SMTP', 'pl': 'Planowanie SMTP'},
+    'smtp_auto_config': {'en': 'Automatic sending configuration', 'fr': 'Configuration envoi automatique', 'pl': 'Konfiguracja automatycznego wysyłania'},
+    'smtp_config_subtitle': {'en': 'Configure automatic daily sending of compliance reports', 'fr': 'Configurez l\'envoi automatique quotidien des rapports de conformité', 'pl': 'Skonfiguruj automatyczne codzienne wysyłanie raportów zgodności'},
+    'smtp_send_time': {'en': 'Send time', 'fr': 'Heure d\'envoi', 'pl': 'Godzina wysyłki'},
+    'smtp_save_schedule': {'en': 'Save schedule', 'fr': 'Enregistrer la planification', 'pl': 'Zapisz harmonogram'},
+    
+    # === API SCHEDULE ===
+    'api_schedule_title': {'en': 'API Scheduling', 'fr': 'Planification API', 'pl': 'Planowanie API'},
+    'api_auto_config': {'en': 'Automatic fetch configuration', 'fr': 'Configuration récupération automatique', 'pl': 'Konfiguracja automatycznego pobierania'},
+    'api_config_subtitle': {'en': 'Configure automatic data retrieval from Altaview API', 'fr': 'Configurez la récupération automatique des données depuis l\'API Altaview', 'pl': 'Skonfiguruj automatyczne pobieranie danych z API Altaview'},
+    'api_fetch_time': {'en': 'Fetch time', 'fr': 'Heure de récupération', 'pl': 'Godzina pobierania'},
+    'api_save_schedule': {'en': 'Save schedule', 'fr': 'Enregistrer la planification', 'pl': 'Zapisz harmonogram'},
+    
+    # === MAINTENANCE DB - PURGE CMDB ===
+    'purge_cmdb_title': {'en': 'CMDB Purge', 'fr': 'Vidage CMDB', 'pl': 'Czyszczenie CMDB'},
+    'purge_cmdb_danger_title': {'en': 'DANGER: Complete CMDB Purge', 'fr': 'DANGER : Vidage complet CMDB', 'pl': 'NIEBEZPIECZEŃSTWO: Pełne czyszczenie CMDB'},
+    'purge_warning': {'en': 'WARNING - IRREVERSIBLE OPERATION', 'fr': 'ATTENTION - OPÉRATION IRRÉVERSIBLE', 'pl': 'UWAGA - OPERACJA NIEODWRACALNA'},
+    'purge_cmdb_warning': {'en': 'This action will permanently delete all CMDB entries. Make sure you have a recent backup before continuing.', 'fr': 'Cette action va supprimer définitivement toutes les entrées CMDB. Assurez-vous d\'avoir une sauvegarde récente avant de continuer.', 'pl': 'Ta akcja trwale usunie wszystkie wpisy CMDB. Upewnij się, że masz ostatnią kopię zapasową przed kontynuowaniem.'},
+    'purge_stats_title': {'en': 'CMDB Statistics', 'fr': 'Statistiques CMDB', 'pl': 'Statystyki CMDB'},
+    'purge_total_entries': {'en': 'Total entries', 'fr': 'Total entrées', 'pl': 'Całkowita liczba wpisów'},
+    'purge_alternative': {'en': 'Recommended alternative', 'fr': 'Alternative recommandée', 'pl': 'Zalecana alternatywa'},
+    'purge_alternative_desc': {'en': 'Rather than purging, consider:', 'fr': 'Plutôt que de purger, envisagez :', 'pl': 'Zamiast czyścić, rozważ:'},
+    'purge_create_backup': {'en': 'Create a complete backup', 'fr': 'Créer une sauvegarde complète', 'pl': 'Utwórz pełną kopię zapasową'},
+    'purge_import_new': {'en': 'Import a new CMDB file instead', 'fr': 'Importer un nouveau fichier CMDB à la place', 'pl': 'Zaimportuj nowy plik CMDB zamiast tego'},
+    'purge_check_logs': {'en': 'Check import logs to identify issues', 'fr': 'Consulter les logs d\'import pour identifier les problèmes', 'pl': 'Sprawdź logi importu, aby zidentyfikować problemy'},
+    'purge_complete_title': {'en': 'Complete CMDB Purge', 'fr': 'Purge complète CMDB', 'pl': 'Pełne czyszczenie CMDB'},
+    'purge_check': {'en': 'Check:', 'fr': 'Vérifiez :', 'pl': 'Sprawdź:'},
+    'purge_confirm_backup': {'en': 'I have a recent backup', 'fr': 'J\'ai une sauvegarde récente', 'pl': 'Mam ostatnią kopię zapasową'},
+    'purge_understand_irreversible': {'en': 'I understand this is irreversible', 'fr': 'Je comprends que c\'est irréversible', 'pl': 'Rozumiem, że jest to nieodwracalne'},
+    'purge_execute_btn': {'en': 'Execute purge', 'fr': 'Exécuter la purge', 'pl': 'Wykonaj czyszczenie'},
+    
+    # === MAINTENANCE DB - PURGE JOBS ===
+    'purge_jobs_title': {'en': 'Jobs Purge', 'fr': 'Vidage Jobs', 'pl': 'Czyszczenie zadań'},
+    'purge_jobs_danger_title': {'en': 'DANGER: Complete Jobs Purge', 'fr': 'DANGER : Vidage complet Jobs', 'pl': 'NIEBEZPIECZEŃSTWO: Pełne czyszczenie zadań'},
+    'purge_jobs_warning': {'en': 'This action will permanently delete all job entries. Make sure you have a recent backup before continuing.', 'fr': 'Cette action va supprimer définitivement toutes les entrées jobs. Assurez-vous d\'avoir une sauvegarde récente avant de continuer.', 'pl': 'Ta akcja trwale usunie wszystkie wpisy zadań. Upewnij się, że masz ostatnią kopię zapasową przed kontynuowaniem.'},
+    'purge_jobs_stats': {'en': 'Jobs Statistics', 'fr': 'Statistiques Jobs', 'pl': 'Statystyki zadań'},
+    'purge_jobs_complete': {'en': 'Complete Jobs Purge', 'fr': 'Purge complète Jobs', 'pl': 'Pełne czyszczenie zadań'},
+    
+    # === MAINTENANCE DB - CLEANUP OLD ===
+    'cleanup_old_title': {'en': 'Cleanup Old Data', 'fr': 'Nettoyage données anciennes', 'pl': 'Czyszczenie starych danych'},
+    'cleanup_old_subtitle': {'en': 'Delete old data to free up disk space', 'fr': 'Supprimez les anciennes données pour libérer de l\'espace disque', 'pl': 'Usuń stare dane, aby zwolnić miejsce na dysku'},
+    'cleanup_jobs_older': {'en': 'Delete jobs older than', 'fr': 'Supprimer les jobs de plus de', 'pl': 'Usuń zadania starsze niż'},
+    'cleanup_days': {'en': 'days', 'fr': 'jours', 'pl': 'dni'},
+    'cleanup_archives_older': {'en': 'Delete archives older than', 'fr': 'Supprimer les archives de plus de', 'pl': 'Usuń archiwa starsze niż'},
+    'cleanup_execute': {'en': 'Execute cleanup', 'fr': 'Exécuter le nettoyage', 'pl': 'Wykonaj czyszczenie'},
+    'cleanup_stats_title': {'en': 'Database Statistics', 'fr': 'Statistiques base de données', 'pl': 'Statystyki bazy danych'},
+    'cleanup_total_jobs': {'en': 'Total jobs', 'fr': 'Total jobs', 'pl': 'Całkowita liczba zadań'},
+    'cleanup_total_archives': {'en': 'Total archives', 'fr': 'Total archives', 'pl': 'Całkowita liczba archiwów'},
+    'cleanup_disk_usage': {'en': 'Disk usage', 'fr': 'Utilisation disque', 'pl': 'Użycie dysku'},
+    'cleanup_oldest_job': {'en': 'Oldest job', 'fr': 'Job le plus ancien', 'pl': 'Najstarsze zadanie'},
+    'cleanup_oldest_archive': {'en': 'Oldest archive', 'fr': 'Archive la plus ancienne', 'pl': 'Najstarsze archiwum'},
+    
+    # === MAINTENANCE DB - DEDUPLICATION ===
+    'dedup_title': {'en': 'Data Deduplication', 'fr': 'Déduplication des données', 'pl': 'Deduplikacja danych'},
+    'dedup_subtitle': {'en': 'Remove duplicate entries from database', 'fr': 'Supprimez les doublons de la base de données', 'pl': 'Usuń zduplikowane wpisy z bazy danych'},
+    'dedup_search_btn': {'en': 'Search for duplicates', 'fr': 'Rechercher les doublons', 'pl': 'Szukaj duplikatów'},
+    'dedup_remove_btn': {'en': 'Remove duplicates', 'fr': 'Supprimer les doublons', 'pl': 'Usuń duplikaty'},
+    'dedup_cmdb_duplicates': {'en': 'CMDB duplicates', 'fr': 'Doublons CMDB', 'pl': 'Duplikaty CMDB'},
+    'dedup_jobs_duplicates': {'en': 'Jobs duplicates', 'fr': 'Doublons Jobs', 'pl': 'Duplikaty zadań'},
+    'dedup_no_duplicates': {'en': 'No duplicates found', 'fr': 'Aucun doublon trouvé', 'pl': 'Nie znaleziono duplikatów'},
+    'dedup_found': {'en': 'duplicates found', 'fr': 'doublons trouvés', 'pl': 'znaleziono duplikatów'},
+    
+    # === MAINTENANCE FS ===
+    'maintenance_fs_title': {'en': 'Filesystem Maintenance', 'fr': 'Maintenance système de fichiers', 'pl': 'Konserwacja systemu plików'},
+    'maintenance_fs_subtitle': {'en': 'Manage import files and temporary data', 'fr': 'Gérez les fichiers d\'import et les données temporaires', 'pl': 'Zarządzaj plikami importu i danymi tymczasowymi'},
+    'maintenance_fs_cleanup': {'en': 'Cleanup filesystem', 'fr': 'Nettoyage système fichiers', 'pl': 'Czyszczenie systemu plików'},
+    'maintenance_fs_uploads': {'en': 'Upload files', 'fr': 'Fichiers uploadés', 'pl': 'Przesłane pliki'},
+    'maintenance_fs_processing': {'en': 'Processing files', 'fr': 'Fichiers en traitement', 'pl': 'Pliki w trakcie przetwarzania'},
+    'maintenance_fs_archives': {'en': 'Archive files', 'fr': 'Fichiers archives', 'pl': 'Pliki archiwalne'},
+    'maintenance_fs_temp': {'en': 'Temporary files', 'fr': 'Fichiers temporaires', 'pl': 'Pliki tymczasowe'},
+    'maintenance_fs_total_size': {'en': 'Total size', 'fr': 'Taille totale', 'pl': 'Całkowity rozmiar'},
+    'maintenance_fs_delete_old': {'en': 'Delete old files', 'fr': 'Supprimer fichiers anciens', 'pl': 'Usuń stare pliki'},
+    'maintenance_fs_delete_all': {'en': 'Delete all files', 'fr': 'Supprimer tous les fichiers', 'pl': 'Usuń wszystkie pliki'},
+    
+    # === BACKUP - BACKUPS DB ===
+    'backups_db_title': {'en': 'Database Backups', 'fr': 'Sauvegardes base de données', 'pl': 'Kopie zapasowe bazy danych'},
+    'backups_db_create': {'en': 'Create a new backup', 'fr': 'Créer une nouvelle sauvegarde', 'pl': 'Utwórz nową kopię zapasową'},
+    'backups_db_description_label': {'en': 'Description (optional)', 'fr': 'Description (optionnel)', 'pl': 'Opis (opcjonalny)'},
+    'backups_db_description_placeholder': {'en': 'E.g.: Before migration', 'fr': 'Ex: Avant migration', 'pl': 'Np.: Przed migracją'},
+    'backups_db_create_btn': {'en': 'Create backup', 'fr': 'Créer la sauvegarde', 'pl': 'Utwórz kopię zapasową'},
+    'backups_db_list': {'en': 'Available backups', 'fr': 'Sauvegardes disponibles', 'pl': 'Dostępne kopie zapasowe'},
+    'backups_db_filename': {'en': 'Filename', 'fr': 'Nom fichier', 'pl': 'Nazwa pliku'},
+    'backups_db_created': {'en': 'Created', 'fr': 'Créée le', 'pl': 'Utworzono'},
+    'backups_db_actions': {'en': 'Actions', 'fr': 'Actions', 'pl': 'Akcje'},
+    'backups_db_restore': {'en': 'Restore', 'fr': 'Restaurer', 'pl': 'Przywróć'},
+    'backups_db_no_backups': {'en': 'No backups available', 'fr': 'Aucune sauvegarde disponible', 'pl': 'Brak dostępnych kopii zapasowych'},
+    
+    # === BACKUP - BACKUPS FS ===
+    'backups_fs_title': {'en': 'Filesystem Backups', 'fr': 'Sauvegardes système fichiers', 'pl': 'Kopie zapasowe systemu plików'},
+    'backups_fs_create': {'en': 'Create a new filesystem backup', 'fr': 'Créer une nouvelle sauvegarde système fichiers', 'pl': 'Utwórz nową kopię zapasową systemu plików'},
+    'backups_fs_list': {'en': 'Available filesystem backups', 'fr': 'Sauvegardes système fichiers disponibles', 'pl': 'Dostępne kopie zapasowe systemu plików'},
+    
+    # === BACKUP - RESTORE DB ===
+    'restore_db_title': {'en': 'Database Restore', 'fr': 'Restauration base de données', 'pl': 'Przywracanie bazy danych'},
+    'restore_db_subtitle': {'en': 'Restore database from a backup', 'fr': 'Restaurez la base de données depuis une sauvegarde', 'pl': 'Przywróć bazę danych z kopii zapasowej'},
+    'restore_db_select': {'en': 'Select a backup', 'fr': 'Sélectionnez une sauvegarde', 'pl': 'Wybierz kopię zapasową'},
+    'restore_db_warning': {'en': 'WARNING: This will replace current data', 'fr': 'ATTENTION : Ceci remplacera les données actuelles', 'pl': 'UWAGA: To zastąpi bieżące dane'},
+    'restore_db_confirm': {'en': 'I understand data will be replaced', 'fr': 'Je comprends que les données seront remplacées', 'pl': 'Rozumiem, że dane zostaną zastąpione'},
+    'restore_db_execute': {'en': 'Execute restore', 'fr': 'Exécuter la restauration', 'pl': 'Wykonaj przywracanie'},
+    'restore_db_in_progress': {'en': 'Restore in progress...', 'fr': 'Restauration en cours...', 'pl': 'Przywracanie w toku...'},
+    'restore_db_success': {'en': 'Restore completed successfully', 'fr': 'Restauration terminée avec succès', 'pl': 'Przywracanie zakończone pomyślnie'},
+    'restore_db_failed': {'en': 'Restore failed', 'fr': 'Échec de la restauration', 'pl': 'Przywracanie nie powiodło się'},
+    
+    # === BACKUP - RESTORE FS ===
+    'restore_fs_title': {'en': 'Filesystem Restore', 'fr': 'Restauration système fichiers', 'pl': 'Przywracanie systemu plików'},
+    'restore_fs_subtitle': {'en': 'Restore filesystem from a backup', 'fr': 'Restaurez le système fichiers depuis une sauvegarde', 'pl': 'Przywróć system plików z kopii zapasowej'},
+    'restore_fs_select': {'en': 'Select a filesystem backup', 'fr': 'Sélectionnez une sauvegarde système fichiers', 'pl': 'Wybierz kopię zapasową systemu plików'},
+    
+    # === BACKUP SCHEDULE - DB DAILY ===
+    'schedule_db_daily_title': {'en': 'Daily Database Backup', 'fr': 'Sauvegarde quotidienne base de données', 'pl': 'Codzienna kopia zapasowa bazy danych'},
+    'schedule_db_daily_config': {'en': 'Daily backup configuration', 'fr': 'Configuration sauvegarde quotidienne', 'pl': 'Konfiguracja codziennej kopii zapasowej'},
+    'schedule_backup_time': {'en': 'Backup time', 'fr': 'Heure de sauvegarde', 'pl': 'Godzina kopii zapasowej'},
+    'schedule_retention_days': {'en': 'Retention (days)', 'fr': 'Conservation (jours)', 'pl': 'Retencja (dni)'},
+    'schedule_enabled': {'en': 'Enabled', 'fr': 'Activé', 'pl': 'Włączone'},
+    
+    # === BACKUP SCHEDULE - DB WEEKLY ===
+    'schedule_db_weekly_title': {'en': 'Weekly Database Backup', 'fr': 'Sauvegarde hebdomadaire base de données', 'pl': 'Tygodniowa kopia zapasowa bazy danych'},
+    'schedule_db_weekly_config': {'en': 'Weekly backup configuration', 'fr': 'Configuration sauvegarde hebdomadaire', 'pl': 'Konfiguracja tygodniowej kopii zapasowej'},
+    'schedule_day_of_week': {'en': 'Day of week', 'fr': 'Jour de la semaine', 'pl': 'Dzień tygodnia'},
+    'day_monday': {'en': 'Monday', 'fr': 'Lundi', 'pl': 'Poniedziałek'},
+    'day_tuesday': {'en': 'Tuesday', 'fr': 'Mardi', 'pl': 'Wtorek'},
+    'day_wednesday': {'en': 'Wednesday', 'fr': 'Mercredi', 'pl': 'Środa'},
+    'day_thursday': {'en': 'Thursday', 'fr': 'Jeudi', 'pl': 'Czwartek'},
+    'day_friday': {'en': 'Friday', 'fr': 'Vendredi', 'pl': 'Piątek'},
+    'day_saturday': {'en': 'Saturday', 'fr': 'Samedi', 'pl': 'Sobota'},
+    'day_sunday': {'en': 'Sunday', 'fr': 'Dimanche', 'pl': 'Niedziela'},
+    
+    # === BACKUP SCHEDULE - DB MONTHLY ===
+    'schedule_db_monthly_title': {'en': 'Monthly Database Backup', 'fr': 'Sauvegarde mensuelle base de données', 'pl': 'Miesięczna kopia zapasowa bazy danych'},
+    'schedule_db_monthly_config': {'en': 'Monthly backup configuration', 'fr': 'Configuration sauvegarde mensuelle', 'pl': 'Konfiguracja miesięcznej kopii zapasowej'},
+    'schedule_day_of_month': {'en': 'Day of month', 'fr': 'Jour du mois', 'pl': 'Dzień miesiąca'},
+    
+    # === BACKUP SCHEDULE - FS DAILY ===
+    'schedule_fs_daily_title': {'en': 'Daily Filesystem Backup', 'fr': 'Sauvegarde quotidienne système fichiers', 'pl': 'Codzienna kopia zapasowa systemu plików'},
+    'schedule_fs_daily_config': {'en': 'Daily filesystem backup configuration', 'fr': 'Configuration sauvegarde quotidienne système fichiers', 'pl': 'Konfiguracja codziennej kopii zapasowej systemu plików'},
+    
+    # === BACKUP SCHEDULE - FS WEEKLY ===
+    'schedule_fs_weekly_title': {'en': 'Weekly Filesystem Backup', 'fr': 'Sauvegarde hebdomadaire système fichiers', 'pl': 'Tygodniowa kopia zapasowa systemu plików'},
+    'schedule_fs_weekly_config': {'en': 'Weekly filesystem backup configuration', 'fr': 'Configuration sauvegarde hebdomadaire système fichiers', 'pl': 'Konfiguracja tygodniowej kopii zapasowej systemu plików'},
+    
+    # === BACKUP SCHEDULE - FS MONTHLY ===
+    'schedule_fs_monthly_title': {'en': 'Monthly Filesystem Backup', 'fr': 'Sauvegarde mensuelle système fichiers', 'pl': 'Miesięczna kopia zapasowa systemu plików'},
+    'schedule_fs_monthly_config': {'en': 'Monthly filesystem backup configuration', 'fr': 'Configuration sauvegarde mensuelle système fichiers', 'pl': 'Konfiguracja miesięcznej kopii zapasowej systemu plików'},
+    
+    # === COMMON TERMS ===
+    'configuration': {'en': 'Configuration', 'fr': 'Configuration', 'pl': 'Konfiguracja'},
+    'schedule': {'en': 'Schedule', 'fr': 'Planification', 'pl': 'Harmonogram'},
+    'test': {'en': 'Test', 'fr': 'Test', 'pl': 'Test'},
+    'next': {'en': 'Next', 'fr': 'Suivant', 'pl': 'Następny'},
+    'previous': {'en': 'Previous', 'fr': 'Précédent', 'pl': 'Poprzedni'},
+    'confirm': {'en': 'Confirm', 'fr': 'Confirmer', 'pl': 'Potwierdź'},
+    'warning': {'en': 'Warning', 'fr': 'Attention', 'pl': 'Uwaga'},
+    'danger': {'en': 'Danger', 'fr': 'Danger', 'pl': 'Niebezpieczeństwo'},
+    'info': {'en': 'Information', 'fr': 'Information', 'pl': 'Informacja'},
+    'success': {'en': 'Success', 'fr': 'Succès', 'pl': 'Sukces'},
+    'error': {'en': 'Error', 'fr': 'Erreur', 'pl': 'Błąd'},
+    'loading': {'en': 'Loading...', 'fr': 'Chargement...', 'pl': 'Ładowanie...'},
+    'processing': {'en': 'Processing...', 'fr': 'Traitement...', 'pl': 'Przetwarzanie...'},
+    'completed': {'en': 'Completed', 'fr': 'Terminé', 'pl': 'Ukończone'},
+    'failed': {'en': 'Failed', 'fr': 'Échoué', 'pl': 'Nie powiodło się'},
+    'in_progress': {'en': 'In progress', 'fr': 'En cours', 'pl': 'W toku'},
+
+###### NESTA
+    # === CLÉS MANQUANTES COMMUNES ===
+    'th_name': {'en': 'Name', 'fr': 'Nom', 'pl': 'Nazwa'},
+    'th_date': {'en': 'Date', 'fr': 'Date', 'pl': 'Data'},
+    'th_status': {'en': 'Status', 'fr': 'Statut', 'pl': 'Status'},
+    'not_configured': {'en': 'Not configured', 'fr': 'Non configuré', 'pl': 'Nieskonfigurowane'},
+    'status_success': {'en': 'Success', 'fr': 'Succès', 'pl': 'Sukces'},
+    'status_error': {'en': 'Error', 'fr': 'Erreur', 'pl': 'Błąd'},
+    
+    # === SIDEBAR SUPPLÉMENTAIRE ===
+    'sidebar_api_altaview': {'en': 'Altaview API', 'fr': 'API Altaview', 'pl': 'API Altaview'},
+    'sidebar_imap': {'en': 'IMAP', 'fr': 'IMAP', 'pl': 'IMAP'},
+    
+    # === SMTP SCHEDULE ===
+    'smtp_schedule_info_1': {'en': 'Reports are sent automatically according to scheduler planning', 'fr': 'Les rapports sont envoyés automatiquement selon la planification définie dans le scheduler', 'pl': 'Raporty są wysyłane automatycznie zgodnie z harmonogramem planera'},
+    'smtp_schedule_info_2': {'en': 'To modify sending frequency, contact system administrator', 'fr': 'Pour modifier la fréquence d\'envoi, contactez l\'administrateur système', 'pl': 'Aby zmienić częstotliwość wysyłania, skontaktuj się z administratorem systemu'},
+    'smtp_schedule_info_3': {'en': 'Scheduled jobs are managed by APScheduler', 'fr': 'Les jobs planifiés sont gérés par APScheduler', 'pl': 'Zaplanowane zadania są zarządzane przez APScheduler'},
+    
+    # === API SCHEDULE ===
+    'api_title': {'en': 'API Configuration', 'fr': 'Configuration API', 'pl': 'Konfiguracja API'},
+    'api_interval': {'en': 'Interval (minutes)', 'fr': 'Intervalle (minutes)', 'pl': 'Interwał (minuty)'},
+    'api_interval_info': {'en': 'Between 5 minutes and 1440 minutes (24h)', 'fr': 'Entre 5 minutes et 1440 minutes (24h)', 'pl': 'Między 5 minut a 1440 minut (24h)'},
+    'api_quick_suggestions': {'en': 'Quick suggestions', 'fr': 'Suggestions rapides', 'pl': 'Szybkie sugestie'},
+    'schedule_enabled': {'en': 'Schedule enabled', 'fr': 'Planification active', 'pl': 'Harmonogram włączony'},
+    'schedule_disabled': {'en': 'Schedule disabled', 'fr': 'Planification désactivée', 'pl': 'Harmonogram wyłączony'},
+    'api_configured_active': {'en': 'API configured and active', 'fr': 'API configurée et active', 'pl': 'API skonfigurowane i aktywne'},
+    'api_not_active': {'en': 'API is not active', 'fr': 'L\'API n\'est pas active', 'pl': 'API nie jest aktywne'},
+    'api_activate': {'en': 'Activate API', 'fr': 'Activer l\'API', 'pl': 'Aktywuj API'},
+    'api_every': {'en': 'Every', 'fr': 'Toutes les', 'pl': 'Co'},
+    'api_auto_import_desc': {'en': 'Import will run automatically according to configured interval', 'fr': 'L\'import s\'exécutera automatiquement selon l\'intervalle configuré', 'pl': 'Import będzie wykonywany automatycznie zgodnie ze skonfigurowanym interwałem'},
+    
+    # === API GUIDE STEPS ===
+    'api_step_1_title': {'en': 'Configure API', 'fr': 'Configurer l\'API', 'pl': 'Skonfiguruj API'},
+    'api_step_1_desc': {'en': 'Make sure API is configured with URL and token in Configuration API', 'fr': 'Assurez-vous que l\'API est configurée avec l\'URL et le token dans Configuration API', 'pl': 'Upewnij się, że API jest skonfigurowane z URL i tokenem w Konfiguracji API'},
+    'api_step_2_title': {'en': 'Define interval', 'fr': 'Définir l\'intervalle', 'pl': 'Zdefiniuj interwał'},
+    'api_step_2_desc': {'en': 'Choose import frequency (e.g. 60 minutes = once per hour)', 'fr': 'Choisissez la fréquence d\'import (ex: 60 minutes = 1 fois par heure)', 'pl': 'Wybierz częstotliwość importu (np. 60 minut = raz na godzinę)'},
+    'api_step_3_title': {'en': 'Enable scheduling', 'fr': 'Activer la planification', 'pl': 'Włącz planowanie'},
+    'api_step_3_desc': {'en': 'Check "Schedule enabled" box', 'fr': 'Cochez la case "Planification active"', 'pl': 'Zaznacz pole "Harmonogram włączony"'},
+    'api_step_4_title': {'en': 'Restart application', 'fr': 'Redémarrer l\'application', 'pl': 'Uruchom ponownie aplikację'},
+    'api_step_4_desc': {'en': 'Run docker-compose restart nbcm to apply changes', 'fr': 'Exécutez docker-compose restart nbcm pour appliquer les changements', 'pl': 'Uruchom docker-compose restart nbcm aby zastosować zmiany'},
+    'api_step_5_title': {'en': 'Check logs', 'fr': 'Vérifier les logs', 'pl': 'Sprawdź logi'},
+    'api_step_5_desc': {'en': 'Check logs to see automatic imports: docker-compose logs -f nbcm-app | grep API', 'fr': 'Consultez les logs pour voir les imports automatiques : docker-compose logs -f nbcm-app | grep API', 'pl': 'Sprawdź logi, aby zobaczyć automatyczne importy: docker-compose logs -f nbcm-app | grep API'},
+    'api_step_6_title': {'en': 'History', 'fr': 'Historique', 'pl': 'Historia'},
+    'api_step_6_desc': {'en': 'Check import history to see results', 'fr': 'Consultez l\'historique des imports pour voir les résultats', 'pl': 'Sprawdź historię importów, aby zobaczyć wyniki'},
+    
+    # === PURGE / MAINTENANCE ===
+    'purge_entries': {'en': 'PURGE ENTRIES', 'fr': 'PURGER ENTRÉES', 'pl': 'WYCZYŚĆ WPISY'},
+    'cancel_return': {'en': 'Cancel and return', 'fr': 'Annuler et retourner', 'pl': 'Anuluj i wróć'},
+    'type_delete': {'en': 'Type DELETE', 'fr': 'Tapez DELETE', 'pl': 'Wpisz DELETE'},
+    'type_delete_caps': {'en': 'Type DELETE in capitals', 'fr': 'Tapez DELETE en majuscules', 'pl': 'Wpisz DELETE wielkimi literami'},
+    'case_sensitive': {'en': 'Case sensitive - must be UPPERCASE', 'fr': 'Sensible à la casse - doit être en MAJUSCULES', 'pl': 'Rozróżnia wielkość liter - musi być WIELKIMI LITERAMI'},
+    'what_happens_after': {'en': 'What happens after purge?', 'fr': 'Que se passe-t-il après la purge ?', 'pl': 'Co się dzieje po czyszczeniu?'},
+    'create_recent_backup': {'en': 'You created a recent backup', 'fr': 'Vous avez créé une sauvegarde récente', 'pl': 'Utworzyłeś ostatnią kopię zapasową'},
+    'action_necessary': {'en': 'This action is really necessary', 'fr': 'Cette action est vraiment nécessaire', 'pl': 'Ta akcja jest naprawdę konieczna'},
+    'ready_reimport': {'en': 'You are ready to re-import a new file', 'fr': 'Vous êtes prêt à réimporter un nouveau fichier', 'pl': 'Jesteś gotowy do ponownego importu nowego pliku'},
+    'last_confirmation': {'en': 'LAST CONFIRMATION', 'fr': 'DERNIÈRE CONFIRMATION', 'pl': 'OSTATNIE POTWIERDZENIE'},
+    'really_delete_all': {'en': 'Do you really want to delete ALL entries? This action is IRREVERSIBLE.', 'fr': 'Voulez-vous vraiment supprimer TOUTES les entrées ? Cette action est IRRÉVERSIBLE.', 'pl': 'Czy naprawdę chcesz usunąć WSZYSTKIE wpisy? Ta akcja jest NIEODWRACALNA.'},
+    
+    # === CLEANUP ===
+    'cleanup_will_delete': {'en': 'This will delete', 'fr': 'Ceci va supprimer', 'pl': 'To usunie'},
+    'cleanup_jobs_older_than': {'en': 'Jobs older than', 'fr': 'Jobs de plus de', 'pl': 'Zadania starsze niż'},
+    'cleanup_archives_older_than': {'en': 'Archives older than', 'fr': 'Archives de plus de', 'pl': 'Archiwa starsze niż'},
+    'cleanup_recommended': {'en': 'Recommended', 'fr': 'Recommandé', 'pl': 'Zalecane'},
+    'cleanup_days_90': {'en': '90 days', 'fr': '90 jours', 'pl': '90 dni'},
+    'cleanup_days_180': {'en': '180 days', 'fr': '180 jours', 'pl': '180 dni'},
+    'cleanup_days_365': {'en': '365 days', 'fr': '365 jours', 'pl': '365 dni'},
+    
+    # === DEDUPLICATION ===
+    'dedup_hostname': {'en': 'Hostname', 'fr': 'Hostname', 'pl': 'Hostname'},
+    'dedup_count': {'en': 'Count', 'fr': 'Nombre', 'pl': 'Liczba'},
+    'dedup_duplicates': {'en': 'duplicates', 'fr': 'doublons', 'pl': 'duplikaty'},
+    'dedup_keep_most_recent': {'en': 'Keep most recent', 'fr': 'Conserver le plus récent', 'pl': 'Zachowaj najnowszy'},
+    'dedup_delete_others': {'en': 'Delete others', 'fr': 'Supprimer les autres', 'pl': 'Usuń pozostałe'},
+    
+    # === FILESYSTEM MAINTENANCE ===
+    'fs_directory': {'en': 'Directory', 'fr': 'Répertoire', 'pl': 'Katalog'},
+    'fs_files_count': {'en': 'Files count', 'fr': 'Nombre de fichiers', 'pl': 'Liczba plików'},
+    'fs_delete_older_than': {'en': 'Delete files older than', 'fr': 'Supprimer fichiers de plus de', 'pl': 'Usuń pliki starsze niż'},
+    'fs_delete_all_warning': {'en': 'Warning: This will delete ALL files in this directory', 'fr': 'Attention : Ceci va supprimer TOUS les fichiers de ce répertoire', 'pl': 'Uwaga: To usunie WSZYSTKIE pliki w tym katalogu'},
+    
+    # === BACKUP & RESTORE ===
+    'backup_create_new': {'en': 'Create a new backup', 'fr': 'Créer une nouvelle sauvegarde', 'pl': 'Utwórz nową kopię zapasową'},
+    'backup_creating': {'en': 'Creating backup...', 'fr': 'Création de la sauvegarde...', 'pl': 'Tworzenie kopii zapasowej...'},
+    'restore_select_backup': {'en': 'Select a backup to restore', 'fr': 'Sélectionnez une sauvegarde à restaurer', 'pl': 'Wybierz kopię zapasową do przywrócenia'},
+    'restore_will_replace': {'en': 'This will replace current data', 'fr': 'Ceci remplacera les données actuelles', 'pl': 'To zastąpi bieżące dane'},
+    'restore_understand': {'en': 'I understand data will be replaced', 'fr': 'Je comprends que les données seront remplacées', 'pl': 'Rozumiem, że dane zostaną zastąpione'},
+    'restore_executing': {'en': 'Executing restore...', 'fr': 'Exécution de la restauration...', 'pl': 'Wykonywanie przywracania...'},
+    'restore_progress': {'en': 'Restore progress', 'fr': 'Progression de la restauration', 'pl': 'Postęp przywracania'},
+    'restore_completed': {'en': 'Restore completed', 'fr': 'Restauration terminée', 'pl': 'Przywracanie zakończone'},
+    
+    # === BACKUP SCHEDULE ===
+    'schedule_daily': {'en': 'Daily', 'fr': 'Quotidien', 'pl': 'Dziennie'},
+    'schedule_weekly': {'en': 'Weekly', 'fr': 'Hebdomadaire', 'pl': 'Tygodniowo'},
+    'schedule_monthly': {'en': 'Monthly', 'fr': 'Mensuel', 'pl': 'Miesięcznie'},
+    'schedule_time': {'en': 'Time', 'fr': 'Heure', 'pl': 'Godzina'},
+    'schedule_retention': {'en': 'Retention', 'fr': 'Conservation', 'pl': 'Retencja'},
+    'schedule_last_backup': {'en': 'Last backup', 'fr': 'Dernière sauvegarde', 'pl': 'Ostatnia kopia zapasowa'},
+    'schedule_next_backup': {'en': 'Next backup', 'fr': 'Prochaine sauvegarde', 'pl': 'Następna kopia zapasowa'},
+    'schedule_never': {'en': 'Never', 'fr': 'Jamais', 'pl': 'Nigdy'},
+    
+    # === COMMON ACTIONS ===
+    'btn_test': {'en': 'Test', 'fr': 'Tester', 'pl': 'Testuj'},
+    'btn_apply': {'en': 'Apply', 'fr': 'Appliquer', 'pl': 'Zastosuj'},
+    'btn_reset': {'en': 'Reset', 'fr': 'Réinitialiser', 'pl': 'Zresetuj'},
+    'btn_refresh': {'en': 'Refresh', 'fr': 'Actualiser', 'pl': 'Odśwież'},
+    'btn_close': {'en': 'Close', 'fr': 'Fermer', 'pl': 'Zamknij'},
+    'btn_continue': {'en': 'Continue', 'fr': 'Continuer', 'pl': 'Kontynuuj'},
+    'btn_back': {'en': 'Back', 'fr': 'Retour', 'pl': 'Wstecz'},
+    
+    # === TIME UNITS ===
+    'time_second': {'en': 'second', 'fr': 'seconde', 'pl': 'sekunda'},
+    'time_seconds': {'en': 'seconds', 'fr': 'secondes', 'pl': 'sekundy'},
+    'time_minute': {'en': 'minute', 'fr': 'minute', 'pl': 'minuta'},
+    'time_hour': {'en': 'hour', 'fr': 'heure', 'pl': 'godzina'},
+    'time_hours': {'en': 'hours', 'fr': 'heures', 'pl': 'godziny'},
+    'time_day': {'en': 'day', 'fr': 'jour', 'pl': 'dzień'},
+    'time_week': {'en': 'week', 'fr': 'semaine', 'pl': 'tydzień'},
+    'time_month': {'en': 'month', 'fr': 'mois', 'pl': 'miesiąc'},
+    'time_year': {'en': 'year', 'fr': 'année', 'pl': 'rok'},
+
+###### NESTA
+    # === PURGE CMDB ===
+    'purge_cmdb_page_title': {'en': 'CMDB Purge', 'fr': 'Vidage CMDB', 'pl': 'Czyszczenie CMDB'},
+    'purge_cmdb_danger_title': {'en': 'DANGER: Complete CMDB Purge', 'fr': 'DANGER : Vidage complet CMDB', 'pl': 'NIEBEZPIECZEŃSTWO: Pełne czyszczenie CMDB'},
+    'purge_warning_irreversible': {'en': 'WARNING - IRREVERSIBLE OPERATION', 'fr': 'ATTENTION - OPÉRATION IRRÉVERSIBLE', 'pl': 'UWAGA - OPERACJA NIEODWRACALNA'},
+    'purge_cmdb_warning_text': {'en': 'This action will permanently delete all CMDB entries. Make sure you have a recent backup before continuing.', 'fr': 'Cette action va supprimer définitivement toutes les entrées CMDB. Assurez-vous d\'avoir une sauvegarde récente avant de continuer.', 'pl': 'Ta akcja trwale usunie wszystkie wpisy CMDB. Upewnij się, że masz ostatnią kopię zapasową przed kontynuowaniem.'},
+    'purge_cmdb_action_will': {'en': 'This action will', 'fr': 'Cette action va', 'pl': 'Ta akcja'},
+    'purge_delete_permanently_all': {'en': 'permanently delete all', 'fr': 'supprimer définitivement toutes les', 'pl': 'trwale usunie wszystkie'},
+    'purge_cmdb_entries': {'en': 'CMDB entries', 'fr': 'entrées CMDB', 'pl': 'wpisy CMDB'},
+    'purge_ensure_backup': {'en': 'Make sure you have a recent backup before continuing', 'fr': 'Assurez-vous d\'avoir une sauvegarde récente avant de continuer', 'pl': 'Upewnij się, że masz ostatnią kopię zapasową przed kontynuowaniem'},
+    'stats_cmdb': {'en': 'CMDB Statistics', 'fr': 'Statistiques CMDB', 'pl': 'Statystyki CMDB'},
+    'total_entries': {'en': 'Total entries', 'fr': 'Total entrées', 'pl': 'Wszystkie wpisy'},
+    'recommended_alternative': {'en': 'Recommended alternative', 'fr': 'Alternative recommandée', 'pl': 'Zalecana alternatywa'},
+    'rather_than_purge': {'en': 'Rather than purging, consider:', 'fr': 'Plutôt que de purger, envisagez :', 'pl': 'Zamiast czyścić, rozważ:'},
+    'create_full_backup': {'en': 'Create a full backup', 'fr': 'Créer une sauvegarde complète', 'pl': 'Utwórz pełną kopię zapasową'},
+    'import_new_cmdb_file': {'en': 'Import a new CMDB file instead', 'fr': 'Importer un nouveau fichier CMDB à la place', 'pl': 'Zaimportuj nowy plik CMDB zamiast tego'},
+    'check_import_logs': {'en': 'Check import logs to identify issues', 'fr': 'Consulter les logs d\'import pour identifier les problèmes', 'pl': 'Sprawdź logi importu, aby zidentyfikować problemy'},
+    'complete_cmdb_purge': {'en': 'Complete CMDB Purge', 'fr': 'Purge complète CMDB', 'pl': 'Pełne czyszczenie CMDB'},
+    'verify_checklist': {'en': 'Verify:', 'fr': 'Vérifiez :', 'pl': 'Sprawdź:'},
+    'you_created_recent_backup': {'en': 'You created a recent backup', 'fr': 'Vous avez créé une sauvegarde récente', 'pl': 'Utworzyłeś ostatnią kopię zapasową'},
+    'action_really_necessary': {'en': 'This action is really necessary', 'fr': 'Cette action est vraiment nécessaire', 'pl': 'Ta akcja jest naprawdę konieczna'},
+    'ready_to_reimport': {'en': 'You are ready to re-import a new CMDB file', 'fr': 'Vous êtes prêt à réimporter un nouveau fichier CMDB', 'pl': 'Jesteś gotowy do ponownego importu nowego pliku CMDB'},
+    'last_confirmation': {'en': 'LAST CONFIRMATION', 'fr': 'DERNIÈRE CONFIRMATION', 'pl': 'OSTATNIE POTWIERDZENIE'},
+    'really_want_delete_all': {'en': 'Do you really want to delete ALL entries? This action is IRREVERSIBLE.', 'fr': 'Voulez-vous vraiment supprimer TOUTES les entrées ? Cette action est IRRÉVERSIBLE.', 'pl': 'Czy naprawdę chcesz usunąć WSZYSTKIE wpisy? Ta akcja jest NIEODWRACALNA.'},
+    'to_confirm_type_exactly': {'en': 'To confirm, type exactly', 'fr': 'Pour confirmer, tapez exactement', 'pl': 'Aby potwierdzić, wpisz dokładnie'},
+    'type_delete_caps': {'en': 'Type DELETE in capitals', 'fr': 'Tapez DELETE en majuscules', 'pl': 'Wpisz DELETE wielkimi literami'},
+    'case_sensitive_uppercase': {'en': 'Case sensitive - must be UPPERCASE', 'fr': 'Sensible à la casse - doit être en MAJUSCULES', 'pl': 'Rozróżnia wielkość liter - musi być WIELKIMI LITERAMI'},
+    'btn_purge': {'en': 'PURGE', 'fr': 'PURGER', 'pl': 'WYCZYŚĆ'},
+    'btn_cancel_return': {'en': 'Cancel and return', 'fr': 'Annuler et retourner', 'pl': 'Anuluj i wróć'},
+    'what_happens_after_purge': {'en': 'What happens after purge?', 'fr': 'Que se passe-t-il après la purge ?', 'pl': 'Co się dzieje po czyszczeniu?'},
+    'purge_cmdb_info_1': {'en': 'All CMDB entries will be deleted from database', 'fr': 'Toutes les entrées CMDB seront supprimées de la base de données', 'pl': 'Wszystkie wpisy CMDB zostaną usunięte z bazy danych'},
+    'purge_cmdb_info_2': {'en': 'Operation history will be recorded with your username', 'fr': 'Un historique de l\'opération sera enregistré avec votre nom d\'utilisateur', 'pl': 'Historia operacji zostanie zapisana z Twoją nazwą użytkownika'},
+    'purge_cmdb_info_3': {'en': 'Compliance reports will not work until next CMDB import', 'fr': 'Les rapports de conformité ne fonctionneront plus jusqu\'au prochain import CMDB', 'pl': 'Raporty zgodności nie będą działać do następnego importu CMDB'},
+    'purge_cmdb_info_4': {'en': 'You will need to import a new CMDB file to restore data', 'fr': 'Vous devrez importer un nouveau fichier CMDB pour restaurer les données', 'pl': 'Będziesz musiał zaimportować nowy plik CMDB, aby przywrócić dane'},
+    
+    # === PURGE JOBS ===
+    'purge_jobs_page_title': {'en': 'Jobs Purge', 'fr': 'Vidage Jobs', 'pl': 'Czyszczenie zadań'},
+    'purge_jobs_danger_title': {'en': 'DANGER: Complete Altaview Jobs Purge', 'fr': 'DANGER : Vidage complet Jobs Altaview', 'pl': 'NIEBEZPIECZEŃSTWO: Pełne czyszczenie zadań Altaview'},
+    'purge_jobs_warning_text': {'en': 'This action will permanently delete all Altaview jobs. All backup history will be lost. Make sure you have a full backup before continuing.', 'fr': 'Cette action va supprimer définitivement tous les jobs Altaview. Tout l\'historique des sauvegardes sera perdu. Assurez-vous d\'avoir une sauvegarde complète avant de continuer.', 'pl': 'Ta akcja trwale usunie wszystkie zadania Altaview. Cała historia kopii zapasowych zostanie utracona. Upewnij się, że masz pełną kopię zapasową przed kontynuowaniem.'},
+    'purge_delete_all_jobs': {'en': 'permanently delete all Altaview jobs', 'fr': 'supprimer définitivement tous les jobs Altaview', 'pl': 'trwale usunie wszystkie zadania Altaview'},
+    'all_backup_history_lost': {'en': 'All backup history will be lost', 'fr': 'Tout l\'historique des sauvegardes sera perdu', 'pl': 'Cała historia kopii zapasowych zostanie utracona'},
+    'ensure_full_backup': {'en': 'Make sure you have a full backup before continuing', 'fr': 'Assurez-vous d\'avoir une sauvegarde complète avant de continuer', 'pl': 'Upewnij się, że masz pełną kopię zapasową przed kontynuowaniem'},
+    'stats_jobs': {'en': 'Jobs Statistics', 'fr': 'Statistiques Jobs', 'pl': 'Statystyki zadań'},
+    'total_jobs': {'en': 'Total jobs', 'fr': 'Total jobs', 'pl': 'Wszystkie zadania'},
+    'jobs_older_6_months': {'en': 'Jobs > 6 months', 'fr': 'Jobs > 6 mois', 'pl': 'Zadania > 6 miesięcy'},
+    'rather_than_purge_all': {'en': 'Rather than purging everything, consider:', 'fr': 'Plutôt que de tout purger, envisagez :', 'pl': 'Zamiast czyścić wszystko, rozważ:'},
+    'cleanup_only_old_jobs': {'en': 'Cleanup only jobs > 6 months', 'fr': 'Nettoyer seulement les jobs > 6 mois', 'pl': 'Wyczyść tylko zadania > 6 miesięcy'},
+    'export_important_data': {'en': 'Export important data before purge', 'fr': 'Exporter les données importantes avant purge', 'pl': 'Eksportuj ważne dane przed czyszczeniem'},
+    'complete_jobs_purge': {'en': 'Complete Altaview Jobs Purge', 'fr': 'Purge complète Jobs Altaview', 'pl': 'Pełne czyszczenie zadań Altaview'},
+    'you_created_db_backup': {'en': 'You created a recent database backup', 'fr': 'Vous avez créé une sauvegarde récente de la base de données', 'pl': 'Utworzyłeś ostatnią kopię zapasową bazy danych'},
+    'complete_purge_necessary': {'en': 'This complete purge is really necessary', 'fr': 'Cette purge complète est vraiment nécessaire', 'pl': 'To pełne czyszczenie jest naprawdę konieczne'},
+    'understand_history_lost': {'en': 'You understand all history will be lost', 'fr': 'Vous comprenez que tout l\'historique sera perdu', 'pl': 'Rozumiesz, że cała historia zostanie utracona'},
+    'reports_wont_work_until_import': {'en': 'Compliance reports will not work until next import', 'fr': 'Les rapports de conformité ne fonctionneront plus jusqu\'au prochain import', 'pl': 'Raporty zgodności nie będą działać do następnego importu'},
+    'really_delete_all_jobs': {'en': 'Do you really want to delete ALL jobs? This action is IRREVERSIBLE and will delete all history.', 'fr': 'Voulez-vous vraiment supprimer TOUS les jobs ? Cette action est IRRÉVERSIBLE et supprimera tout l\'historique.', 'pl': 'Czy naprawdę chcesz usunąć WSZYSTKIE zadania? Ta akcja jest NIEODWRACALNA i usunie całą historię.'},
+    'btn_purge_jobs': {'en': 'PURGE ALTAVIEW JOBS', 'fr': 'PURGER JOBS ALTAVIEW', 'pl': 'WYCZYŚĆ ZADANIA ALTAVIEW'},
+    'purge_jobs_info_1': {'en': 'All Altaview jobs will be deleted from database', 'fr': 'Tous les jobs Altaview seront supprimés de la base de données', 'pl': 'Wszystkie zadania Altaview zostaną usunięte z bazy danych'},
+    'purge_jobs_info_3': {'en': 'Dashboard and compliance reports will show 0% compliance', 'fr': 'Le tableau de bord et les rapports de conformité afficheront 0% de conformité', 'pl': 'Dashboard i raporty zgodności pokażą 0% zgodności'},
+    'purge_jobs_info_4': {'en': 'Existing compliance archives will remain intact', 'fr': 'Les archives de conformité existantes resteront intactes', 'pl': 'Istniejące archiwa zgodności pozostaną nienaruszone'},
+    'purge_jobs_info_5': {'en': 'You will need to import new Altaview files to restore data', 'fr': 'Vous devrez importer de nouveaux fichiers Altaview pour restaurer les données', 'pl': 'Będziesz musiał zaimportować nowe pliki Altaview, aby przywrócić dane'},
+    
+    # === COMMON PURGE ===
+    'entries_word': {'en': 'entries', 'fr': 'entrées', 'pl': 'wpisy'},
+    'jobs_word': {'en': 'jobs', 'fr': 'jobs', 'pl': 'zadania'},
+
+    # === MAINTENANCE DB - CLEANUP OLD ===
+    'cleanup_old_page_title': {'en': 'Jobs Cleanup', 'fr': 'Nettoyage Jobs', 'pl': 'Czyszczenie zadań'},
+    'cleanup_old_page_heading': {'en': 'Clean jobs older than 6 months', 'fr': 'Nettoyer jobs de plus de 6 mois', 'pl': 'Wyczyść zadania starsze niż 6 miesięcy'},
+    'selective_cleanup': {'en': 'Selective cleanup', 'fr': 'Nettoyage sélectif', 'pl': 'Selektywne czyszczenie'},
+    'cleanup_will_delete': {'en': 'This operation will delete', 'fr': 'Cette opération va supprimer', 'pl': 'Ta operacja usunie'},
+    'jobs_older_than_6_months': {'en': 'jobs older than 6 months', 'fr': 'jobs de plus de 6 mois', 'pl': 'zadań starszych niż 6 miesięcy'},
+    'btn_cleanup': {'en': 'Cleanup', 'fr': 'Nettoyer', 'pl': 'Wyczyść'},
+    'confirm_delete_jobs': {'en': 'Delete {count} jobs?', 'fr': 'Supprimer {count} jobs ?', 'pl': 'Usunąć {count} zadań?'},
+    
+    # === MAINTENANCE DB - DEDUPLICATION ===
+    'deduplication_page_title': {'en': 'Deduplication', 'fr': 'Déduplication', 'pl': 'Deduplikacja'},
+    'deduplication_page_heading': {'en': 'Remove Altaview duplicates', 'fr': 'Supprimer les doublons Altaview', 'pl': 'Usuń duplikaty Altaview'},
+    'dedup_detects_info': {'en': 'Detects and removes duplicate jobs (same Job ID + same backup date).', 'fr': 'Détecte et supprime les jobs en double (même Job ID + même date de backup).', 'pl': 'Wykrywa i usuwa zduplikowane zadania (ten sam Job ID + ta sama data kopii zapasowej).'},
+    'config_auto_dedup': {'en': 'Automatic deduplication configuration', 'fr': 'Configuration déduplication automatique', 'pl': 'Konfiguracja automatycznej deduplikacji'},
+    'auto_deduplication': {'en': 'Automatic deduplication', 'fr': 'Déduplication automatique', 'pl': 'Automatyczna deduplikacja'},
+    'manual_deduplication': {'en': 'Manual deduplication', 'fr': 'Déduplication manuelle', 'pl': 'Ręczna deduplikacja'},
+    'btn_run_now': {'en': 'Run now', 'fr': 'Lancer maintenant', 'pl': 'Uruchom teraz'},
+    'confirm_run_dedup': {'en': 'Start deduplication?', 'fr': 'Lancer la déduplication ?', 'pl': 'Rozpocząć deduplikację?'},
+    
+    # === MAINTENANCE FS ===
+    'maintenance_fs_page_title': {'en': 'FS Maintenance', 'fr': 'Maintenance FS', 'pl': 'Konserwacja FS'},
+    'fs_cleanup_heading': {'en': 'Auto-Import Files Cleanup', 'fr': 'Nettoyage Fichiers Auto-Import', 'pl': 'Czyszczenie plików automatycznego importu'},
+    'total_files': {'en': 'Total files', 'fr': 'Fichiers totaux', 'pl': 'Wszystkie pliki'},
+    'files_older_48h': {'en': '> 48h', 'fr': '> 48h', 'pl': '> 48h'},
+    'total_space': {'en': 'Total space', 'fr': 'Espace total', 'pl': 'Całkowita przestrzeń'},
+    'freeable_space': {'en': 'Freeable', 'fr': 'Libérable', 'pl': 'Do zwolnienia'},
+    'auto_cleanup_config': {'en': 'Automatic cleanup configuration', 'fr': 'Configuration du nettoyage automatique', 'pl': 'Konfiguracja automatycznego czyszczenia'},
+    'monitored_directory': {'en': 'Monitored directory', 'fr': 'Répertoire surveillé', 'pl': 'Monitorowany katalog'},
+    'parameters': {'en': 'Parameters', 'fr': 'Paramètres', 'pl': 'Parametry'},
+    'retention': {'en': 'Retention', 'fr': 'Rétention', 'pl': 'Retencja'},
+    'retention_48_hours': {'en': '48 hours', 'fr': '48 heures', 'pl': '48 godzin'},
+    'scheduling': {'en': 'Scheduling', 'fr': 'Planification', 'pl': 'Harmonogram'},
+    'daily_at_3am': {'en': 'Every day at 3:00 AM', 'fr': 'Tous les jours à 3h00', 'pl': 'Codziennie o 3:00'},
+    'status': {'en': 'Status', 'fr': 'Statut', 'pl': 'Status'},
+    'status_active': {'en': 'Active', 'fr': 'Actif', 'pl': 'Aktywny'},
+    'configure_other_dirs': {'en': 'Configure other directories in FS Scheduling', 'fr': 'Configurez d\'autres répertoires dans Planification FS', 'pl': 'Skonfiguruj inne katalogi w harmonogramie FS'},
+    'manual_cleanup': {'en': 'Manual cleanup', 'fr': 'Nettoyage manuel', 'pl': 'Ręczne czyszczenie'},
+    'trigger_immediate_cleanup': {'en': 'Trigger immediate cleanup of files older than 48 hours. This action does not affect automatic scheduling.', 'fr': 'Déclenchez un nettoyage immédiat des fichiers de plus de 48 heures. Cette action n\'affecte pas la planification automatique.', 'pl': 'Uruchom natychmiastowe czyszczenie plików starszych niż 48 godzin. Ta akcja nie wpływa na automatyczny harmonogram.'},
+    'files_will_be_deleted': {'en': 'files will be deleted', 'fr': 'fichiers seront supprimés', 'pl': 'plików zostanie usuniętych'},
+    'freeing': {'en': 'freeing', 'fr': 'libérant', 'pl': 'zwalniając'},
+    'disk_space': {'en': 'disk space', 'fr': 'd\'espace disque', 'pl': 'miejsca na dysku'},
+    'btn_cleanup_now': {'en': 'Cleanup now', 'fr': 'Nettoyer maintenant', 'pl': 'Wyczyść teraz'},
+    'confirm_cleanup_48h': {'en': 'Confirm cleanup of files older than 48h?', 'fr': 'Confirmer le nettoyage des fichiers de plus de 48h ?', 'pl': 'Potwierdzić czyszczenie plików starszych niż 48h?'},
+    'recent_cleanups': {'en': 'Recent cleanups', 'fr': 'Derniers nettoyages', 'pl': 'Ostatnie czyszczenia'},
+    'auto_cleanups_logged': {'en': 'Automatic cleanups are logged in system logs. Check {path} for full details.', 'fr': 'Les nettoyages automatiques sont tracés dans les logs système. Consultez {path} pour le détail complet.', 'pl': 'Automatyczne czyszczenia są rejestrowane w logach systemowych. Sprawdź {path} po szczegóły.'},
+    'th_date': {'en': 'Date', 'fr': 'Date', 'pl': 'Data'},
+    'th_type': {'en': 'Type', 'fr': 'Type', 'pl': 'Typ'},
+    'files_deleted': {'en': 'Files deleted', 'fr': 'Fichiers supprimés', 'pl': 'Usunięte pliki'},
+    'space_freed': {'en': 'Space freed', 'fr': 'Espace libéré', 'pl': 'Zwolniona przestrzeń'},
+    'check_logs_for_history': {'en': 'Check logs for full history', 'fr': 'Consultez les logs pour l\'historique complet', 'pl': 'Sprawdź logi po pełną historię'},
+    'information': {'en': 'Information', 'fr': 'Informations', 'pl': 'Informacje'},
+    'fs_info_operation': {'en': 'Operation: Automatically imported CSV files are kept for 48h in processed/ directory', 'fr': 'Fonctionnement : Les fichiers CSV importés automatiquement sont conservés 48h dans le répertoire processed/', 'pl': 'Działanie: Automatycznie zaimportowane pliki CSV są przechowywane przez 48h w katalogu processed/'},
+    'fs_info_security': {'en': 'Security: Only files older than 48h are deleted, recent imports are preserved', 'fr': 'Sécurité : Seuls les fichiers de plus de 48h sont supprimés, les imports récents sont préservés', 'pl': 'Bezpieczeństwo: Tylko pliki starsze niż 48h są usuwane, ostatnie importy są zachowane'},
+    'fs_info_performance': {'en': 'Performance: Regular cleanup prevents unnecessary file accumulation', 'fr': 'Performance : Le nettoyage régulier évite l\'accumulation de fichiers inutiles', 'pl': 'Wydajność: Regularne czyszczenie zapobiega gromadzeniu niepotrzebnych plików'},
+    'fs_info_logs': {'en': 'Logs: Each cleanup is logged with files count and freed space', 'fr': 'Logs : Chaque nettoyage est tracé avec le nombre de fichiers supprimés et l\'espace libéré', 'pl': 'Logi: Każde czyszczenie jest rejestrowane z liczbą plików i zwolnioną przestrzenią'},
+    'fs_info_scheduling': {'en': 'Scheduling: Automatic cleanup is managed by APScheduler', 'fr': 'Planification : Le nettoyage automatique est géré par le scheduler APScheduler', 'pl': 'Harmonogram: Automatyczne czyszczenie jest zarządzane przez scheduler APScheduler'},
+    
+    # === BACKUP BACKUPS DB ===
+    'backups_db_page_title': {'en': 'DB Backups', 'fr': 'Sauvegardes DB', 'pl': 'Kopie zapasowe DB'},
+    'backups_db_heading': {'en': 'Database Backups', 'fr': 'Sauvegardes Base de Données', 'pl': 'Kopie zapasowe bazy danych'},
+    'create_manual_db_backups': {'en': 'Create manual backups of PostgreSQL database. Files are stored in {path}', 'fr': 'Créez des sauvegardes manuelles de la base de données PostgreSQL. Les fichiers sont stockés dans {path}', 'pl': 'Twórz ręczne kopie zapasowe bazy danych PostgreSQL. Pliki są przechowywane w {path}'},
+    'create_new_backup': {'en': 'Create a new backup', 'fr': 'Créer une nouvelle sauvegarde', 'pl': 'Utwórz nową kopię zapasową'},
+    'description_optional': {'en': 'Description (optional)', 'fr': 'Description (optionnelle)', 'pl': 'Opis (opcjonalny)'},
+    'description_placeholder': {'en': 'Ex: Before update V2.5', 'fr': 'Ex: Avant mise à jour V2.5', 'pl': 'Np: Przed aktualizacją V2.5'},
+    'btn_create_db_backup': {'en': 'Create DB backup', 'fr': 'Créer sauvegarde DB', 'pl': 'Utwórz kopię zapasową DB'},
+    'available_backups': {'en': 'Available backups', 'fr': 'Sauvegardes disponibles', 'pl': 'Dostępne kopie zapasowe'},
+    'th_file': {'en': 'File', 'fr': 'Fichier', 'pl': 'Plik'},
+    'th_size': {'en': 'Size', 'fr': 'Taille', 'pl': 'Rozmiar'},
+    'th_description': {'en': 'Description', 'fr': 'Description', 'pl': 'Opis'},
+    'th_actions': {'en': 'Actions', 'fr': 'Actions', 'pl': 'Akcje'},
+    'no_description': {'en': '-', 'fr': '-', 'pl': '-'},
+    'btn_download': {'en': 'Download', 'fr': 'Télécharger', 'pl': 'Pobierz'},
+    'btn_delete': {'en': 'Delete', 'fr': 'Supprimer', 'pl': 'Usuń'},
+    'confirm_delete_backup': {'en': 'Delete this backup?', 'fr': 'Supprimer cette sauvegarde ?', 'pl': 'Usunąć tę kopię zapasową?'},
+    'no_db_backups': {'en': 'No DB backups available', 'fr': 'Aucune sauvegarde DB disponible', 'pl': 'Brak dostępnych kopii zapasowych DB'},
+    
+    # === BACKUP BACKUPS FS ===
+    'backups_fs_page_title': {'en': 'FS Backups', 'fr': 'Sauvegardes FS', 'pl': 'Kopie zapasowe FS'},
+    'backups_fs_heading': {'en': 'FileSystem Backups', 'fr': 'Sauvegardes Fichiers (FileSystem)', 'pl': 'Kopie zapasowe systemu plików (FileSystem)'},
+    'create_tarball_backups': {'en': 'Create TAR.GZ archives of application files. Files are stored in {path}', 'fr': 'Créez des archives TAR.GZ des fichiers applicatifs. Les fichiers sont stockés dans {path}', 'pl': 'Twórz archiwa TAR.GZ plików aplikacji. Pliki są przechowywane w {path}'},
+    'create_new_fs_backup': {'en': 'Create a new FileSystem backup', 'fr': 'Créer une nouvelle sauvegarde FileSystem', 'pl': 'Utwórz nową kopię zapasową systemu plików'},
+    'fs_backup_placeholder': {'en': 'Ex: Before server migration', 'fr': 'Ex: Avant migration serveur', 'pl': 'Np: Przed migracją serwera'},
+    'default_backed_dirs': {'en': 'Directories backed up by default:', 'fr': 'Répertoires sauvegardés par défaut :', 'pl': 'Katalogi domyślnie zapisywane:'},
+    'sqlite_database': {'en': 'SQLite database', 'fr': 'Base de données SQLite', 'pl': 'Baza danych SQLite'},
+    'application_logs': {'en': 'Application logs', 'fr': 'Journaux applicatifs', 'pl': 'Logi aplikacji'},
+    'import_files': {'en': 'Import files', 'fr': 'Fichiers d\'import', 'pl': 'Pliki importu'},
+    'configure_other_dirs_fs': {'en': 'Configure other directories in FS Scheduling', 'fr': 'Configurez d\'autres répertoires dans Planification FS', 'pl': 'Skonfiguruj inne katalogi w harmonogramie FS'},
+    'btn_create_fs_backup': {'en': 'Create FS backup', 'fr': 'Créer sauvegarde FS', 'pl': 'Utwórz kopię zapasową FS'},
+    'available_fs_backups': {'en': 'Available FileSystem backups', 'fr': 'Sauvegardes FileSystem disponibles', 'pl': 'Dostępne kopie zapasowe systemu plików'},
+    'no_fs_backups': {'en': 'No FS backups available', 'fr': 'Aucune sauvegarde FS disponible', 'pl': 'Brak dostępnych kopii zapasowych FS'},
+    'confirm_delete_fs_backup': {'en': 'Delete this FS backup?', 'fr': 'Supprimer cette sauvegarde FS ?', 'pl': 'Usunąć tę kopię zapasową FS?'},
+    'btn_title_download': {'en': 'Download', 'fr': 'Télécharger', 'pl': 'Pobierz'},
+    'btn_title_delete': {'en': 'Delete', 'fr': 'Supprimer', 'pl': 'Usuń'},
+    
+    # === BACKUP INDEX ===
+    'backup_index_title': {'en': 'Backup & Restore', 'fr': 'Sauvegarde & Restauration', 'pl': 'Kopia zapasowa i przywracanie'},
+    'backup_index_overview': {'en': 'Backup & Restore - Overview', 'fr': 'Sauvegarde & Restauration - Vue d\'ensemble', 'pl': 'Kopia zapasowa i przywracanie - Przegląd'},
+    'backup_db_count': {'en': 'DB Backups', 'fr': 'Sauvegardes DB', 'pl': 'Kopie zapasowe DB'},
+    'backup_fs_count': {'en': 'FS Backups', 'fr': 'Sauvegardes FS', 'pl': 'Kopie zapasowe FS'},
+    'cache_redis': {'en': 'Redis Cache', 'fr': 'Cache Redis', 'pl': 'Pamięć podręczna Redis'},
+    'files_available': {'en': 'Files available', 'fr': 'Fichiers disponibles', 'pl': 'Dostępne pliki'},
+    'quick_navigation': {'en': 'Quick Navigation', 'fr': 'Navigation rapide', 'pl': 'Szybka nawigacja'},
+    'backups_section': {'en': 'Backups', 'fr': 'Sauvegardes', 'pl': 'Kopie zapasowe'},
+    'backups_section_desc': {'en': 'Create and manage manual backups', 'fr': 'Créer et gérer les sauvegardes manuelles', 'pl': 'Twórz i zarządzaj ręcznymi kopiami zapasowymi'},
+    'restores_section': {'en': 'Restores', 'fr': 'Restaurations', 'pl': 'Przywracanie'},
+    'restores_section_desc': {'en': 'Restore from an existing backup', 'fr': 'Restaurer depuis une sauvegarde existante', 'pl': 'Przywróć z istniejącej kopii zapasowej'},
+    'schedule_section': {'en': 'Scheduling', 'fr': 'Planification', 'pl': 'Planowanie'},
+    'schedule_section_desc': {'en': 'Configure automatic backups', 'fr': 'Configurer les sauvegardes automatiques', 'pl': 'Skonfiguruj automatyczne kopie zapasowe'},
+    'db_daily': {'en': 'DB Daily', 'fr': 'DB Quotidienne', 'pl': 'DB Dzienne'},
+    'fs_daily': {'en': 'FS Daily', 'fr': 'FS Quotidienne', 'pl': 'FS Dzienne'},
+    'backup_info_db': {'en': 'DB Backups: Compressed SQL files of the database', 'fr': 'Sauvegardes DB : Fichiers SQL compressés de la base de données', 'pl': 'Kopie zapasowe DB: Skompresowane pliki SQL bazy danych'},
+    'backup_info_fs': {'en': 'FS Backups: tar.gz archives of application files', 'fr': 'Sauvegardes FS : Archives tar.gz des fichiers applicatifs', 'pl': 'Kopie zapasowe FS: Archiwa tar.gz plików aplikacji'},
+    'backup_info_schedule': {'en': 'Scheduling: Automatic daily/weekly/monthly backups via APScheduler', 'fr': 'Planification : Sauvegardes automatiques quotidiennes/hebdo/mensuelles via APScheduler', 'pl': 'Planowanie: Automatyczne dzienne/tygodniowe/miesięczne kopie zapasowe przez APScheduler'},
+    'backup_info_restore': {'en': 'Restore: Secure process with mandatory confirmation', 'fr': 'Restauration : Processus sécurisé avec confirmation obligatoire', 'pl': 'Przywracanie: Bezpieczny proces z obowiązkowym potwierdzeniem'},
+    'backup_info_redis': {'en': 'Redis Cache: Automatically invalidated after DB restore', 'fr': 'Cache Redis : Invalidé automatiquement après restauration DB', 'pl': 'Pamięć podręczna Redis: Automatycznie unieważniana po przywróceniu DB'},
+    
+    # === SCHEDULE MISSING KEYS ===
+    'schedule_time_format': {'en': '24h format (e.g. 08:00 for 8am)', 'fr': 'Format 24h (ex: 08:00 pour 8h du matin)', 'pl': 'Format 24h (np. 08:00 dla 8 rano)'},
+    'schedule_no_history': {'en': 'No backups', 'fr': 'Aucune sauvegarde', 'pl': 'Brak kopii zapasowych'},
+    'backups': {'en': 'backups', 'fr': 'sauvegardes', 'pl': 'kopie zapasowe'},
+    
+    # === BACKUP RESTORE DB ===
+    'restore_db_page_title': {'en': 'DB Restorations', 'fr': 'Restaurations DB', 'pl': 'Przywracanie DB'},
+    'restore_db_heading': {'en': 'Database Restoration', 'fr': 'Restauration Base de Données', 'pl': 'Przywracanie bazy danych'},
+    'restore_in_progress_warning': {'en': 'RESTORATION IN PROGRESS', 'fr': 'RESTAURATION EN COURS', 'pl': 'PRZYWRACANIE W TOKU'},
+    'restore_currently_running': {'en': 'A restoration is currently running.', 'fr': 'Une restauration est actuellement en cours.', 'pl': 'Przywracanie jest aktualnie w toku.'},
+    'btn_view_realtime_status': {'en': 'View real-time status', 'fr': 'Voir le suivi en temps réel', 'pl': 'Zobacz status w czasie rzeczywistym'},
+    'critical_operation': {'en': 'CRITICAL OPERATION', 'fr': 'OPÉRATION CRITIQUE', 'pl': 'OPERACJA KRYTYCZNA'},
+    'restore_replaces_all_data': {'en': 'Restoration replaces ALL current database data.', 'fr': 'La restauration remplace TOUTES les données actuelles de la base de données.', 'pl': 'Przywracanie zastępuje WSZYSTKIE aktualne dane w bazie danych.'},
+    'current_data_lost': {'en': 'Current data will be permanently lost', 'fr': 'Les données actuelles seront définitivement perdues', 'pl': 'Aktualne dane zostaną trwale utracone'},
+    'irreversible_operation': {'en': 'Irreversible operation', 'fr': 'Opération irréversible', 'pl': 'Operacja nieodwracalna'},
+    'redis_auto_flushed': {'en': 'Redis cache will be automatically flushed after restoration', 'fr': 'Le cache Redis sera automatiquement vidé après restauration', 'pl': 'Pamięć podręczna Redis zostanie automatycznie wyczyszczona po przywróceniu'},
+    'instructions': {'en': 'Instructions', 'fr': 'Instructions', 'pl': 'Instrukcje'},
+    'restore_step_1': {'en': 'First create a safety backup of current data', 'fr': 'Créez d\'abord une sauvegarde de sécurité des données actuelles', 'pl': 'Najpierw utwórz kopię zapasową zabezpieczającą bieżących danych'},
+    'restore_step_2': {'en': 'Verify that nobody is using the application', 'fr': 'Vérifiez que personne n\'utilise l\'application', 'pl': 'Sprawdź, czy nikt nie korzysta z aplikacji'},
+    'restore_step_3': {'en': 'Select the backup to restore', 'fr': 'Sélectionnez la sauvegarde à restaurer', 'pl': 'Wybierz kopię zapasową do przywrócenia'},
+    'restore_step_4': {'en': 'Type {code} to confirm', 'fr': 'Tapez {code} pour confirmer', 'pl': 'Wpisz {code}, aby potwierdzić'},
+    'restore_step_5': {'en': 'The status page will display automatically', 'fr': 'La page de suivi s\'affichera automatiquement', 'pl': 'Strona statusu wyświetli się automatycznie'},
+    'available_db_restores': {'en': 'Available DB backups for restoration', 'fr': 'Sauvegardes DB disponibles pour restauration', 'pl': 'Dostępne kopie zapasowe DB do przywrócenia'},
+    'th_timestamp': {'en': 'Timestamp', 'fr': 'Horodatage', 'pl': 'Znacznik czasu'},
+    'th_action': {'en': 'Action', 'fr': 'Action', 'pl': 'Akcja'},
+    'btn_restore': {'en': 'Restore', 'fr': 'Restaurer', 'pl': 'Przywróć'},
+    'confirm_restoration': {'en': 'Confirm restoration', 'fr': 'Confirmer la restauration', 'pl': 'Potwierdź przywracanie'},
+    'about_to_restore': {'en': 'You are about to restore:', 'fr': 'Vous êtes sur le point de restaurer :', 'pl': 'Zamierzasz przywrócić:'},
+    'file': {'en': 'File', 'fr': 'Fichier', 'pl': 'Plik'},
+    'date': {'en': 'Date', 'fr': 'Date', 'pl': 'Data'},
+    'description': {'en': 'Description', 'fr': 'Description', 'pl': 'Opis'},
+    'none': {'en': 'None', 'fr': 'Aucune', 'pl': 'Brak'},
+    'all_current_data_lost': {'en': 'ALL CURRENT DATA WILL BE LOST', 'fr': 'TOUTES LES DONNÉES ACTUELLES SERONT PERDUES', 'pl': 'WSZYSTKIE AKTUALNE DANE ZOSTANĄ UTRACONE'},
+    'type_restore_to_confirm': {'en': 'Type {code} to confirm:', 'fr': 'Tapez {code} pour confirmer :', 'pl': 'Wpisz {code}, aby potwierdzić:'},
+    'btn_cancel': {'en': 'Cancel', 'fr': 'Annuler', 'pl': 'Anuluj'},
+    'no_db_backups_for_restore': {'en': 'No DB backups available for restoration', 'fr': 'Aucune sauvegarde DB disponible pour restauration', 'pl': 'Brak dostępnych kopii zapasowych DB do przywrócenia'},
+    'btn_create_backup': {'en': 'Create a backup', 'fr': 'Créer une sauvegarde', 'pl': 'Utwórz kopię zapasową'},
+    
+    # === BACKUP RESTORE FS ===
+    'restore_fs_page_title': {'en': 'FS Restorations', 'fr': 'Restaurations FS', 'pl': 'Przywracanie FS'},
+    'restore_fs_heading': {'en': 'FileSystem Restoration', 'fr': 'Restauration FileSystem', 'pl': 'Przywracanie systemu plików'},
+    'fs_restore_warning': {'en': 'FILESYSTEM RESTORATION', 'fr': 'RESTAURATION FILESYSTEM', 'pl': 'PRZYWRACANIE SYSTEMU PLIKÓW'},
+    'fs_restore_replaces': {'en': 'FS restoration replaces backed up files.', 'fr': 'La restauration FS remplace les fichiers sauvegardés.', 'pl': 'Przywracanie FS zastępuje zapisane pliki.'},
+    'current_files_overwritten': {'en': 'Current files in backed up directories will be overwritten', 'fr': 'Les fichiers actuels dans les répertoires sauvegardés seront écrasés', 'pl': 'Aktualne pliki w zapisanych katalogach zostaną nadpisane'},
+    'targz_extracted': {'en': 'TAR.GZ archives will be extracted to their original locations', 'fr': 'Les archives TAR.GZ seront extraites dans leurs emplacements d\'origine', 'pl': 'Archiwa TAR.GZ zostaną rozpakowane do ich oryginalnych lokalizacji'},
+    'app_restart_required': {'en': 'Application restart required after restoration', 'fr': 'Redémarrage de l\'application requis après restauration', 'pl': 'Wymagane ponowne uruchomienie aplikacji po przywróceniu'},
+    'fs_restore_step_1': {'en': 'Download the FS backup first for verification', 'fr': 'Téléchargez d\'abord la sauvegarde FS pour vérification', 'pl': 'Najpierw pobierz kopię zapasową FS do weryfikacji'},
+    'fs_restore_step_2': {'en': 'Verify archive contents (included directories)', 'fr': 'Vérifiez le contenu de l\'archive (répertoires inclus)', 'pl': 'Sprawdź zawartość archiwum (zawarte katalogi)'},
+    'fs_restore_step_3': {'en': 'Stop the application if possible (or put in maintenance mode)', 'fr': 'Arrêtez l\'application si possible (ou mettez en maintenance)', 'pl': 'Zatrzymaj aplikację, jeśli to możliwe (lub włącz tryb konserwacji)'},
+    'fs_restore_step_4': {'en': 'Click "Extract" to restore', 'fr': 'Cliquez sur "Extraire" pour restaurer', 'pl': 'Kliknij "Rozpakuj", aby przywrócić'},
+    'fs_restore_step_5': {'en': 'Restart the application', 'fr': 'Redémarrez l\'application', 'pl': 'Uruchom ponownie aplikację'},
+    'available_fs_restores': {'en': 'Available FileSystem backups for restoration', 'fr': 'Sauvegardes FileSystem disponibles pour restauration', 'pl': 'Dostępne kopie zapasowe systemu plików do przywrócenia'},
+    'btn_extract': {'en': 'Extract', 'fr': 'Extraire', 'pl': 'Rozpakuj'},
+    'confirm_extraction': {'en': 'Confirm extraction', 'fr': 'Confirmer l\'extraction', 'pl': 'Potwierdź rozpakowanie'},
+    'about_to_extract': {'en': 'You are about to extract:', 'fr': 'Vous êtes sur le point d\'extraire :', 'pl': 'Zamierzasz rozpakować:'},
+    'size': {'en': 'Size', 'fr': 'Taille', 'pl': 'Rozmiar'},
+    'current_files_overwritten_warning': {'en': 'CURRENT FILES WILL BE OVERWRITTEN', 'fr': 'LES FICHIERS ACTUELS SERONT ÉCRASÉS', 'pl': 'AKTUALNE PLIKI ZOSTANĄ NADPISANE'},
+    'web_restore_limited_note': {'en': 'Note: FS restoration via web interface is limited. For a full restoration, download the archive and extract it manually on the server.', 'fr': 'Note : La restauration FS via interface web est limitée. Pour une restauration complète, téléchargez l\'archive et extrayez-la manuellement sur le serveur.', 'pl': 'Uwaga: Przywracanie FS przez interfejs internetowy jest ograniczone. Aby wykonać pełne przywracanie, pobierz archiwum i rozpakuj je ręcznie na serwerze.'},
+    'type_extract_to_confirm': {'en': 'Type {code} to confirm:', 'fr': 'Tapez {code} pour confirmer :', 'pl': 'Wpisz {code}, aby potwierdzić:'},
+    'fs_restore_tip': {'en': 'Tip: For secure FS restoration, download the archive and extract it manually via SSH/FTP on the server.', 'fr': 'Conseil : Pour une restauration FS sécurisée, téléchargez l\'archive et extrayez-la manuellement via SSH/FTP sur le serveur.', 'pl': 'Wskazówka: Aby bezpiecznie przywrócić FS, pobierz archiwum i rozpakuj je ręcznie przez SSH/FTP na serwerze.'},
+    'no_fs_backups_for_restore': {'en': 'No FS backups available for restoration', 'fr': 'Aucune sauvegarde FS disponible pour restauration', 'pl': 'Brak dostępnych kopii zapasowych FS do przywrócenia'},
+    'btn_create_fs_backup': {'en': 'Create an FS backup', 'fr': 'Créer une sauvegarde FS', 'pl': 'Utwórz kopię zapasową FS'},
+    
+    # === BACKUP RESTORE STATUS ===
+    'restore_status_page_title': {'en': 'Restoration in progress', 'fr': 'Restauration en cours', 'pl': 'Przywracanie w toku'},
+    'restore_status_heading': {'en': 'DB Restoration - Real-time monitoring', 'fr': 'Restauration DB - Suivi en temps réel', 'pl': 'Przywracanie DB - Monitoring w czasie rzeczywistym'},
+    'status_pending': {'en': 'Pending...', 'fr': 'En attente...', 'pl': 'Oczekiwanie...'},
+    'status_running': {'en': 'Restoration in progress...', 'fr': 'Restauration en cours...', 'pl': 'Przywracanie w toku...'},
+    'status_completed': {'en': 'Completed successfully', 'fr': 'Terminé avec succès', 'pl': 'Zakończono pomyślnie'},
+    'status_failed': {'en': 'Failed', 'fr': 'Échec', 'pl': 'Niepowodzenie'},
+    'restoration_file': {'en': 'Restoration', 'fr': 'Restauration', 'pl': 'Przywracanie'},
+    'started_at': {'en': 'Started at', 'fr': 'Démarré à', 'pl': 'Rozpoczęto o'},
+    'duration': {'en': 'Duration', 'fr': 'Durée', 'pl': 'Czas trwania'},
+    'realtime_logs': {'en': 'Real-time logs', 'fr': 'Logs en temps réel', 'pl': 'Logi w czasie rzeczywistym'},
+    'error': {'en': 'Error', 'fr': 'Erreur', 'pl': 'Błąd'},
+    'btn_back_to_restorations': {'en': 'Back to restorations', 'fr': 'Retour aux restaurations', 'pl': 'Powrót do przywracania'},
+    'btn_back_to_dashboard': {'en': 'Back to dashboard', 'fr': 'Retour au dashboard', 'pl': 'Powrót do pulpitu'},
+    'restoration_in_progress_wait': {'en': 'Restoration in progress...', 'fr': 'Restauration en cours...', 'pl': 'Przywracanie w toku...'},
+    'important_note': {'en': 'Important', 'fr': 'Important', 'pl': 'Ważne'},
+    'dont_close_page': {'en': 'Do not close this page during restoration. Progress is updated automatically every 2 seconds.', 'fr': 'Ne fermez pas cette page pendant la restauration. La progression est mise à jour automatiquement toutes les 2 secondes.', 'pl': 'Nie zamykaj tej strony podczas przywracania. Postęp jest aktualizowany automatycznie co 2 sekundy.'},
+
+    # === ADMIN ARCHIVE SCHEDULE ===
+    'archive_access_info_1': {
+        'en': 'Archive consultation : ',
+        'fr': 'Consultation des archives : ',
+        'pl': 'Konsultacja archiwów : '
+    },
+    'archive_access_info_2': {
+        'en': 'Access all archives in Archives > ',
+        'fr': 'Accédez à toutes les archives dans Archives > ',
+        'pl': 'Uzyskaj dostęp do wszystkich archiwów w Archiwa > '
+    },
+    'archive_access_info_3': {
+        'en': 'Manual Archiving',
+        'fr': 'Archivage Manuel',
+        'pl': 'Archiwizacja ręczna'
+    },    
+    # === ADMIN API SCHEDULE ===
+    'api_recommended_intervals': {
+        'en': 'Recommended intervals',
+        'fr': 'Intervalles recommandés',
+        'pl': 'Zalecane interwały'
+    },
+    'api_interval_15_30': {
+        'en': '15-30 min: Environments with frequent backups',
+        'fr': '15-30 min : Environnements avec backups fréquents',
+        'pl': '15-30 min: Środowiska z częstymi kopiami zapasowymi'
+    },
+    'api_interval_60': {
+        'en': '60 min (1h): Standard recommended usage',
+        'fr': '60 min (1h) : Usage standard recommandé',
+        'pl': '60 min (1h): Standardowe zalecane użycie'
+    },
+    'api_interval_2_6': {
+        'en': '2-6h: Less active environments',
+        'fr': '2-6h : Environnements peu actifs',
+        'pl': '2-6h: Mniej aktywne środowiska'
+    },
+    'api_interval_12_24': {
+        'en': '12-24h: Occasional imports',
+        'fr': '12-24h : Imports ponctuels',
+        'pl': '12-24h: Okazjonalne importy'
+    },
+    'api_limitations': {
+        'en': 'Limitations',
+        'fr': 'Limitations',
+        'pl': 'Ograniczenia'
+    },
+    'api_min_interval': {
+        'en': 'Minimum: 5 minutes (avoid overload)',
+        'fr': 'Minimum : 5 minutes (éviter la surcharge)',
+        'pl': 'Minimum: 5 minut (unikaj przeciążenia)'
+    },
+    'api_max_interval': {
+        'en': 'Maximum: 1440 minutes (24h)',
+        'fr': 'Maximum : 1440 minutes (24h)',
+        'pl': 'Maksimum: 1440 minut (24h)'
+    },
+    'api_rate_limits': {
+        'en': 'Veritas API may have rate limits',
+        'fr': 'L\'API Veritas peut avoir des limites de taux',
+        'pl': 'API Veritas może mieć limity częstotliwości'
+    },
+    'api_restart_required': {
+        'en': 'Restart required after modification',
+        'fr': 'Redémarrage requis après modification',
+        'pl': 'Wymagane ponowne uruchomienie po modyfikacji'
+    },
+    'api_troubleshooting': {
+        'en': 'Troubleshooting',
+        'fr': 'Dépannage',
+        'pl': 'Rozwiązywanie problemów'
+    },
+    'api_check_logs': {
+        'en': 'Check import logs',
+        'fr': 'Vérifier les logs d\'import',
+        'pl': 'Sprawdź logi importu'
+    },
+    'api_test_manually': {
+        'en': 'Test manually in API Config',
+        'fr': 'Tester manuellement dans Config API',
+        'pl': 'Przetestuj ręcznie w konfiguracji API'
+    },
+    'api_check_url_token': {
+        'en': 'Check URL and token',
+        'fr': 'Vérifier l\'URL et le token',
+        'pl': 'Sprawdź URL i token'
+    },
+    'api_check_docker_logs': {
+        'en': 'Check Docker logs: ',
+        'fr': 'Consulter les logs Docker : ',
+        'pl': 'Sprawdź logi Docker: '
+    },
+    
+    # === ADMIN IMAP ===
+    'btn_test_connection': {
+        'en': 'Test connection',
+        'fr': 'Tester la connexion',
+        'pl': 'Testuj połączenie'
+    },
+    
+    # === INFORMATION ===
+    'information': {'en': 'Information', 'fr': 'Informations', 'pl': 'Informacje'},
+    
+    # === SCHEDULE DYNAMIC TEXT ===
+    'schedule_every_day_at': {'en': 'Every day at {time}', 'fr': 'Tous les jours à {time}', 'pl': 'Codziennie o {time}'},
+    'schedule_every_week_on': {'en': 'Every {day} at {time}', 'fr': 'Chaque {day} à {time}', 'pl': 'Każdy {day} o {time}'},
+    'schedule_every_month_on': {'en': 'On the {day} of each month at {time}', 'fr': 'Le {day} de chaque mois à {time}', 'pl': 'Dnia {day} każdego miesiąca o {time}'},
+    'schedule_not_planned': {'en': 'Not scheduled', 'fr': 'Non planifiée', 'pl': 'Nie zaplanowano'},
+    'calculation_error': {'en': 'Calculation error', 'fr': 'Erreur de calcul', 'pl': 'Błąd obliczeń'},
+    
+    # === ARCHIVE SCHEDULE ===
+    'archive_no_scheduled_job': {'en': 'No archive job scheduled', 'fr': 'Aucune tâche d\'archivage planifiée', 'pl': 'Brak zaplanowanego zadania archiwizacji'},
+    'archive_enable_to_see_job': {'en': 'Enable archiving and save to see the scheduled job', 'fr': 'Activez l\'archivage et enregistrez pour voir la tâche planifiée', 'pl': 'Włącz archiwizację i zapisz, aby zobaczyć zaplanowane zadanie'},
+    
+    # === SMTP SCHEDULE ===
+    'smtp_no_scheduled_job': {'en': 'No email job scheduled', 'fr': 'Aucune tâche d\'envoi email planifiée', 'pl': 'Brak zaplanowanego zadania e-mail'},
+    'smtp_check_config': {'en': 'Check that SMTP is configured and emails have recipients', 'fr': 'Vérifiez que le SMTP est configuré et que les emails ont des destinataires', 'pl': 'Sprawdź, czy SMTP jest skonfigurowany i czy e-maile mają odbiorców'}
 
 }
 

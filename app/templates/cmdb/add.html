@@ -1,39 +1,39 @@
 {% extends "base.html" %}
-{% block title %}Ajouter un Serveur{% endblock %}
-{% block page_title %}Ajouter un Serveur{% endblock %}
+{% block title %}{{ t('cmdb_add_title') }}{% endblock %}
+{% block page_title %}{{ t('cmdb_add_title') }}{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-8">
         <div class="card shadow-sm">
             <div class="card-header bg-primary text-white">
-                <h5 class="mb-0"><i class="bi bi-server"></i> Nouveau Serveur</h5>
+                <h5 class="mb-0"><i class="bi bi-server"></i> {{ t('cmdb_add_title') }}</h5>
             </div>
             <div class="card-body">
                 <form method="POST">
                     <div class="row mb-3">
                         <div class="col-md-8">
-                            <label class="form-label fw-bold">Hostname <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="hostname" required placeholder="serveur01.domaine.local">
-                            <div class="form-text">Nom d'hôte complet du serveur</div>
+                            <label class="form-label fw-bold">{{ t('cmdb_field_hostname') }} <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="hostname" required placeholder="{{ t('cmdb_placeholder_hostname') }}">
+                            <div class="form-text">{{ t('cmdb_field_hostname') }}</div>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label fw-bold">Backup</label>
+                            <label class="form-label fw-bold">{{ t('cmdb_field_backup_active') }}</label>
                             <div class="form-check form-switch mt-2">
                                 <input class="form-check-input" type="checkbox" name="backup_enabled" id="backup_enabled" checked>
-                                <label class="form-check-label" for="backup_enabled">Activé</label>
+                                <label class="form-check-label" for="backup_enabled">{{ t('status_enabled') }}</label>
                             </div>
                         </div>
                     </div>
                     
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Commentaire</label>
-                        <textarea class="form-control" name="commentaire" rows="3" placeholder="Notes ou observations..."></textarea>
+                        <label class="form-label fw-bold">{{ t('backup_description') }}</label>
+                        <textarea class="form-control" name="commentaire" rows="3" placeholder="{{ t('cmdb_field_comment_optional') }}..."></textarea>
                     </div>
                     
                     <div class="d-flex justify-content-end gap-2">
-                        <a href="{{ url_for('cmdb.list') }}" class="btn btn-secondary">Annuler</a>
-                        <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg"></i> Ajouter</button>
+                        <a href="{{ url_for('cmdb.list') }}" class="btn btn-secondary">{{ t('btn_cancel') }}</a>
+                        <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg"></i> {{ t('btn_save') }}</button>
                     </div>
                 </form>
             </div>

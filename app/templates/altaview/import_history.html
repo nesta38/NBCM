@@ -1,15 +1,15 @@
 {% extends "base.html" %}
-{% block title %}Historique des imports{% endblock %}
-{% block page_title %}Historique des imports{% endblock %}
+{% block title %}{{ t('import_history_title') }}{% endblock %}
+{% block page_title %}{{ t('import_history_title') }}{% endblock %}
 
 {% block content %}
 <div class="alert alert-info mb-4">
-    <i class="bi bi-info-circle"></i> Historique des 100 derniers imports (IMAP, API, Manuels)
+    <i class="bi bi-info-circle"></i> {{ t('import_history_subtitle') }}
 </div>
 
 <div class="card shadow-sm">
     <div class="card-header bg-light">
-        <h5 class="mb-0"><i class="bi bi-clock-history"></i> Imports récents ({{ imports|length }})</h5>
+        <h5 class="mb-0"><i class="bi bi-clock-history"></i> {{ t('import_recent') }} ({{ imports|length }})</h5>
     </div>
     <div class="card-body">
         {% if imports %}
@@ -17,14 +17,14 @@
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th>Date</th>
-                        <th>Type</th>
-                        <th>Fichier</th>
-                        <th>Statut</th>
-                        <th>Lignes</th>
-                        <th>Détails</th>
-                        <th>Durée</th>
-                        <th>Utilisateur</th>
+                        <th>{{ t('th_date') }}</th>
+                        <th>{{ t('import_type') }}</th>
+                        <th>{{ t('import_file') }}</th>
+                        <th>{{ t('th_status') }}</th>
+                        <th>{{ t('import_lines') }}</th>
+                        <th>{{ t('import_details') }}</th>
+                        <th>{{ t('import_duration') }}</th>
+                        <th>{{ t('import_user') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -33,19 +33,19 @@
                         <td><small>{{ import.date_import.strftime('%Y-%m-%d %H:%M:%S') }}</small></td>
                         <td>
                             {% if import.type_import == 'altaview_api' %}
-                                <span class="badge bg-info"><i class="bi bi-cloud-arrow-down"></i> API</span>
+                                <span class="badge bg-info"><i class="bi bi-cloud-arrow-down"></i> {{ t('import_type_api') }}</span>
                             {% elif import.type_import == 'imap' %}
-                                <span class="badge bg-primary"><i class="bi bi-inbox"></i> IMAP</span>
+                                <span class="badge bg-primary"><i class="bi bi-inbox"></i> {{ t('import_type_imap') }}</span>
                             {% else %}
-                                <span class="badge bg-secondary"><i class="bi bi-upload"></i> Manuel</span>
+                                <span class="badge bg-secondary"><i class="bi bi-upload"></i> {{ t('import_type_manual') }}</span>
                             {% endif %}
                         </td>
                         <td><code>{{ import.filename }}</code></td>
                         <td>
                             {% if import.statut == 'success' %}
-                                <span class="badge bg-success"><i class="bi bi-check-circle"></i> Succès</span>
+                                <span class="badge bg-success"><i class="bi bi-check-circle"></i> {{ t('status_success') }}</span>
                             {% else %}
-                                <span class="badge bg-danger"><i class="bi bi-x-circle"></i> Erreur</span>
+                                <span class="badge bg-danger"><i class="bi bi-x-circle"></i> {{ t('status_error') }}</span>
                             {% endif %}
                         </td>
                         <td>{{ import.nb_lignes }}</td>
@@ -76,7 +76,7 @@
             </table>
         </div>
         {% else %}
-        <p class="text-muted text-center">Aucun import enregistré</p>
+        <p class="text-muted text-center">{{ t('import_no_records') }}</p>
         {% endif %}
     </div>
 </div>
@@ -85,11 +85,11 @@
     <div class="col-md-4">
         <div class="card">
             <div class="card-body">
-                <h6><i class="bi bi-info-circle text-info"></i> Légende</h6>
+                <h6><i class="bi bi-info-circle text-info"></i> {{ t('import_legend') }}</h6>
                 <ul class="list-unstyled mb-0">
-                    <li><span class="text-success">+X</span> = Nouveaux enregistrements</li>
-                    <li><span class="text-info">~X</span> = Mis à jour</li>
-                    <li><span class="text-danger">✗X</span> = Erreurs</li>
+                    <li><span class="text-success">+X</span> = {{ t('import_new_records') }}</li>
+                    <li><span class="text-info">~X</span> = {{ t('import_updated') }}</li>
+                    <li><span class="text-danger">✗X</span> = {{ t('import_errors') }}</li>
                 </ul>
             </div>
         </div>
@@ -97,11 +97,11 @@
     <div class="col-md-4">
         <div class="card">
             <div class="card-body">
-                <h6><i class="bi bi-tags text-primary"></i> Types d'import</h6>
+                <h6><i class="bi bi-tags text-primary"></i> {{ t('import_types_title') }}</h6>
                 <ul class="list-unstyled mb-0">
-                    <li><span class="badge bg-info">API</span> = Import automatique via API</li>
-                    <li><span class="badge bg-primary">IMAP</span> = Import depuis emails</li>
-                    <li><span class="badge bg-secondary">Manuel</span> = Upload fichier</li>
+                    <li><span class="badge bg-info">{{ t('import_type_api') }}</span> = {{ t('import_auto_api') }}</li>
+                    <li><span class="badge bg-primary">{{ t('import_type_imap') }}</span> = {{ t('import_from_emails') }}</li>
+                    <li><span class="badge bg-secondary">{{ t('import_type_manual') }}</span> = {{ t('import_file_upload') }}</li>
                 </ul>
             </div>
         </div>
@@ -109,11 +109,11 @@
     <div class="col-md-4">
         <div class="card">
             <div class="card-body">
-                <h6><i class="bi bi-gear text-secondary"></i> Configuration</h6>
+                <h6><i class="bi bi-gear text-secondary"></i> {{ t('configuration') }}</h6>
                 <ul class="list-unstyled mb-0 small">
-                    <li><a href="{{ url_for('admin.api') }}"><i class="bi bi-cloud-arrow-down"></i> API Altaview</a></li>
-                    <li><a href="{{ url_for('admin.imap') }}"><i class="bi bi-inbox"></i> IMAP</a></li>
-                    <li><a href="{{ url_for('altaview.import_page') }}"><i class="bi bi-upload"></i> Import manuel</a></li>
+                    <li><a href="{{ url_for('admin.api') }}"><i class="bi bi-cloud-arrow-down"></i> {{ t('sidebar_api_altaview') }}</a></li>
+                    <li><a href="{{ url_for('admin.imap') }}"><i class="bi bi-inbox"></i> {{ t('sidebar_imap') }}</a></li>
+                    <li><a href="{{ url_for('altaview.import_page') }}"><i class="bi bi-upload"></i> {{ t('import_manual_link') }}</a></li>
                 </ul>
             </div>
         </div>

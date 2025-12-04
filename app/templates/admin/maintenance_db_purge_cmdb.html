@@ -1,14 +1,14 @@
 {% extends "base.html" %}
-{% block title %}Vidage CMDB{% endblock %}
-{% block page_title %}DANGER : Vidage complet CMDB{% endblock %}
+{% block title %}{{ t('purge_cmdb_page_title') }}{% endblock %}
+{% block page_title %}{{ t('purge_cmdb_danger_title') }}{% endblock %}
 
 {% block content %}
 <!-- Warning banner -->
 <div class="alert alert-danger alert-dismissible fade show" role="alert">
-    <h4 class="alert-heading"><i class="bi bi-shield-exclamation"></i> ATTENTION - OPÉRATION IRRÉVERSIBLE</h4>
+    <h4 class="alert-heading"><i class="bi bi-shield-exclamation"></i> {{ t('purge_warning_irreversible') }}</h4>
     <p class="mb-0">
-        Cette action va <strong>supprimer définitivement toutes les {{ "{:,}".format(stats.cmdb_count).replace(',', ' ') }} entrées CMDB</strong>.
-        Assurez-vous d'avoir une sauvegarde récente avant de continuer.
+        {{ t('purge_cmdb_action_will') }} <strong>{{ t('purge_delete_permanently_all') }} {{ "{:,}".format(stats.cmdb_count).replace(',', ' ') }} {{ t('purge_cmdb_entries') }}</strong>.
+        {{ t('purge_ensure_backup') }}.
     </p>
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
 </div>
@@ -18,7 +18,7 @@
     <div class="col-md-6">
         <div class="card shadow-sm">
             <div class="card-body">
-                <h6 class="text-muted mb-3">Statistiques CMDB</h6>
+                <h6 class="text-muted mb-3">{{ t('stats_cmdb') }}</h6>
                 <div class="row">
                     <div class="col-6 mb-3">
                         <div class="d-flex align-items-center">
@@ -26,7 +26,7 @@
                                 <i class="bi bi-database fs-4 text-primary"></i>
                             </div>
                             <div>
-                                <small class="text-muted">Total entrées</small>
+                                <small class="text-muted">{{ t('total_entries') }}</small>
                                 <h4 class="mb-0">{{ "{:,}".format(stats.cmdb_count).replace(',', ' ') }}</h4>
                             </div>
                         </div>
@@ -38,12 +38,12 @@
     <div class="col-md-6">
         <div class="card shadow-sm bg-light">
             <div class="card-body">
-                <h6 class="text-muted mb-3">Alternative recommandée</h6>
-                <p class="small mb-2">Plutôt que de purger, envisagez :</p>
+                <h6 class="text-muted mb-3">{{ t('recommended_alternative') }}</h6>
+                <p class="small mb-2">{{ t('rather_than_purge') }}</p>
                 <ul class="small mb-0">
-                    <li>Créer une <a href="{{ url_for('backup.index') }}">sauvegarde complète</a></li>
-                    <li>Importer un nouveau fichier CMDB à la place</li>
-                    <li>Consulter les logs d'import pour identifier les problèmes</li>
+                    <li><a href="{{ url_for('backup.index') }}">{{ t('create_full_backup') }}</a></li>
+                    <li>{{ t('import_new_cmdb_file') }}</li>
+                    <li>{{ t('check_import_logs') }}</li>
                 </ul>
             </div>
         </div>
@@ -53,38 +53,39 @@
 <!-- Action de purge -->
 <div class="card shadow-sm border-danger">
     <div class="card-header bg-danger text-white">
-        <h5 class="mb-0"><i class="bi bi-database-x"></i> Purge complète CMDB</h5>
+        <h5 class="mb-0"><i class="bi bi-database-x"></i> {{ t('complete_cmdb_purge') }}</h5>
     </div>
     <div class="card-body">
         <div class="alert alert-warning">
-            <strong>Vérifiez :</strong>
+            <strong>{{ t('verify_checklist') }}</strong>
             <ul class="mb-0">
-                <li>Vous avez créé une sauvegarde récente</li>
-                <li>Cette action est vraiment nécessaire</li>
-                <li>Vous êtes prêt à réimporter un nouveau fichier CMDB</li>
+                <li>{{ t('you_created_recent_backup') }}</li>
+                <li>{{ t('action_really_necessary') }}</li>
+                <li>{{ t('ready_to_reimport') }}</li>
             </ul>
         </div>
 
-        <form action="{{ url_for('admin.purge_cmdb') }}" method="POST" onsubmit="return confirm('DERNIÈRE CONFIRMATION : Voulez-vous vraiment supprimer TOUTES les {{ stats.cmdb_count }} entrées CMDB ? Cette action est IRRÉVERSIBLE.');">
+        {% set confirm_msg = t('last_confirmation') ~ ' : ' ~ t('really_want_delete_all') ~ ' ' ~ stats.cmdb_count ~ ' ' ~ t('purge_cmdb_entries') ~ '?' %}
+        <form action="{{ url_for('admin.purge_cmdb') }}" method="POST" onsubmit="return confirm('{{ confirm_msg }}');">
             <div class="mb-3">
                 <label class="form-label fw-bold">
-                    Pour confirmer, tapez exactement <code class="bg-dark text-white px-2 py-1">DELETE</code> :
+                    {{ t('to_confirm_type_exactly') }} <code class="bg-dark text-white px-2 py-1">DELETE</code> :
                 </label>
                 <input type="text" 
                        class="form-control form-control-lg" 
                        name="confirmation" 
-                       placeholder="Tapez DELETE en majuscules" 
+                       placeholder="{{ t('type_delete_caps') }}" 
                        autocomplete="off"
                        required>
-                <small class="form-text text-muted">Sensible à la casse - doit être en MAJUSCULES</small>
+                <small class="form-text text-muted">{{ t('case_sensitive_uppercase') }}</small>
             </div>
 
             <div class="d-grid gap-2">
                 <button type="submit" class="btn btn-danger btn-lg">
-                    <i class="bi bi-trash3-fill"></i> PURGER {{ "{:,}".format(stats.cmdb_count).replace(',', ' ') }} ENTRÉES CMDB
+                    <i class="bi bi-trash3-fill"></i> {{ t('btn_purge') }} {{ "{:,}".format(stats.cmdb_count).replace(',', ' ') }} {{ t('purge_cmdb_entries').upper() }}
                 </button>
                 <a href="{{ url_for('admin.maintenance_db') }}" class="btn btn-outline-secondary">
-                    <i class="bi bi-arrow-left"></i> Annuler et retourner
+                    <i class="bi bi-arrow-left"></i> {{ t('btn_cancel_return') }}
                 </a>
             </div>
         </form>
@@ -94,14 +95,14 @@
 <!-- Info complémentaire -->
 <div class="card shadow-sm border-info mt-4">
     <div class="card-header bg-info text-white">
-        <h6 class="mb-0"><i class="bi bi-info-circle"></i> Que se passe-t-il après la purge ?</h6>
+        <h6 class="mb-0"><i class="bi bi-info-circle"></i> {{ t('what_happens_after_purge') }}</h6>
     </div>
     <div class="card-body">
         <ol class="mb-0">
-            <li>Toutes les entrées CMDB seront supprimées de la base de données</li>
-            <li>Un historique de l'opération sera enregistré avec votre nom d'utilisateur</li>
-            <li>Les rapports de conformité ne fonctionneront plus jusqu'au prochain import CMDB</li>
-            <li>Vous devrez importer un nouveau fichier CMDB pour restaurer les données</li>
+            <li>{{ t('purge_cmdb_info_1') }}</li>
+            <li>{{ t('purge_cmdb_info_2') }}</li>
+            <li>{{ t('purge_cmdb_info_3') }}</li>
+            <li>{{ t('purge_cmdb_info_4') }}</li>
         </ol>
     </div>
 </div>

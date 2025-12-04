@@ -29,8 +29,8 @@
                         <td>{{ user.email or '-' }}</td>
                         <td>
                             {% if user.role == 'admin' %}<span class="badge bg-danger"><i class="bi bi-shield-check"></i> {{ t('nav_admin') }}</span>
-                            {% elif user.role == 'operator' %}<span class="badge bg-warning text-dark"><i class="bi bi-person-gear"></i> Opérateur</span>
-                            {% else %}<span class="badge bg-secondary"><i class="bi bi-eye"></i> Lecteur</span>
+                            {% elif user.role == 'operator' %}<span class="badge bg-warning text-dark"><i class="bi bi-person-gear"></i> {{ t('role_operator') }}</span>
+                            {% else %}<span class="badge bg-secondary"><i class="bi bi-eye"></i> {{ t('role_viewer') }}</span>
                             {% endif %}
                         </td>
                         <td>{% if user.is_active %}<span class="badge bg-success">{{ t('status_active') }}</span>{% else %}<span class="badge bg-secondary">{{ t('status_inactive') }}</span>{% endif %}</td>

@@ -83,12 +83,12 @@
                         <ul class="submenu nav flex-column">
                             <li class="nav-item">
                                 <a class="nav-link {{ 'active' if request.endpoint == 'altaview.list' }}" href="{{ url_for('altaview.list') }}">
-                                    <i class="bi bi-list-ul"></i> Liste des jobs
+                                    <i class="bi bi-list-ul"></i> {{ t('sidebar_jobs_list') }}
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link {{ 'active' if request.endpoint == 'altaview.import_history' }}" href="{{ url_for('altaview.import_history') }}">
-                                    <i class="bi bi-clock-history"></i> Historique imports
+                                    <i class="bi bi-clock-history"></i> {{ t('sidebar_import_history') }}
                                 </a>
                             </li>
                         </ul>
@@ -205,12 +205,12 @@
                         <ul class="submenu nav flex-column">
                             <li class="nav-item">
                                 <a class="nav-link {{ 'active' if request.endpoint == 'admin.api' }}" href="{{ url_for('admin.api') }}">
-                                    <i class="bi bi-gear"></i> Configuration
+                                    <i class="bi bi-gear"></i> {{ t('sidebar_api_config') }}
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link {{ 'active' if request.endpoint == 'admin.api_schedule' }}" href="{{ url_for('admin.api_schedule') }}">
-                                    <i class="bi bi-clock"></i> Planification
+                                    <i class="bi bi-clock"></i> {{ t('sidebar_api_planning') }}
                                 </a>
                             </li>
                         </ul>

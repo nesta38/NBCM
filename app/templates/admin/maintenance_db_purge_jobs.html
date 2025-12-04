@@ -1,14 +1,14 @@
 {% extends "base.html" %}
-{% block title %}Vidage Jobs{% endblock %}
-{% block page_title %}DANGER : Vidage complet Jobs Altaview{% endblock %}
+{% block title %}{{ t('purge_jobs_page_title') }}{% endblock %}
+{% block page_title %}{{ t('purge_jobs_danger_title') }}{% endblock %}
 
 {% block content %}
 <!-- Warning banner -->
 <div class="alert alert-danger alert-dismissible fade show" role="alert">
-    <h4 class="alert-heading"><i class="bi bi-shield-exclamation"></i> ATTENTION - OPÉRATION IRRÉVERSIBLE</h4>
+    <h4 class="alert-heading"><i class="bi bi-shield-exclamation"></i> {{ t('purge_warning_irreversible') }}</h4>
     <p class="mb-0">
-        Cette action va <strong>supprimer définitivement tous les {{ "{:,}".format(stats.jobs_count).replace(',', ' ') }} jobs Altaview</strong>.
-        Tout l'historique des sauvegardes sera perdu. Assurez-vous d'avoir une sauvegarde complète avant de continuer.
+        {{ t('purge_cmdb_action_will') }} <strong>{{ t('purge_delete_all_jobs') }} {{ "{:,}".format(stats.jobs_count).replace(',', ' ') }}</strong>.
+        {{ t('all_backup_history_lost') }}. {{ t('ensure_full_backup') }}.
     </p>
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
 </div>
@@ -18,7 +18,7 @@
     <div class="col-md-6">
         <div class="card shadow-sm">
             <div class="card-body">
-                <h6 class="text-muted mb-3">Statistiques Jobs</h6>
+                <h6 class="text-muted mb-3">{{ t('stats_jobs') }}</h6>
                 <div class="row">
                     <div class="col-6 mb-3">
                         <div class="d-flex align-items-center">
@@ -26,7 +26,7 @@
                                 <i class="bi bi-activity fs-4 text-success"></i>
                             </div>
                             <div>
-                                <small class="text-muted">Total jobs</small>
+                                <small class="text-muted">{{ t('total_jobs') }}</small>
                                 <h4 class="mb-0">{{ "{:,}".format(stats.jobs_count).replace(',', ' ') }}</h4>
                             </div>
                         </div>
@@ -37,7 +37,7 @@
                                 <i class="bi bi-clock-history fs-4 text-warning"></i>
                             </div>
                             <div>
-                                <small class="text-muted">Jobs > 6 mois</small>
+                                <small class="text-muted">{{ t('jobs_older_6_months') }}</small>
                                 <h4 class="mb-0">{{ "{:,}".format(stats.jobs_old_count).replace(',', ' ') }}</h4>
                             </div>
                         </div>
@@ -49,12 +49,12 @@
     <div class="col-md-6">
         <div class="card shadow-sm bg-light">
             <div class="card-body">
-                <h6 class="text-muted mb-3">Alternative recommandée</h6>
-                <p class="small mb-2">Plutôt que de tout purger, envisagez :</p>
+                <h6 class="text-muted mb-3">{{ t('recommended_alternative') }}</h6>
+                <p class="small mb-2">{{ t('rather_than_purge_all') }}</p>
                 <ul class="small mb-0">
-                    <li>Créer une <a href="{{ url_for('backup.index') }}">sauvegarde complète</a></li>
-                    <li><a href="{{ url_for('admin.maintenance_db_cleanup_old') }}">Nettoyer seulement les jobs > 6 mois</a> ({{ "{:,}".format(stats.jobs_old_count).replace(',', ' ') }} jobs)</li>
-                    <li>Exporter les données importantes avant purge</li>
+                    <li><a href="{{ url_for('backup.index') }}">{{ t('create_full_backup') }}</a></li>
+                    <li><a href="{{ url_for('admin.maintenance_db_cleanup_old') }}">{{ t('cleanup_only_old_jobs') }}</a> ({{ "{:,}".format(stats.jobs_old_count).replace(',', ' ') }} {{ t('jobs_word') }})</li>
+                    <li>{{ t('export_important_data') }}</li>
                 </ul>
             </div>
         </div>
@@ -64,39 +64,40 @@
 <!-- Action de purge -->
 <div class="card shadow-sm border-danger">
     <div class="card-header bg-danger text-white">
-        <h5 class="mb-0"><i class="bi bi-activity"></i> Purge complète Jobs Altaview</h5>
+        <h5 class="mb-0"><i class="bi bi-activity"></i> {{ t('complete_jobs_purge') }}</h5>
     </div>
     <div class="card-body">
         <div class="alert alert-warning">
-            <strong>Vérifiez :</strong>
+            <strong>{{ t('verify_checklist') }}</strong>
             <ul class="mb-0">
-                <li>Vous avez créé une sauvegarde récente de la base de données</li>
-                <li>Cette purge complète est vraiment nécessaire</li>
-                <li>Vous comprenez que tout l'historique sera perdu</li>
-                <li>Les rapports de conformité ne fonctionneront plus jusqu'au prochain import</li>
+                <li>{{ t('you_created_db_backup') }}</li>
+                <li>{{ t('complete_purge_necessary') }}</li>
+                <li>{{ t('understand_history_lost') }}</li>
+                <li>{{ t('reports_wont_work_until_import') }}</li>
             </ul>
         </div>
 
-        <form action="{{ url_for('admin.purge_altaview') }}" method="POST" onsubmit="return confirm('DERNIÈRE CONFIRMATION : Voulez-vous vraiment supprimer TOUS les {{ stats.jobs_count }} jobs ? Cette action est IRRÉVERSIBLE et supprimera tout l\'historique.');">
+        {% set confirm_msg = t('last_confirmation') ~ ' : ' ~ t('really_delete_all_jobs') %}
+        <form action="{{ url_for('admin.purge_altaview') }}" method="POST" onsubmit="return confirm('{{ confirm_msg }}');">
             <div class="mb-3">
                 <label class="form-label fw-bold">
-                    Pour confirmer, tapez exactement <code class="bg-dark text-white px-2 py-1">DELETE</code> :
+                    {{ t('to_confirm_type_exactly') }} <code class="bg-dark text-white px-2 py-1">DELETE</code> :
                 </label>
                 <input type="text" 
                        class="form-control form-control-lg" 
                        name="confirmation" 
-                       placeholder="Tapez DELETE en majuscules" 
+                       placeholder="{{ t('type_delete_caps') }}" 
                        autocomplete="off"
                        required>
-                <small class="form-text text-muted">Sensible à la casse - doit être en MAJUSCULES</small>
+                <small class="form-text text-muted">{{ t('case_sensitive_uppercase') }}</small>
             </div>
 
             <div class="d-grid gap-2">
                 <button type="submit" class="btn btn-danger btn-lg">
-                    <i class="bi bi-trash3-fill"></i> PURGER {{ "{:,}".format(stats.jobs_count).replace(',', ' ') }} JOBS ALTAVIEW
+                    <i class="bi bi-trash3-fill"></i> {{ t('btn_purge_jobs') }} {{ "{:,}".format(stats.jobs_count).replace(',', ' ') }}
                 </button>
                 <a href="{{ url_for('admin.maintenance_db') }}" class="btn btn-outline-secondary">
-                    <i class="bi bi-arrow-left"></i> Annuler et retourner
+                    <i class="bi bi-arrow-left"></i> {{ t('btn_cancel_return') }}
                 </a>
             </div>
         </form>
@@ -106,15 +107,15 @@
 <!-- Info complémentaire -->
 <div class="card shadow-sm border-info mt-4">
     <div class="card-header bg-info text-white">
-        <h6 class="mb-0"><i class="bi bi-info-circle"></i> Que se passe-t-il après la purge ?</h6>
+        <h6 class="mb-0"><i class="bi bi-info-circle"></i> {{ t('what_happens_after_purge') }}</h6>
     </div>
     <div class="card-body">
         <ol class="mb-0">
-            <li>Tous les jobs Altaview seront supprimés de la base de données</li>
-            <li>Un historique de l'opération sera enregistré avec votre nom d'utilisateur</li>
-            <li>Le tableau de bord et les rapports de conformité afficheront 0% de conformité</li>
-            <li>Les archives de conformité existantes resteront intactes</li>
-            <li>Vous devrez importer de nouveaux fichiers Altaview pour restaurer les données</li>
+            <li>{{ t('purge_jobs_info_1') }}</li>
+            <li>{{ t('purge_cmdb_info_2') }}</li>
+            <li>{{ t('purge_jobs_info_3') }}</li>
+            <li>{{ t('purge_jobs_info_4') }}</li>
+            <li>{{ t('purge_jobs_info_5') }}</li>
         </ol>
     </div>
 </div>

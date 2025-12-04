@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-{% block title %}Maintenance FS{% endblock %}
-{% block page_title %}Nettoyage Fichiers Auto-Import{% endblock %}
+{% block title %}{{ t('maintenance_fs_page_title') }}{% endblock %}
+{% block page_title %}{{ t('maintenance_fs_title') }}{% endblock %}
 
 {% block content %}
 <!-- Statistiques -->
@@ -8,7 +8,7 @@
     <div class="col-md-3">
         <div class="card shadow-sm bg-primary text-white">
             <div class="card-body">
-                <h6 class="card-title"><i class="bi bi-files"></i> Fichiers totaux</h6>
+                <h6 class="card-title"><i class="bi bi-files"></i> {{ t('maintenance_fs_total_files') }}</h6>
                 <h3 class="mb-0" id="totalFiles">-</h3>
             </div>
         </div>
@@ -16,7 +16,7 @@
     <div class="col-md-3">
         <div class="card shadow-sm bg-warning text-dark">
             <div class="card-body">
-                <h6 class="card-title"><i class="bi bi-clock"></i> > 48h</h6>
+                <h6 class="card-title"><i class="bi bi-clock"></i> {{ t('maintenance_fs_old_files') }}</h6>
                 <h3 class="mb-0" id="oldFiles">-</h3>
             </div>
         </div>
@@ -24,7 +24,7 @@
     <div class="col-md-3">
         <div class="card shadow-sm bg-info text-white">
             <div class="card-body">
-                <h6 class="card-title"><i class="bi bi-hdd"></i> Espace total</h6>
+                <h6 class="card-title"><i class="bi bi-hdd"></i> {{ t('maintenance_fs_total_space') }}</h6>
                 <h3 class="mb-0" id="totalSize">-</h3>
             </div>
         </div>
@@ -32,7 +32,7 @@
     <div class="col-md-3">
         <div class="card shadow-sm bg-success text-white">
             <div class="card-body">
-                <h6 class="card-title"><i class="bi bi-trash"></i> Libérable</h6>
+                <h6 class="card-title"><i class="bi bi-trash"></i> {{ t('maintenance_fs_cleanable') }}</h6>
                 <h3 class="mb-0" id="cleanableSize">-</h3>
             </div>
         </div>
@@ -43,14 +43,14 @@
 <div class="card shadow-sm border-warning mb-4">
     <div class="card-header bg-warning">
         <h5 class="mb-0">
-            <i class="bi bi-gear"></i> Configuration du nettoyage automatique
+            <i class="bi bi-gear"></i> {{ t('maintenance_fs_auto_cleanup_config') }}
         </h5>
     </div>
     <div class="card-body">
         <div class="row">
             <div class="col-md-6">
                 <h6 class="text-primary">
-                    <i class="bi bi-folder"></i> Répertoire surveillé
+                    <i class="bi bi-folder"></i> {{ t('maintenance_fs_monitored_dir') }}
                 </h6>
                 <div class="alert alert-light">
                     <code>/app/data/altaview_auto_import/processed/</code>
@@ -58,12 +58,12 @@
             </div>
             <div class="col-md-6">
                 <h6 class="text-primary">
-                    <i class="bi bi-clock-history"></i> Paramètres
+                    <i class="bi bi-clock-history"></i> {{ t('maintenance_fs_parameters') }}
                 </h6>
                 <ul class="mb-0">
-                    <li><strong>Rétention :</strong> 48 heures</li>
-                    <li><strong>Planification :</strong> Tous les jours à 3h00</li>
-                    <li><strong>Statut :</strong> <span class="badge bg-success">Actif</span></li>
+                    <li><strong>{{ t('maintenance_fs_retention') }} :</strong> {{ t('maintenance_fs_retention_48h') }}</li>
+                    <li><strong>{{ t('maintenance_fs_schedule') }} :</strong> {{ t('maintenance_fs_schedule_daily') }}</li>
+                    <li><strong>{{ t('status') }} :</strong> <span class="badge bg-success">{{ t('status_active') }}</span></li>
                 </ul>
             </div>
         </div>
@@ -74,24 +74,23 @@
 <div class="card shadow-sm border-success mb-4">
     <div class="card-header bg-success text-white">
         <h5 class="mb-0">
-            <i class="bi bi-play-circle"></i> Nettoyage manuel
+            <i class="bi bi-play-circle"></i> {{ t('maintenance_fs_manual_cleanup') }}
         </h5>
     </div>
     <div class="card-body">
         <p class="text-muted">
-            Déclenchez un nettoyage immédiat des fichiers de plus de 48 heures.
-            Cette action n'affecte pas la planification automatique.
+            {{ t('maintenance_fs_manual_desc') }}
         </p>
 
         <div class="alert alert-info" id="cleanupPreview">
-            <strong id="previewCount">-</strong> fichiers seront supprimés, 
-            libérant <strong id="previewSize">-</strong> d'espace disque
+            <strong id="previewCount">-</strong> {{ t('maintenance_fs_preview') }}, 
+            {{ t('maintenance_fs_preview_space') }} <strong id="previewSize">-</strong>
         </div>
 
         <form action="{{ url_for('admin.cleanup_now') }}" method="POST"
-              onsubmit="return confirm('Confirmer le nettoyage des fichiers de plus de 48h ?');">
+              onsubmit="return confirm('{{ t('maintenance_fs_confirm') }}');">
             <button type="submit" class="btn btn-success btn-lg w-100">
-                <i class="bi bi-trash"></i> Nettoyer maintenant
+                <i class="bi bi-trash"></i> {{ t('maintenance_fs_clean_now') }}
             </button>
         </form>
     </div>
@@ -101,29 +100,28 @@
 <div class="card shadow-sm border-primary">
     <div class="card-header bg-primary text-white">
         <h5 class="mb-0">
-            <i class="bi bi-clock-history"></i> Derniers nettoyages
+            <i class="bi bi-clock-history"></i> {{ t('maintenance_fs_recent_cleanups') }}
         </h5>
     </div>
     <div class="card-body">
         <p class="text-muted">
-            Les nettoyages automatiques sont tracés dans les logs système.
-            Consultez <code>/app/logs/app.log</code> pour le détail complet.
+            {{ t('maintenance_fs_cleanup_logs') }}
         </p>
 
         <div class="table-responsive">
             <table class="table table-sm">
                 <thead class="table-light">
                     <tr>
-                        <th>Date</th>
-                        <th>Type</th>
-                        <th>Fichiers supprimés</th>
-                        <th>Espace libéré</th>
+                        <th>{{ t('th_date') }}</th>
+                        <th>{{ t('th_type') }}</th>
+                        <th>{{ t('maintenance_fs_deleted_files') }}</th>
+                        <th>{{ t('maintenance_fs_freed_space') }}</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td colspan="4" class="text-center text-muted">
-                            <i class="bi bi-info-circle"></i> Consultez les logs pour l'historique complet
+                            <i class="bi bi-info-circle"></i> {{ t('check_logs_for_history') }}
                         </td>
                     </tr>
                 </tbody>
@@ -136,16 +134,16 @@
 <div class="card shadow-sm border-info mt-4">
     <div class="card-header bg-info text-white">
         <h6 class="mb-0">
-            <i class="bi bi-info-circle"></i> Informations
+            <i class="bi bi-info-circle"></i> {{ t('information') }}
         </h6>
     </div>
     <div class="card-body">
         <ul class="mb-0">
-            <li><strong>Fonctionnement</strong> : Les fichiers CSV importés automatiquement sont conservés 48h dans le répertoire processed/</li>
-            <li><strong>Sécurité</strong> : Seuls les fichiers de plus de 48h sont supprimés, les imports récents sont préservés</li>
-            <li><strong>Performance</strong> : Le nettoyage régulier évite l'accumulation de fichiers inutiles</li>
-            <li><strong>Logs</strong> : Chaque nettoyage est tracé avec le nombre de fichiers supprimés et l'espace libéré</li>
-            <li><strong>Planification</strong> : Le nettoyage automatique est géré par le scheduler APScheduler</li>
+            <li><strong>{{ t('maintenance_fs_info_operation') }}</strong> : {{ t('maintenance_fs_info_operation_desc') }}</li>
+            <li><strong>{{ t('maintenance_fs_info_security') }}</strong> : {{ t('maintenance_fs_info_security_desc') }}</li>
+            <li><strong>{{ t('maintenance_fs_info_performance') }}</strong> : {{ t('maintenance_fs_info_performance_desc') }}</li>
+            <li><strong>{{ t('maintenance_fs_info_logs') }}</strong> : {{ t('maintenance_fs_info_logs_desc') }}</li>
+            <li><strong>{{ t('maintenance_fs_info_planning') }}</strong> : {{ t('maintenance_fs_info_planning_desc') }}</li>
         </ul>
     </div>
 </div>
@@ -178,9 +176,11 @@ function loadCleanupStats() {
             // Pourcentage dans la preview
             if (data.total_files > 0) {
                 let percentage = ((data.old_files / data.total_files) * 100).toFixed(1);
+                const translation_preview = '{{ t("maintenance_fs_preview") }}';
+                const translation_space = '{{ t("maintenance_fs_preview_space") }}';
                 $('#cleanupPreview').html(
-                    `<strong>${data.old_files}</strong> fichiers seront supprimés (${percentage}%), ` +
-                    `libérant <strong>${data.cleanable_size_mb.toFixed(2)} MB</strong> d'espace disque`
+                    `<strong>${data.old_files}</strong> ${translation_preview} (${percentage}%), ` +
+                    `${translation_space} <strong>${data.cleanable_size_mb.toFixed(2)} MB</strong>`
                 );
             }
         })
