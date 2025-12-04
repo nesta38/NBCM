@@ -8,7 +8,7 @@ from flask_login import current_user
 from sqlalchemy import text
 
 from app import db
-from app.models.cmdb import ReferentielCMDB
+from app.models.cmdb import ReferentielCMDB, CMDBHistory
 from app.models.jobs import JobAltaview, ImportHistory
 from app.services.config_service import get_config, set_config
 from app.services.scheduler_service import get_scheduler_status, reschedule_archive
@@ -292,20 +292,34 @@ def maintenance_db_deduplication():
 def purge_cmdb():
     """Purger complètement la CMDB"""
     if request.form.get('confirmation', '').strip().upper() == 'DELETE':
-        count = ReferentielCMDB.query.count()
-        ReferentielCMDB.query.delete()
-        db.session.commit()
-        
-        ImportHistory(
-            type_import='cmdb',
-            filename='PURGE_ADMIN',
-            nb_lignes=count,
-            statut='success',
-            message=f'Purge de {count} entrées CMDB',
-            utilisateur=current_user.username
-        ).save()
-        
-        flash(f'CMDB purgée: {count} entrées supprimées.', 'success')
+        try:
+            # Compter avant de supprimer
+            cmdb_count = ReferentielCMDB.query.count()
+            history_count = CMDBHistory.query.count()
+            
+            # Supprimer d'abord l'historique (clé étrangère)
+            CMDBHistory.query.delete()
+            
+            # Puis supprimer la CMDB
+            ReferentielCMDB.query.delete()
+            
+            # Commit
+            db.session.commit()
+            
+            # Log
+            ImportHistory(
+                type_import='cmdb',
+                filename='PURGE_ADMIN',
+                nb_lignes=cmdb_count,
+                statut='success',
+                message=f'Purge de {cmdb_count} entrées CMDB et {history_count} entrées historique',
+                utilisateur=current_user.username
+            ).save()
+            
+            flash(f'CMDB purgée: {cmdb_count} entrées + {history_count} historiques supprimés.', 'success')
+        except Exception as e:
+            db.session.rollback()
+            flash(f'❌ Erreur lors de la purge: {str(e)}', 'danger')
     else:
         flash('Code de confirmation incorrect.', 'warning')
     
